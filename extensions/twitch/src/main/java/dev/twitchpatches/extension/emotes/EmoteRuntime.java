@@ -22,14 +22,15 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
     private final EmoteCatalog catalog = new EmoteCatalog(channel -> main.post(() -> refresh(channel, null)));
     private final EmoteImages images = new EmoteImages(url -> main.post(() -> refresh(null, url)));
     private final NativeEmotePreview preview = new NativeEmotePreview();
-    private volatile boolean enabled;
+    private volatile int providerMask;
     private volatile String channel;
     private int resumed;
     private long lastObservation;
 
     private EmoteRuntime(Application application) {
         preferences = application.getSharedPreferences("twitch_patches_emotes", 0);
-        enabled = preferences.getBoolean("enabled", true);
+        providerMask = EmotePolicy.restore(preferences.getBoolean("enabled", true), preferences.getInt("provider_mask", -1));
+        catalog.setProviderMask(providerMask);
         application.registerActivityLifecycleCallbacks(this);
     }
 
@@ -41,16 +42,27 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
         }
     }
 
-    public static boolean enabled() { return instance != null && instance.enabled; }
+    public static boolean enabled() { return providerMask() != 0; }
+    public static int providerMask() { return instance == null ? 0 : instance.providerMask; }
+    public static boolean providerEnabled(int provider) { return EmotePolicy.includes(providerMask(), provider); }
 
     public static void setEnabled(boolean value) {
+        setProviderMask(value ? EmotePolicy.ALL : 0);
+    }
+
+    public static void setProviderEnabled(int provider, boolean value) {
+        setProviderMask(EmotePolicy.select(providerMask(), provider, value));
+    }
+
+    private static void setProviderMask(int mask) {
         EmoteRuntime runtime = instance;
         if (runtime == null) return;
-        runtime.enabled = value;
-        runtime.preferences.edit().putBoolean("enabled", value).apply();
+        runtime.providerMask = mask;
+        runtime.preferences.edit().putInt("provider_mask", mask).putBoolean("enabled", mask != 0).apply();
+        runtime.catalog.setProviderMask(mask);
+        runtime.images.cancelPending();
         ReactNativeRuntime.refresh();
-        if (!value) { runtime.catalog.cancelPending(); runtime.images.cancelPending(); }
-        runtime.main.post(() -> { if (!value) runtime.preview.close(); runtime.refresh(null, null); });
+        runtime.main.post(() -> { runtime.preview.close(); runtime.refresh(null, null); });
     }
 
     public static void onChannelChanged(String id, String name) {
@@ -62,7 +74,7 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
         runtime.images.cancelPending();
         runtime.main.post(() -> {
             if (!valid.equals(runtime.channel)) return;
-            if (runtime.enabled && runtime.resumed > 0) runtime.catalog.ensure(valid);
+            if (runtime.providerMask != 0 && runtime.resumed > 0) runtime.catalog.ensure(valid);
         });
     }
 
@@ -84,7 +96,7 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
         }
         runtime.rows.put(view, bound);
         view.addOnAttachStateChangeListener(runtime);
-        if (runtime.enabled && runtime.resumed > 0) {
+        if (runtime.providerMask != 0 && runtime.resumed > 0) {
             runtime.catalog.ensure(id);
             if (view.isAttachedToWindow()) EmoteRows.render(view, bound, runtime.catalog.snapshot(id), runtime.images);
         }
@@ -100,7 +112,7 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
                 rows.remove(view);
                 continue;
             }
-            if (!enabled) {
+            if (providerMask == 0) {
                 EmoteRows.close(view.getText());
                 view.setText(bound.original, TextView.BufferType.SPANNABLE);
                 bound.rendered = view.getText();
@@ -122,12 +134,14 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
 
     static void preview(TextView view, Emote emote) {
         EmoteRuntime runtime = instance;
-        if (runtime == null || !runtime.enabled || runtime.resumed == 0 || !runtime.rows.containsKey(view)) return;
+        if (runtime == null || runtime.providerMask == 0 || runtime.resumed == 0) return;
+        EmoteRows.Bound bound = runtime.rows.get(view);
+        if (bound == null || !runtime.catalog.snapshot(bound.channel).containsValue(emote)) return;
         runtime.preview.open(view, emote, runtime.images.drawable(view.getResources(), emote.url));
     }
 
     @Override public void onViewAttachedToWindow(View view) {
-        if (!(view instanceof TextView) || !enabled || resumed == 0) return;
+        if (!(view instanceof TextView) || providerMask == 0 || resumed == 0) return;
         TextView text = (TextView) view;
         EmoteRows.Bound bound = rows.get(text);
         if (bound != null && text.getText() == bound.rendered) {

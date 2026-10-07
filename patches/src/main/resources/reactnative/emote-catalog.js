@@ -18,8 +18,11 @@
     function notify() { listeners.forEach(function (callback) { callback(); }); }
     function compose(record) {
         var next = new Map();
-        [globals[2], globals[0], globals[1], record.parts[2], record.parts[0], record.parts[1]].forEach(function (part) {
-            if (part) part.forEach(function (value, name) { next.set(name, value); });
+        [globals, record.parts].forEach(function (parts) {
+            [2, 0, 1].forEach(function (index) {
+                var part = parts[index];
+                if (runtime.enabled(8 + index) && part) part.forEach(function (value, name) { next.set(name, value); });
+            });
         });
         record.snapshot = next;
     }
@@ -40,7 +43,7 @@
         return {promise: promise, cancel: function () { controller.abort(); }};
     }
     function globalCatalog(index) {
-        if (globals[index] || globalJobs[index] || Date.now() < globalRetry[index]) return;
+        if (!runtime.enabled(8 + index) || globals[index] || globalJobs[index] || Date.now() < globalRetry[index]) return;
         var job = request(globalURLs[index]);
         globalJobs[index] = job;
         job.promise.then(function (data) {
@@ -55,6 +58,7 @@
     function ensure(record) {
         if (!runtime.enabled(5) || !runtime.enabled(3) || !record.refs) return;
         providers.forEach(function (provider, index) {
+            if (!runtime.enabled(8 + index)) return;
             globalCatalog(index);
             if (record.jobs[index] || Date.now() < record.retry[index] ||
                 (record.parts[index] && Date.now() - record.loaded[index] < 900000)) return;
@@ -91,12 +95,20 @@
         return function () { record.refs--; if (!record.refs) cancel(record); };
     }
     runtime.subscribe(function () {
-        records.forEach(function (record) {
-            if (runtime.enabled(5) && runtime.enabled(3)) ensure(record); else cancel(record);
-        });
-        if (!runtime.enabled(5) || !runtime.enabled(3)) globalJobs.forEach(function (job, index) {
+        var active = runtime.enabled(5) && runtime.enabled(3);
+        globalJobs.forEach(function (job, index) {
+            if (active && runtime.enabled(8 + index)) return;
             if (job) job.cancel(); globalJobs[index] = null;
         });
+        records.forEach(function (record) {
+            record.jobs.forEach(function (job, index) {
+                if (active && runtime.enabled(8 + index)) return;
+                if (job) job.cancel(); record.jobs[index] = null;
+            });
+            compose(record);
+            if (active) ensure(record);
+        });
+        notify();
     });
     runtime.emotes = {
         retain: retain,

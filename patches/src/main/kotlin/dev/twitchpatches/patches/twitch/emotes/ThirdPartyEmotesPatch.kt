@@ -9,7 +9,7 @@ import dev.twitchpatches.patches.twitch.shared.*
 @Suppress("unused")
 val thirdPartyEmotesPatch = bytecodePatch(
     name = "BTTV, FFZ and 7TV emotes",
-    description = "Displays static and animated global and channel emotes with tap previews.",
+    description = "Displays static and animated global and channel emotes with provider controls and tap previews.",
     default = true,
 ) {
     compatibleWith(TwitchTarget.compatibility)

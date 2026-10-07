@@ -24,13 +24,17 @@ public final class PatchSettings implements Application.ActivityLifecycleCallbac
         if (instance == null) instance = new PatchSettings(application);
     }
 
-    public static synchronized void register(ToggleSetting option) {
+    public static synchronized void register(SettingEntry option) {
         if (instance == null) throw new IllegalStateException("Patch settings must initialize before a feature.");
         instance.options.register(option);
     }
 
-    static synchronized List<ToggleSetting> options() {
+    static synchronized List<SettingEntry> options() {
         return instance == null ? new ArrayList<>() : instance.options.snapshot();
+    }
+
+    static synchronized SettingGroup group(String key) {
+        return instance == null ? null : instance.options.group(key);
     }
 
     public static int settingsIcon() {

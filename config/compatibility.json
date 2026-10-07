@@ -259,5 +259,39 @@
       "FrankerFaceZ preview metadata"
     ],
     "scope": "Animation frames and lifecycle verified with compiled runtime code on Android. V2 provider parsing, image routing and previews verified with adapter tests. Live chat acceptance remains pending."
+  },
+  "emoteProviderSettings": {
+    "date": "2026-10-07",
+    "versionName": "31.4.2",
+    "versionCode": 3104026,
+    "bundleSha256": "38784c51a02c7f088267326c505bfca579e9930821def399510d219586bfa619",
+    "apkSha256": "1ff86a9ab74da95e000702ca50303e58ce462e4b2db9454a347cd8963d04a0ba",
+    "javaKotlinTests": 161,
+    "javaScriptTests": 13,
+    "standaloneVerifierTests": "passed",
+    "fullDexRebuild": "passed",
+    "sdkPerDexAndApkChecks": "passed",
+    "introducedHierarchyFindings": 0,
+    "typeContracts": 69,
+    "androidApi": 33,
+    "deviceInstallation": "passed; existing signing key and app data retained",
+    "deviceArtVerification": "passed",
+    "startupErrorLines": 0,
+    "deviceChecks": [
+      "Native Emotes submenu and provider switches",
+      "All providers enabled by default",
+      "Individual provider selection and partial-selection summary",
+      "Enable all and disable all",
+      "Selections retained after closing the page and restarting Twitch",
+      "Toolbar and Android Back navigation"
+    ],
+    "regressionChecks": [
+      "Legacy preference migration and all provider combinations",
+      "Native and V2 catalog filtering and cached reactivation",
+      "Disabled-provider cancellation and late responses",
+      "Provider-specific preview dismissal",
+      "Settings groups omitted with unselected patches"
+    ],
+    "scope": "Native settings controls verified on Android. Provider filtering and lifecycle covered by catalog and adapter tests."
   }
 }

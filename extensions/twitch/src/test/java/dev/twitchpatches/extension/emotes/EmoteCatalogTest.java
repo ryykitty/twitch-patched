@@ -9,6 +9,49 @@ import static org.junit.Assert.*;
 public class EmoteCatalogTest {
     private static final String ENTRY = "{\"channelEmotes\":[{\"id\":\"example\",\"code\":\"ChannelCode\"}]}";
 
+    @Test public void providerSelectionFiltersCachedCatalogsWithoutRefetching() throws Exception {
+        CountDownLatch ready = new CountDownLatch(6);
+        AtomicInteger requests = new AtomicInteger();
+        EmoteCatalog catalog = new EmoteCatalog(id -> ready.countDown(), (url, optional) -> {
+            requests.incrementAndGet();
+            if (url.contains("betterttv")) return optional ? ENTRY : "[{\"id\":\"global\",\"code\":\"GlobalCode\"}]";
+            return "{}";
+        }, () -> { });
+        try {
+            catalog.ensure("11");
+            assertTrue(ready.await(2, TimeUnit.SECONDS));
+            assertTrue(catalog.snapshot("11").containsKey("ChannelCode"));
+            assertTrue(catalog.snapshot(null).containsKey("GlobalCode"));
+            catalog.setProviderMask(6);
+            assertTrue(catalog.snapshot("11").isEmpty());
+            assertTrue(catalog.snapshot(null).isEmpty());
+            catalog.ensure("11");
+            assertEquals(6, requests.get());
+            catalog.setProviderMask(7);
+            assertTrue(catalog.snapshot("11").containsKey("ChannelCode"));
+            catalog.ensure("11");
+            assertEquals(6, requests.get());
+            catalog.setProviderMask(0);
+            assertTrue(catalog.snapshot("11").isEmpty());
+        } finally { catalog.cancelPending(); }
+    }
+
+    @Test public void unselectedProvidersNeverStartRequests() throws Exception {
+        CountDownLatch ready = new CountDownLatch(2);
+        AtomicInteger requests = new AtomicInteger();
+        EmoteCatalog catalog = new EmoteCatalog(id -> ready.countDown(), (url, optional) -> {
+            assertTrue(url.contains("frankerfacez"));
+            requests.incrementAndGet();
+            return "{}";
+        }, () -> { });
+        try {
+            catalog.setProviderMask(4);
+            catalog.ensure("11");
+            assertTrue(ready.await(2, TimeUnit.SECONDS));
+            assertEquals(2, requests.get());
+        } finally { catalog.cancelPending(); }
+    }
+
     @Test public void cancelledChannelRequestCannotPublishItsLateResponse() throws Exception {
         CountDownLatch started = new CountDownLatch(1);
         CountDownLatch release = new CountDownLatch(1);

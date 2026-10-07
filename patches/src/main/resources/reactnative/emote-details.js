@@ -49,8 +49,9 @@
             }
             var state = React.useState(true), visible = state[0], setVisible = state[1];
             var enabled = runtime.policyHook(React, 5), foreground = runtime.policyHook(React, 3);
+            var provider = runtime.policyHook(React, 8 + ['bttv', '7tv', 'ffz'].indexOf(props.emote.provider));
             var close = function () { setVisible(false); };
-            React.useEffect(function () { if (!enabled || !foreground) close(); }, [enabled, foreground]);
+            React.useEffect(function () { if (!enabled || !foreground || !provider) close(); }, [enabled, foreground, provider]);
             React.useEffect(function () { runtime.log('emotes details opened'); }, []);
             return React.createElement(Sheet, {visible: visible, onClose: close, onClosed: props.onClosed,
                 accessibilityLabel: props.emote.name + ', ' + label(props.emote), initialDetent: false,

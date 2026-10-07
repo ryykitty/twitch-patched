@@ -13,7 +13,7 @@ Select each feature independently when patching. Included features appear under 
 | Hide Turbo promotions | Hides Turbo entries, upsells and purchase buttons. |
 | Hide subscription discount banners | Hides subscription offers and promotional labels, while retaining normal subscription actions. |
 | Auto-claim bonus channel points | Claims available bonus rewards in live playback. |
-| BTTV, FFZ and 7TV emotes | Displays static and animated global and channel emotes with tap previews. |
+| BTTV, FFZ and 7TV emotes | Displays static and animated global and channel emotes with provider controls and tap previews. |
 | Reload stream | Adds a reload button in live-player controls. Double-tap to reload. |
 | Block client-requested ads | Suppresses native ad requests. Restart Twitch after changing the setting. |
 | Playback diagnostics | Records playlist structure and playback frame counters. Disabled by default. |

@@ -80,8 +80,8 @@ internal val reactNativeBridgePatch = bytecodePatch {
             .uniqueHook("extension RN policy bridge")
         val dispatch = ImmutableMethod(RUNTIME, stub.name, stub.parameters, "V", stub.accessFlags,
             stub.annotations, stub.hiddenApiRestrictions, MutableMethodImplementation(7)).toMutable()
-        val writes = (0..7).joinToString("\n") { index -> """
-            const/4 v1, $index
+        val writes = (0..10).joinToString("\n") { index -> """
+            const/16 v1, $index
             aget-boolean v2, p1, v1
             invoke-virtual {v0, v2}, $ARRAY->pushBoolean(Z)V
         """ }

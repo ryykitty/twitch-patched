@@ -22,6 +22,7 @@ final class EmoteCatalog {
     private final Consumer<String> changed;
     private final Fetcher fetcher;
     private final Runnable unavailable;
+    private int providerMask = EmotePolicy.ALL;
 
     interface Fetcher { String get(String url, boolean optional) throws java.io.IOException; }
 
@@ -72,17 +73,31 @@ final class EmoteCatalog {
         workers.purge();
     }
 
-    private static void cancel(Channel state) {
-        for (Provider provider : state.providers) {
-            if (provider.task != null) {
-                provider.generation++;
-                provider.task.cancel(true);
-                provider.task = null;
-            }
+    synchronized void setProviderMask(int mask) {
+        providerMask = mask & EmotePolicy.ALL;
+        for (int index = 0; index < 3; index++) {
+            if (EmotePolicy.includes(providerMask, index)) continue;
+            cancel(global.providers[index]);
+            for (Channel state : channels.values()) cancel(state.providers[index]);
         }
+        global.combined = compose(Collections.emptyMap(), global);
+        channels.values().forEach(state -> state.combined = compose(global.combined, state));
+        workers.purge();
+    }
+
+    private static void cancel(Channel state) {
+        for (Provider provider : state.providers) cancel(provider);
+    }
+
+    private static void cancel(Provider provider) {
+        if (provider.task == null) return;
+        provider.generation++;
+        provider.task.cancel(true);
+        provider.task = null;
     }
 
     private void schedule(String id, Channel state, int index) {
+        if (!EmotePolicy.includes(providerMask, index)) return;
         Provider provider = state.providers[index];
         long now = System.currentTimeMillis();
         if (provider.task != null || now < provider.retryAfter || now - provider.loadedAt < TTL) return;
@@ -112,15 +127,18 @@ final class EmoteCatalog {
             provider.retryAfter = 0;
             if (id == null) {
                 global.combined = compose(Collections.emptyMap(), global);
-                channels.values().forEach(channel -> channel.combined = combine(global.combined,
-                        channel.providers[2].entries, channel.providers[0].entries, channel.providers[1].entries));
+                channels.values().forEach(channel -> channel.combined = compose(global.combined, channel));
             } else state.combined = compose(global.combined, state);
         }
         changed.accept(id);
     }
 
-    private static Map<String, Emote> compose(Map<String, Emote> globals, Channel channel) {
-        return combine(globals, channel.providers[2].entries, channel.providers[0].entries, channel.providers[1].entries);
+    private Map<String, Emote> compose(Map<String, Emote> globals, Channel channel) {
+        return combine(globals, entries(channel, 2), entries(channel, 0), entries(channel, 1));
+    }
+
+    private Map<String, Emote> entries(Channel channel, int index) {
+        return EmotePolicy.includes(providerMask, index) ? channel.providers[index].entries : Collections.emptyMap();
     }
 
     @SafeVarargs

@@ -97,7 +97,9 @@ public final class ReactNativeRuntime implements Application.ActivityLifecycleCa
         return new boolean[] {selected[0] && ChannelPointsRuntime.isEnabled(),
                 selected[1] && PromotionSettings.blocked(), selected[2] && SubscriptionBannerSettings.blocked(),
                 resumed > 0, selected[3] && AdSettings.displayAdsBlocked(), selected[4] && EmoteRuntime.enabled(),
-                selected[5] && AdSettings.enabled(2), selected[6] && ReloadRuntime.enabled()};
+                selected[5] && AdSettings.enabled(2), selected[6] && ReloadRuntime.enabled(),
+                selected[4] && EmoteRuntime.providerEnabled(0), selected[4] && EmoteRuntime.providerEnabled(1),
+                selected[4] && EmoteRuntime.providerEnabled(2)};
     }
 
     private static void dispatch(Object instance, boolean[] policy) {

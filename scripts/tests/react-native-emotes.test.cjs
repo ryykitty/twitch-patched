@@ -5,9 +5,10 @@ const vm = require('node:vm');
 const root = path.resolve(__dirname, '../../patches/src/main/resources/reactnative');
 const jobs = [], events = [], targets = new Map(), subscriptions = new Set();
 let enabled = true, foreground = true, effects = [], policy;
+const selection = [true, true, true];
 const runtime = {
     target(id, name, adapter, memo) { targets.set(name, {adapter, memo}); },
-    enabled(index) { return index === 5 ? enabled : foreground; },
+    enabled(index) { return index >= 8 ? selection[index - 8] : index === 5 ? enabled : foreground; },
     policyHook() { return enabled; },
     subscribe(fn) { subscriptions.add(fn); return () => subscriptions.delete(fn); },
     log(value) { events.push(value); }
@@ -95,6 +96,15 @@ async function main() {
         'channel emotes override a global name collision');
     assert.equal(props.message.emotes.length, 0);
     assert.equal(runtime.emotes.snapshot('456').get('FFZChannel').provider, 'ffz');
+    selection[1] = false; subscriptions.forEach(fn => fn());
+    assert.equal(runtime.emotes.snapshot('456').get('Wankge').provider, 'ffz', 'disabling 7TV exposes the enabled channel provider');
+    selection[2] = false; subscriptions.forEach(fn => fn());
+    assert.equal(runtime.emotes.snapshot('456').get('Wankge').provider, 'bttv');
+    selection[0] = false; subscriptions.forEach(fn => fn());
+    assert.equal(runtime.emotes.snapshot('456').size, 0, 'all providers disabled remove cached emotes');
+    selection.fill(true); subscriptions.forEach(fn => fn());
+    assert.equal(jobs.length, 6, 'reenabling fresh cached providers requires no requests');
+    assert.equal(runtime.emotes.snapshot('456').get('Wankge').provider, '7tv');
     enabled = false;
     assert.equal(row(props).props, props, 'disabling restores untouched message props');
     enabled = true;
@@ -126,6 +136,17 @@ async function main() {
     assert.equal(runtime.emotes.snapshot('888').has('Oversize'), false, 'catalogs exceeding the upper bound are rejected');
     assert.equal(runtime.emotes.snapshot('888').has('OtherProvider'), true, 'one oversized provider does not erase another provider');
     releaseOversize();
+    const releaseSelective = runtime.emotes.retain('999');
+    const selective = jobs.slice(-3);
+    selection[0] = false; subscriptions.forEach(fn => fn());
+    assert.equal(selective[0].options.signal.aborted, true, 'disabled provider requests cancel');
+    assert.equal(selective[1].options.signal.aborted, false, 'other providers remain active');
+    selective[0].resolve({channelEmotes: [{id: 'late', code: 'DisabledLate'}]});
+    selective[1].resolve({emote_set: {emotes: [seven('StillEnabled')]}}); selective[2].resolve({});
+    await flush();
+    assert.equal(runtime.emotes.snapshot('999').has('DisabledLate'), false);
+    assert.equal(runtime.emotes.snapshot('999').has('StillEnabled'), true);
+    releaseSelective(); selection.fill(true);
     const boot = vm.createContext({console: {info() {}}, RN$registerCallableModule(name, factory) { policy = factory(); }});
     vm.runInContext(fs.readFileSync(path.join(root, 'bootstrap.js'), 'utf8').replace('__TWITCH_REACT_MODULE__', '7'), boot);
     let factory;
@@ -135,8 +156,11 @@ async function main() {
     const module = {exports: {}};
     factory(boot, () => React, null, null, module);
     assert.equal(module.exports.Row, original, 'bootstrap accepts only an explicitly declared memo export');
-    policy.set(false, false, false, true, false, true);
+    policy.set(false, false, false, true, false, true, false, false, true, false, true);
     assert.equal(boot.__twitchPatchRuntime.enabled(5), true);
+    assert.equal(boot.__twitchPatchRuntime.enabled(8), true);
+    assert.equal(boot.__twitchPatchRuntime.enabled(9), false);
+    assert.equal(boot.__twitchPatchRuntime.enabled(10), true);
     foreground = false; subscriptions.forEach(fn => fn());
     console.log('React Native emotes: provider parsing, Unicode ranges, memo export, channel ownership, rendering, failures and cancellation passed.');
 }
