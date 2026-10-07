@@ -14,7 +14,7 @@ val blockStitchedAdsPatch = bytecodePatch(
         "Prefers matching video quality. No external stream proxy.",
     default = true,
 ) {
-    compatibleWith(TwitchTarget.candidateCompatibility)
+    compatibleWith(TwitchTarget.compatibility)
     dependsOn(settingsPatch, reactNativeStreamAdsPatch)
     execute {
         val http = resolveIvsHttp()

@@ -12,7 +12,7 @@ val thirdPartyEmotesPatch = bytecodePatch(
     description = "Renders global and channel emotes in chat with provider previews on tap.",
     default = true,
 ) {
-    compatibleWith(TwitchTarget.candidateCompatibility)
+    compatibleWith(TwitchTarget.compatibility)
     dependsOn(settingsPatch, reactNativeEmotesPatch, nativeEmotePreviewPatch)
     execute {
         val hooks = resolveEmoteHooks()

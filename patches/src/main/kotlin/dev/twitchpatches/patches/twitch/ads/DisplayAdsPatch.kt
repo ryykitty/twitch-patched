@@ -17,7 +17,7 @@ val hideDisplayAdsPatch = bytecodePatch(
     description = "Removes sponsored feed cards and display ads using Twitch's no-ad responses.",
     default = true,
 ) {
-    compatibleWith(TwitchTarget.candidateCompatibility)
+    compatibleWith(TwitchTarget.compatibility)
     dependsOn(settingsPatch, reactNativeBridgePatch, reactNativeFeedAdsPatch)
     execute {
         val classes = mutableListOf<com.android.tools.smali.dexlib2.iface.ClassDef>().apply { classDefForEach { add(it) } }

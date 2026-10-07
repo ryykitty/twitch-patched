@@ -73,7 +73,6 @@ public final class ReactNativeRuntime implements Application.ActivityLifecycleCa
         CompletableFuture<String> task = bootstrap;
         if (task == null) { Log.w("TwitchPatchesRN", "Bootstrap initialization unavailable"); return null; }
         try {
-            // Bundle loading runs on the host task.
             if (Looper.myLooper() == Looper.getMainLooper() && !task.isDone()) {
                 Log.w("TwitchPatchesRN", "Bootstrap not ready for UI loader"); return null;
             }

@@ -20,7 +20,7 @@ val hideSubscriptionBannersPatch = bytecodePatch(
     description = "Hides subscription offers and promotional labels, while retaining normal subscription actions.",
     default = true,
 ) {
-    compatibleWith(TwitchTarget.candidateCompatibility)
+    compatibleWith(TwitchTarget.compatibility)
     dependsOn(settingsPatch, reactNativeBridgePatch, reactNativeSubscriptionBannersPatch)
     execute {
         val composer = resolveSettingsHooks().composer

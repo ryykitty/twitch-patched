@@ -11,7 +11,7 @@ val inspectBaselinePatch = bytecodePatch(
     description = "Reports package, version and DEX class count during patching. Does not change the app.",
     default = false,
 ) {
-    compatibleWith(TwitchTarget.candidateCompatibility)
+    compatibleWith(TwitchTarget.compatibility)
 
     execute {
         if (packageMetadata.packageName != TwitchTarget.PACKAGE_NAME) {

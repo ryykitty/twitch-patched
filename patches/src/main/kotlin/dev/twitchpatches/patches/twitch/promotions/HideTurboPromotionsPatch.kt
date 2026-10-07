@@ -1,7 +1,6 @@
 package dev.twitchpatches.patches.twitch.promotions
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
-import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
@@ -29,7 +28,7 @@ val hideTurboPromotionsPatch = bytecodePatch(
     description = "Hides Turbo entries, upsells and purchase buttons.",
     default = true,
 ) {
-    compatibleWith(TwitchTarget.candidateCompatibility)
+    compatibleWith(TwitchTarget.compatibility)
     dependsOn(settingsPatch, reactNativeBridgePatch, reactNativeTurboPatch)
     execute {
         hideTurboHomeTab()

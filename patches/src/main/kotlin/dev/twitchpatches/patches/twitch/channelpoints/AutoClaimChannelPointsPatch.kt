@@ -13,7 +13,7 @@ val autoClaimChannelPointsPatch = bytecodePatch(
     description = "Claims available bonus rewards in live playback.",
     default = true,
 ) {
-    compatibleWith(TwitchTarget.candidateCompatibility)
+    compatibleWith(TwitchTarget.compatibility)
     dependsOn(settingsPatch, reactNativeBridgePatch, reactNativePointsPatch)
     execute {
         val points = resolvePointsHooks()

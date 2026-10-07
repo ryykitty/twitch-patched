@@ -3,17 +3,6 @@ package dev.twitchpatches.patches.twitch.shared.hermes
 internal data class MetroExport(val module: Int, val name: String)
 
 internal class MetroExports(private val bundle: HermesBundle) {
-    fun resolveAny(name: String, alternatives: Set<String>, params: Int = 2): MetroExport {
-        require(alternatives.isNotEmpty())
-        val function = bundle.functions.single { bundle.strings[it.name] == name && it.params == params }
-        val properties = bundle.instructions(function).filter {
-            it.name.startsWith("GetById") || it.name == "TryGetById"
-        }.map { bundle.strings[it.args.last()] }.toSet()
-        val matched = alternatives.intersect(properties).singleOrNull()
-            ?: error("Modern Twitch: $name backing contract changed.")
-        return resolve(name, setOf(matched), params)
-    }
-
     fun resolveAsync(name: String, properties: Set<String>, strings: Set<String>): MetroExport {
         val target = resolve(name, setOf("apply"))
         val function = bundle.functions.single { bundle.strings[it.name] == name && it.params == 2 }

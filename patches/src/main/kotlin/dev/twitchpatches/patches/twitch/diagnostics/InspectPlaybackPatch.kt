@@ -14,7 +14,7 @@ val inspectPlaybackPatch = bytecodePatch(
     description = "Records playlist structure and playback frame counters. Disabled by default.",
     default = false,
 ) {
-    compatibleWith(TwitchTarget.candidateCompatibility)
+    compatibleWith(TwitchTarget.compatibility)
     dependsOn(twitchExtensionPatch)
     execute {
         val factory = resolveIvsHttp()

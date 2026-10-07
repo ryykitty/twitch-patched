@@ -27,10 +27,10 @@ hash, installed APK hash, app version/code, signing certificate and patch
 selection. Copy the installed APK and all its splits into that checkpoint.
 Retain the existing signing key and immutable originals.
 
-For a 31.4.2 evaluation, create the source checkpoint after synchronization:
+Create the source checkpoint after synchronization:
 
 ```powershell
-$upgradeId = 'twitch-31.4.2-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
+$upgradeId = 'twitch-update-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
 $checkpoint = Join-Path '.local/checkpoints' $upgradeId
 New-Item -ItemType Directory -Path $checkpoint | Out-Null
 git branch "codex/baseline-$upgradeId" HEAD
@@ -73,10 +73,11 @@ accepted. Installation, data clearing and publication are separate decisions.
 
 ## Inspect the original
 
-Supply an original APK or complete split bundle for the intended ABI. For example:
+Supply an original APK or complete split bundle for the intended ABI. Set
+`$targetVersion` to its Twitch version before running the intake:
 
 ```powershell
-./scripts/evaluate-update.ps1 -InputApk '.local/inputs/twitch-31.4.2.apkm' -ExpectedVersion '31.4.2' -Decompile
+./scripts/evaluate-update.ps1 -InputApk '.local/inputs/twitch.apkm' -ExpectedVersion $targetVersion -Decompile
 ```
 
 The intake verifies Twitch's publisher signature, package, version and split
@@ -95,8 +96,9 @@ require unique matches. Record missing or changed hooks before adapting them.
 ## Adapt and verify locally
 
 Make focused changes on `dev` and commit completed fixes separately. Add the
-candidate target locally and keep the previous target where both versions pass
-hook and regression checks. Update compatibility evidence after verification.
+candidate target locally while retaining the supported baseline during evaluation.
+After acceptance, retire the previous target and its exclusive hooks. Keep shared
+contracts used by the new baseline. Update compatibility evidence after verification.
 
 ```powershell
 ./scripts/check-source.ps1

@@ -13,7 +13,7 @@ val blockClientAdsPatch = bytecodePatch(
     description = "Suppresses native ad requests. Restart Twitch after changing the setting.",
     default = true,
 ) {
-    compatibleWith(TwitchTarget.candidateCompatibility)
+    compatibleWith(TwitchTarget.compatibility)
     dependsOn(settingsPatch)
     execute {
         val classes = mutableListOf<com.android.tools.smali.dexlib2.iface.ClassDef>().apply { classDefForEach { add(it) } }

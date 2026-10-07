@@ -11,7 +11,7 @@ val reloadStreamPatch = bytecodePatch(
     description = "Adds a reload button in live-player controls. Double-tap to reload.",
     default = true,
 ) {
-    compatibleWith(TwitchTarget.candidateCompatibility)
+    compatibleWith(TwitchTarget.compatibility)
     dependsOn(settingsPatch, reactNativeReloadPatch, nativeReloadPatch)
     execute {
         val application = classDefBy("Ltv/twitch/android/app/consumer/TwitchApplication;").methods.filter {

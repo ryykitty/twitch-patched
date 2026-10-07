@@ -106,96 +106,6 @@
         "Rotation, background playback, raids and extended use",
         "Additional devices, ABIs and omitted-feature combinations"
       ]
-    },
-    {
-      "versionName": "31.3.0",
-      "versionCode": 3103006,
-      "status": "supported",
-      "evaluatedAbis": [
-        "arm64-v8a"
-      ],
-      "deviceAndroidApis": [
-        33
-      ],
-      "original": {
-        "bundleSha256": "d56e057494aa7017feb2c95fa633885f27cf331fcca063380fcc474becd86bef",
-        "baseSha256": "798313fb7817548ebbcdb4c49c84076f8e98c930466d3338dcf700e4c254e77f",
-        "mergedSha256": "6b695f9acdb8a1400ec57740e26a037700d676d62dc130702129020ccca68ddf",
-        "signerCertificateSha256": "1338f9b049893cc70b78432a177582f90bd4bc6296ea4ed35bcc7df59687ac53"
-      },
-      "toolchain": {
-        "morpheDesktop": "1.18.0",
-        "jadx": "1.5.6",
-        "java": 21,
-        "androidBuildTools": "36.0.0"
-      },
-      "appliedPatches": [
-        "Auto-claim bonus channel points",
-        "Hide feed and display ads",
-        "Hide Turbo promotions",
-        "Hide subscription discount banners",
-        "Block stream ads",
-        "Playback diagnostics",
-        "BTTV and 7TV emotes",
-        "Reload stream"
-      ],
-      "verification": {
-        "javaKotlinTests": 131,
-        "javaScriptSuites": 7,
-        "standaloneVerifierTests": "passed",
-        "fullDexRebuild": "passed",
-        "sdkPerDexAndApkChecks": "passed",
-        "originalHierarchyFindings": 93,
-        "introducedHierarchyFindings": 0,
-        "typeContracts": 69,
-        "note": "Original-aware checks retain upstream hierarchy findings. Device results are feature-specific."
-      },
-      "evaluatedArtifact": {
-        "date": "2026-10-03",
-        "bundleSha256": "3f6f463a921a2d6b826d256c3ae6245c23bdbafe2c68187f32ee200e9f7a2e2a",
-        "apkSha256": "2042a7e1c716e23836740966c497a5cb7a7fc5606723ca5a2355b183f96dd223",
-        "postCleanupDeviceChecks": [
-          "Initial V2 Classic Split Reload works",
-          "BTTV/7TV emote preview works"
-        ]
-      },
-      "notificationRegistration": {
-        "date": "2026-10-04",
-        "appliedWithFeaturePatches": true,
-        "originalCertificateSha1": "8c68c13822723a2b1fa844bed340031beb1f9463",
-        "bundleSha256": "3c0522ecf33fcc452c204ea50076c70e988bf52ff6b8081b8307f2b8c9bf465e",
-        "apkSha256": "816e116a54fd5d27de70984fb1e96a8fe58e07a5273a757c82c2165e4fb2b6ca",
-        "syntheticHookTests": 7,
-        "fullDexRebuild": "passed",
-        "introducedHierarchyFindings": 0,
-        "typeContracts": 69,
-        "deviceInstall": "passed with existing signing key and app data",
-        "startup": "app running; no Firebase or crash errors in the observed buffer",
-        "livePushDelivery": "confirmed on Android 13; receiver process start to live-notification posting: 3.8 seconds"
-      },
-      "observedFeatures": [
-        "Bonus channel-point claiming in native and swipe-feed playback",
-        "Feed-card removal and Turbo/discount promotion suppression",
-        "BTTV/7TV rendering and previews in native and RN chat",
-        "Reload on initial V2 Classic Split, Vertical and RN playback",
-        "Stream replacement during observed preroll and midroll opportunities",
-        "Stream-ad and promotion toggles recover without restarting",
-        "Selected-feature settings and saved preferences across same-key updates"
-      ],
-      "remainingChecks": [
-        "Repeated ad opportunities and unmatched-media association failures",
-        "Native Reload toggles, quality conservation and extended lifecycle coverage",
-        "Rotation, accessibility, large fonts and light theme",
-        "Additional devices, ABIs and omitted-feature combinations"
-      ],
-      "upgradeRegression": {
-        "date": "2026-10-04",
-        "bundleSha256": "775e17fe45f62bcea4e356eccc387ba6805e45428c411f6c7b1c28ecfbd1d324",
-        "apkSha256": "917788b683174cbc382de8ad0c1067f72145ccccdcd4b59a01880b057118e7e5",
-        "fullDexRebuild": "passed",
-        "originalAwareAudit": "passed; zero introduced findings",
-        "deviceReinstall": "not performed"
-      }
     }
   ],
   "knownLimitations": {
@@ -237,15 +147,31 @@
         "patchesApplied": 10,
         "fullDexRebuild": "passed",
         "originalAwareAudit": "passed; zero introduced findings"
-      },
-      {
-        "versionName": "31.3.0",
-        "bundleSha256": "6c3b5f37a886f656ca0dd61cc31c52d069a3362851552b00e686fab617fa53e9",
-        "apkSha256": "3a2ea1209f08b5d48a33eacc0d7ce7d816ecc823dc4a3b7f66803a8182dbe3a5",
-        "patchesApplied": 10,
-        "fullDexRebuild": "passed",
-        "originalAwareAudit": "passed; zero introduced findings"
       }
     ]
+  },
+  "baselineCleanup": {
+    "date": "2026-10-07",
+    "versionName": "31.4.2",
+    "javaKotlinTests": 152,
+    "javaScriptTests": 12,
+    "standaloneVerifierTests": "passed",
+    "patchesApplied": 10,
+    "fullDexRebuild": "passed",
+    "sdkPerDexAndApkChecks": "passed",
+    "originalHierarchyFindings": 93,
+    "introducedHierarchyFindings": 0,
+    "typeContracts": 69,
+    "auditedBundleSha256": "4b8b967b2b9a688cd9b80c976bdbfe8bab888cdaac53af805327b604d7df70bc",
+    "apkSha256": "897ec1615d7206dcc3439f63b060096b9c804cd4bb0316fe30bf335f1e00ad14",
+    "androidContractChecks": {
+      "androidApi": 33,
+      "morpheManager": "1.34.0",
+      "resourceParsing": "passed",
+      "adDefaults": "passed",
+      "scope": "Resource validators and compiled preference code executed on Android. No Twitch installation or playback test performed for this cleanup."
+    },
+    "builtBundleSha256": "bf917de8c2148257507422b387033bfbce61ac456fdfd31e5a4b2a947258b0ad",
+    "finalBuildComparison": "Extension entries match the audited bundle; the only changed JVM class has identical instructions and constants after removing an unused import."
   }
 }

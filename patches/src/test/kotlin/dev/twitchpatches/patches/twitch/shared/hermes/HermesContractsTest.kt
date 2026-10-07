@@ -22,17 +22,6 @@ class HermesContractsTest {
         assertThrows(IllegalArgumentException::class.java) { HermesOpcodes.decode(byteArrayOf(opcode.toByte(), 0), 0, 2) }
     }
 
-    @Test fun alternativeBackingContractsRequireOneInspectedProperty() {
-        val exports = MetroExports(HermesBundle(fixture(93)))
-        assertEquals(93, exports.resolveAny("FixtureComponent", setOf("fixtureProp", "otherBacking")).module)
-        assertThrows(IllegalStateException::class.java) {
-            exports.resolveAny("FixtureComponent", setOf("missingBacking", "otherBacking"))
-        }
-        assertThrows(IllegalArgumentException::class.java) {
-            exports.resolveAny("FixtureComponent", emptySet())
-        }
-    }
-
     @Test fun memoExportRequiresProvenWrapperAndTracksModuleDefinitions() {
         assertEquals(91, MetroExports(HermesBundle(fixture(91, true)))
             .resolveMemo("FixtureComponent", "FixtureComponent", setOf("fixtureProp")).module)
