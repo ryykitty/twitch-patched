@@ -46,6 +46,7 @@ val hideDisplayAdsPatch = bytecodePatch(
             sget-object v0, $noAd
             return-object v0
         """, ExternalLabel("original", code.first()))
+        blockBrowseDisplayAds(classes.flatMap { it.methods })
         initializeAdFeature(1)
     }
 }

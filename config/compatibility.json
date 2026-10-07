@@ -37,8 +37,8 @@
         "Reload stream"
       ],
       "verification": {
-        "javaKotlinTests": 164,
-        "javaScriptTests": 13,
+        "javaKotlinTests": 177,
+        "javaScriptTests": 23,
         "standaloneVerifierTests": "passed",
         "fullDexRebuild": "passed",
         "sdkPerDexAndApkChecks": "passed",
@@ -50,11 +50,11 @@
       },
       "evaluatedArtifact": {
         "date": "2026-10-07",
-        "bundleSha256": "9241a1548ae1c81073ce69bfe7b8b78ef9b7cc45b2e75d19cc5fb49906b5e771",
-        "apkSha256": "623cb050a2953fbd1ddc22405d5168fb3b5ba607d22d02c603bb6efbb56e2a1d",
+        "bundleSha256": "2086271ba84c88dd4f3bc81f08e4512daa5a8e3c33ffc395bcbea311b522512c",
+        "apkSha256": "bdd5305380392086b864561e32d822047cd60593e12c674ddc6eca77d3af47dd",
         "deviceInstall": "passed; package, signing key, UID and first installation time retained",
         "startup": "cold launch passed; no fatal app crash or DEX verification error in the observed buffer",
-        "postUpgradeDeviceChecks": "Reload on initial V2 Classic Split entry and external emote previews confirmed by the device tester."
+        "postUpgradeDeviceChecks": "Light feed text, navigation and Patch settings confirmed functional. Live category labels remain visible beneath the header. Following headliner and reserved slot are absent. DJ playback controls confirmed functional."
       },
       "additionalSelections": [
         {
@@ -70,14 +70,22 @@
       ],
       "adaptedContracts": [
         "Existing feature hooks resolve without version-specific alternatives.",
-        "Turbo startup offer navigation is gated by the promotion setting."
+        "Turbo startup offer navigation is gated by the promotion setting.",
+        "Feed theme selection retains the parent palette with equal-length Hermes instructions.",
+        "Feed navigation follows the app theme.",
+        "DJ restrictions are removed from settings presentation; rendition availability and player actions remain intact.",
+        "Following headliners use native and React Native no-fill completions.",
+        "Feed ad creatives unmount and V2 stream display-ad surfaces use native disabled-state cleanup.",
+        "Light header fade ends at the measured tab bar."
       ],
       "observedFeatures": [
         "Same-key update, ART verification and cold startup on Android 13",
         "Patch settings and individual emote provider controls",
         "Reload on initial V2 Classic Split entry",
         "External emote tap previews",
-        "Native Turbo startup offer dispatch suppressed, restored and suppressed again without process restart"
+        "Native Turbo startup offer dispatch suppressed, restored and suppressed again without process restart",
+        "Light-mode category labels and app-themed bottom navigation",
+        "Following headliner suppressed with its slot removed"
       ],
       "remainingChecks": [
         "Repeated preroll and midroll opportunities, stream quality and ad-state recovery",
@@ -194,6 +202,52 @@
           "introducedHierarchyFindings": 0,
           "typeContracts": 69,
           "deviceTesting": "Native offer bridge verified on Android; full app regression installation not performed."
+        },
+        {
+          "name": "Theme and DJ playback settings regression",
+          "date": "2026-10-07",
+          "patches": [
+            "Auto-claim bonus channel points",
+            "BTTV, FFZ and 7TV emotes",
+            "Block client-requested ads",
+            "Block stream ads",
+            "Hide Turbo promotions",
+            "Hide feed and display ads",
+            "Hide subscription discount banners",
+            "Inspect Twitch APK",
+            "Playback diagnostics",
+            "Reload stream"
+          ],
+          "bundleSha256": "1a7287f0d2e8d5bc4ca17bee9c4224bc7063440c27463347996c7041c2b5102c",
+          "apkSha256": "52bde9868f2df72420f5ef0a02b369b32ad118e72fd6b5c8534c2b4b383e6577",
+          "fullDexRebuild": "passed",
+          "originalAwareAudit": "passed; zero introduced findings",
+          "javaKotlinTests": 173,
+          "javaScriptTests": 19,
+          "deviceTesting": "This revision was not installed on 31.4.2."
+        },
+        {
+          "name": "Shared settings and display-ad regression",
+          "date": "2026-10-07",
+          "patches": [
+            "Auto-claim bonus channel points",
+            "BTTV, FFZ and 7TV emotes",
+            "Block client-requested ads",
+            "Block stream ads",
+            "Hide Turbo promotions",
+            "Hide feed and display ads",
+            "Hide subscription discount banners",
+            "Inspect Twitch APK",
+            "Playback diagnostics",
+            "Reload stream"
+          ],
+          "bundleSha256": "2086271ba84c88dd4f3bc81f08e4512daa5a8e3c33ffc395bcbea311b522512c",
+          "apkSha256": "647dc4b33f1fd6a8e89b390aec8305cd4d801e62675f95fc1480cd4f0934b808",
+          "fullDexRebuild": "passed",
+          "originalAwareAudit": "passed; zero introduced findings",
+          "javaKotlinTests": 177,
+          "javaScriptTests": 23,
+          "deviceTesting": "This revision was not installed on 31.4.2."
         }
       ],
       "adaptedContracts": [
@@ -403,5 +457,48 @@
       "Settings groups omitted with unselected patches"
     ],
     "scope": "Native settings controls verified on Android. Provider filtering and lifecycle covered by catalog and adapter tests."
+  },
+  "sharedSettingsFixes": {
+    "date": "2026-10-07",
+    "versionName": "31.5.2",
+    "androidApi": 33,
+    "javaKotlinTests": 177,
+    "javaScriptTests": 23,
+    "standaloneVerifierTests": "passed",
+    "fullDexRebuild": "passed",
+    "sdkPerDexAndApkChecks": "passed",
+    "introducedHierarchyFindings": 0,
+    "deviceArtVerification": "passed",
+    "themeDeviceResult": "Light feed text, navigation and Patch settings confirmed functional. Live category labels remain visible beneath the measured header fade.",
+    "djDeviceResult": "Enabled settings controls and actual playback behavior confirmed on a DJ-labeled live stream.",
+    "scope": "Settings presentation and app theme. DRM, stream authorization and server enforcement are unchanged."
+  },
+  "displayAdCoverage": {
+    "date": "2026-10-07",
+    "versions": [
+      "31.5.2",
+      "31.4.2"
+    ],
+    "javaKotlinTests": 177,
+    "javaScriptTests": 23,
+    "fullDexRebuild": "passed",
+    "originalAwareSdkAudit": "passed; zero introduced findings",
+    "deviceVersion": "31.5.2",
+    "deviceAndroidApi": 33,
+    "deviceArtVerification": "passed",
+    "followingHeadliner": "Absent on the tested Following feed; native reserved slot removed.",
+    "contracts": [
+      "Native display/VAST no-ad singleton",
+      "Native Following headliner empty Optional and Rx Single factory",
+      "React Native in-feed request and coordinator",
+      "React Native headliner request and state lifecycle",
+      "React Native feed ad creative unmount",
+      "V2 pushdown and left-strip display-ad surface"
+    ],
+    "scope": "Display-ad injection. Creator sponsorship disclosures, Drops and train announcements remain available.",
+    "remainingChecks": [
+      "Repeated server-filled ad opportunities and live setting changes on additional devices",
+      "V2 display-ad opportunities during extended playback"
+    ]
   }
 }
