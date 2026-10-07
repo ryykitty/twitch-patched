@@ -15,10 +15,18 @@ internal val reactNativeAssetsPatch = resourcePatch {
         val react = exports.reactModule()
         val core = exports.resolve("AppCore", setOf("identity", "initialRoute", "colorScheme"))
         get("assets/index.android.bundle").writeBytes(HermesFeedTheme.apply(original))
+        val playback = exports.resolve("PlaybackSettingsSheet", setOf("isParticipatingDJ", "hasAudioRendition",
+            "onAudioOnlyChange", "onBgaSettingChange", "onPipAutoPopoutChange"))
+        exports.requireFunctionContract("ViewingOptionsSection", 2,
+            setOf("isParticipatingDJ", "onAudioOnlyChange", "ToggleableSettingsListItem"))
+        exports.requireFunctionContract("BgaSettingRow", 2,
+            setOf("isParticipatingDJ", "onBgaSettingChange", "SelectSettingsListItem"))
         get(RN_ASSET).writeText(assetSource("bootstrap.js").replace("__TWITCH_REACT_MODULE__", react.toString()))
         get(RN_ASSET).appendText("\n" + assetSource("theme.js")
             .replace("__TWITCH_APP_CORE_MODULE__", core.module.toString()))
         appendFeedThemeAdapters(exports)
+        get(RN_ASSET).appendText("\n" + assetSource("playback-settings.js")
+            .replace("__TWITCH_PLAYBACK_SETTINGS_MODULE__", playback.module.toString()))
     }
 }
 

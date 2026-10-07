@@ -11,6 +11,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
+import dev.twitchpatches.patches.twitch.playback.restoreNativePlaybackControls
 import dev.twitchpatches.patches.twitch.settings.restoreFeedNavigationTheme
 
 private const val RN = "Lcom/facebook/react/runtime/ReactInstance;"
@@ -20,6 +21,7 @@ private const val ARRAY = "Lcom/facebook/react/bridge/WritableNativeArray;"
 internal val reactNativeBridgePatch = bytecodePatch {
     dependsOn(twitchExtensionPatch, reactNativeAssetsPatch)
     execute {
+        restoreNativePlaybackControls()
         restoreFeedNavigationTheme()
         val type = classDefBy(RN)
         val nativeSegment = type.methods.filter {

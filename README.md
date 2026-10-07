@@ -21,7 +21,7 @@ Select each feature independently when patching. Included features appear under 
 
 Push notification registration is included automatically with feature patches.
 
-Shared fixes keep feeds synchronized with the app theme.
+Shared fixes keep feeds synchronized with the app theme and restore background audio and audio-only controls on DJ streams. Playback uses Twitch's existing player and available renditions.
 
 All feature patches are selected and enabled by default. Inspection and playback diagnostics are optional. Previously saved settings are retained.
 
