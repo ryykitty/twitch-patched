@@ -33,6 +33,7 @@ public final class ReactNativeRuntime implements Application.ActivityLifecycleCa
     public static synchronized void initialize(Application application) {
         if (initialized) return;
         initialized = true;
+        TwitchTheme.initialize(application);
         application.registerActivityLifecycleCallbacks(new ReactNativeRuntime());
         ExecutorService worker = Executors.newSingleThreadExecutor(task -> new Thread(task, "TwitchPatchAssets"));
         bootstrap = new CompletableFuture<>();
@@ -99,7 +100,7 @@ public final class ReactNativeRuntime implements Application.ActivityLifecycleCa
                 resumed > 0, selected[3] && AdSettings.displayAdsBlocked(), selected[4] && EmoteRuntime.enabled(),
                 selected[5] && AdSettings.enabled(2), selected[6] && ReloadRuntime.enabled(),
                 selected[4] && EmoteRuntime.providerEnabled(0), selected[4] && EmoteRuntime.providerEnabled(1),
-                selected[4] && EmoteRuntime.providerEnabled(2)};
+                selected[4] && EmoteRuntime.providerEnabled(2), TwitchTheme.light()};
     }
 
     private static void dispatch(Object instance, boolean[] policy) {

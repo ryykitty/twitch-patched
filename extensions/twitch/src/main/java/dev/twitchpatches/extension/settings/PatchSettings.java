@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,8 @@ public final class PatchSettings implements Application.ActivityLifecycleCallbac
     private static PatchSettings instance;
     private final Application application;
     private final SettingRegistry options = new SettingRegistry();
+    private final Handler main = new Handler(Looper.getMainLooper());
+    private final SettingsOpenRequest openRequest = new SettingsOpenRequest();
     private WeakReference<Activity> foreground = new WeakReference<>(null);
 
     private PatchSettings(Application application) {
@@ -47,14 +51,25 @@ public final class PatchSettings implements Application.ActivityLifecycleCallbac
 
     public static void open() {
         PatchSettings settings = instance;
-        Activity activity = settings == null ? null : settings.foreground.get();
-        if (activity == null || activity.isFinishing() || activity.isDestroyed()) return;
-        FragmentManager manager = activity.getFragmentManager();
-        if (manager.isStateSaved() || manager.findFragmentByTag(PatchSettingsPage.TAG) != null) return;
-        new PatchSettingsPage().show(manager, PatchSettingsPage.TAG);
+        if (settings == null) return;
+        settings.main.post(() -> {
+            settings.openRequest.request();
+            settings.showRequestedPage();
+        });
     }
 
-    @Override public void onActivityResumed(Activity activity) { foreground = new WeakReference<>(activity); }
+    private void showRequestedPage() {
+        Activity activity = foreground.get();
+        if (activity == null || activity.isFinishing() || activity.isDestroyed()) return;
+        FragmentManager manager = activity.getFragmentManager();
+        if (openRequest.consume(!manager.isStateSaved(), manager.findFragmentByTag(PatchSettingsPage.TAG) != null))
+            new PatchSettingsPage().show(manager, PatchSettingsPage.TAG);
+    }
+
+    @Override public void onActivityResumed(Activity activity) {
+        foreground = new WeakReference<>(activity);
+        main.post(this::showRequestedPage);
+    }
     @Override public void onActivityPaused(Activity activity) {
         if (foreground.get() == activity) foreground.clear();
     }

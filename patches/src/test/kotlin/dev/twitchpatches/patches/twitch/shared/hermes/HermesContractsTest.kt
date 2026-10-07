@@ -22,6 +22,15 @@ class HermesContractsTest {
         assertThrows(IllegalArgumentException::class.java) { HermesOpcodes.decode(byteArrayOf(opcode.toByte(), 0), 0, 2) }
     }
 
+    @Test fun sameNameFunctionsRequireAUniquePropertyContract() {
+        assertEquals(93, MetroExports(HermesBundle(fixture(93, duplicate = true)))
+            .resolve("FixtureComponent", setOf("fixtureProp")).module)
+        assertThrows(IllegalStateException::class.java) {
+            MetroExports(HermesBundle(fixture(93, duplicate = true, duplicateHasProperty = true)))
+                .resolve("FixtureComponent", setOf("fixtureProp"))
+        }
+    }
+
     @Test fun memoExportRequiresProvenWrapperAndTracksModuleDefinitions() {
         assertEquals(91, MetroExports(HermesBundle(fixture(91, true)))
             .resolveMemo("FixtureComponent", "FixtureComponent", setOf("fixtureProp")).module)
@@ -101,7 +110,7 @@ class HermesContractsTest {
 
     private fun fixture(module: Int, memo: Boolean = false, deferred: Boolean = false, clobber: Boolean = false,
         component: String = "FixtureComponent", overwrittenExport: Boolean = false, arity: Int = 2,
-        objectExport: Boolean = false): ByteArray {
+        objectExport: Boolean = false, duplicate: Boolean = false, duplicateHasProperty: Boolean = false): ByteArray {
         val strings = listOf("global", "", "FixtureComponent", "__d", "fixtureProp", "memo", component)
         val bodies = listOf(
             code("TryGetById" to listOf(1, 0, 0, 3), "LoadConstInt" to listOf(4, module),
@@ -121,7 +130,9 @@ class HermesContractsTest {
                 "PutByIdLoose" to listOf(1, 2, 0, 2), "Ret" to listOf(0))
             else code("LoadParam" to listOf(1, 6), "CreateClosure" to listOf(2, 0, 2),
                 "PutByIdLoose" to listOf(1, 2, 0, 2), "Ret" to listOf(0)),
-            code("LoadParam" to listOf(1, 1), "GetById" to listOf(2, 1, 0, 4), "Ret" to listOf(2)))
+            code("LoadParam" to listOf(1, 1), "GetById" to listOf(2, 1, 0, 4), "Ret" to listOf(2))) +
+            if (duplicate) listOf(code("LoadParam" to listOf(1, 1),
+                "GetById" to listOf(2, 1, 0, if (duplicateHasProperty) 4 else 5), "Ret" to listOf(2))) else emptyList()
         val table = 128 + bodies.size * 12
         val storage = table + strings.size * 4
         val storageSize = strings.sumOf { it.length }
@@ -139,9 +150,9 @@ class HermesContractsTest {
         }
         var cursor = codeAt
         bodies.forEachIndexed { id, body ->
-            val params = listOf(1, 8, arity)[id]
+            val params = if (id >= 2) arity else listOf(1, 8)[id]
             header.putInt(128 + id * 12, cursor or (params shl 25))
-            header.putInt(132 + id * 12, body.size or ((if (id == 2) 6 else id) shl 14))
+            header.putInt(132 + id * 12, body.size or ((if (id >= 2) 6 else id) shl 14))
             result[136 + id * 12] = 8
             body.copyInto(result, cursor); cursor += body.size
         }

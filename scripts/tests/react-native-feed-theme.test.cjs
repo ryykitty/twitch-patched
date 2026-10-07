@@ -1,0 +1,107 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+
+function adapters(light) {
+    const targets = new Map();
+    const theme = {colors: {backgroundBody: '#f7f7f8'}};
+    const ThemeProvider = () => {};
+    const React = {
+        createElement(type, props) { return {type, props}; },
+        memo(render, compare) { return {type: render, compare}; },
+        isValidElement(element) { return Boolean(element && element.type && element.props); },
+        cloneElement(element, props) { return {...element, props: {...element.props, ...props}}; },
+        Children: {map(children, transform) { return Array.isArray(children) ? children.map(transform) : transform(children); }}
+    };
+    const runtime = {
+        target(id, name, adapter) { targets.set(name, adapter); },
+        policyHook() { return light; }
+    };
+    const context = vm.createContext({__twitchPatchRuntime: runtime});
+    const source = fs.readFileSync(path.resolve(__dirname,
+        '../../patches/src/main/resources/reactnative/feed-theme.js'), 'utf8')
+        .replaceAll('__TWITCH_THEME_MODULE__', '1').replace('__TWITCH_STREAM_ITEM_MODULE__', '2')
+        .replace('__TWITCH_CLIPS_FEED_MODULE__', '3');
+    const expanded = source.replace('__TWITCH_FEED_SCRIM_MODULE__', '5')
+        .replace('__TWITCH_FEED_CHROME_MODULE__', '6');
+    vm.runInContext(expanded, context);
+    return {React, theme, ThemeProvider, wrap(name, original) {
+        return targets.get(name)(original, React, runtime, () => ({ThemeProvider, useTheme: () => theme}));
+    }};
+}
+
+test('video pages scope the native dark palette to video content and preserve header props', () => {
+    for (const light of [true, false]) for (const name of ['ClipsFeedPage']) {
+        const state = adapters(light);
+        const original = () => {};
+        const props = {children: {video: 'fixture'}, topSlot: {header: 'fixture'}, warm: true, fullBleed: true, onScroll() {}};
+        const result = state.wrap(name, original)(props);
+        assert.equal(result.type, original);
+        assert.equal(result.props.children.type, state.ThemeProvider);
+        assert.equal(result.props.children.props.theme, undefined, 'uses the native dark default');
+        assert.equal(result.props.children.props.children, props.children);
+        assert.equal(result.props.topSlot, props.topSlot);
+        assert.equal(result.props.onScroll, props.onScroll);
+    }
+});
+
+test('Live card theme follows its actual scrolling layout and preserves actions', () => {
+    const state = adapters(true);
+    const original = {compare: () => false};
+    const render = state.wrap('FeedStreamItem', original);
+    for (const freeScroll of [true, false]) {
+        const props = {node: {id: 'fixture'}, freeScroll, onPress() {}};
+        const result = render.type(props);
+        const item = freeScroll ? result : result.props.children;
+        assert.equal(item.type, original);
+        assert.equal(item.props.node, props.node);
+        assert.equal(item.props.onPress, props.onPress);
+        if (!freeScroll) assert.equal(result.type, state.ThemeProvider);
+    }
+    assert.equal(render.compare, original.compare);
+});
+test('light scrim changes gradient stops without changing geometry, opacity or animation', () => {
+    const state = adapters(true);
+    const style = {transform: [{translateY: {value: 12}}], height: 200};
+    const stop = state.React.createElement('Stop', {stopColor: '#000000', offset: 0.4, stopOpacity: 0.2});
+    const root = state.React.createElement('AnimatedView', {style, onLayout() {}, children: [stop, 'fixture']});
+    let calls = 0;
+    const render = state.wrap('FeedTopScrim', () => { calls++; return root; });
+    const result = render({});
+    assert.equal(result.props.style, style);
+    assert.equal(result.props.style.backgroundColor, undefined);
+    assert.equal(result.props.onLayout, root.props.onLayout);
+    assert.equal(result.props.children[0].props.stopColor, state.theme.colors.backgroundBody);
+    assert.equal(result.props.children[0].props.stopOpacity, 0.2);
+    assert.equal(result.props.children[0].props.offset, 0.4);
+    assert.equal(result.props.children[1], 'fixture');
+    assert.equal(calls, 1);
+});
+
+test('dark and undispatched scrims preserve Twitch rendering', () => {
+    for (const light of [false, undefined]) {
+        const state = adapters(light);
+        const original = state.React.createElement('View', {children: null});
+        assert.equal(state.wrap('FeedTopScrim', () => original)({}), original);
+    }
+});
+
+test('light header fade stops at measured tabs without altering scrolling or category layout', () => {
+    for (const light of [true, false, undefined]) {
+        const state = adapters(light);
+        const scrim = state.React.createElement('Scrim', {testID: 'feed-top-scrim', translateY: {value: 13}});
+        const tabs = state.React.createElement('Tabs', {onLayout() {}});
+        const root = state.React.createElement('AnimatedView', {style: {transform: [{translateY: 21}]}, children: [scrim, tabs]});
+        const original = {type: () => root, compare: () => true};
+        const wrapped = state.wrap('FeedTopChrome', original);
+        const result = wrapped.type({tabsBarHeight: 64});
+        assert.equal(result.props.style, root.props.style);
+        assert.equal(result.props.children[0].props.translateY, scrim.props.translateY);
+        assert.equal(result.props.children[1], tabs);
+        assert.equal(result.props.children[0].props.height, light === true ? 64 : undefined);
+        assert.equal(wrapped.compare, original.compare);
+        assert.equal(wrapped.type({tabsBarHeight: 0}), root);
+    }
+});

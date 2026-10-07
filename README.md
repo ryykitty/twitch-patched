@@ -21,6 +21,8 @@ Select each feature independently when patching. Included features appear under 
 
 Push notification registration is included automatically with feature patches.
 
+Shared fixes keep feeds synchronized with the app theme.
+
 All feature patches are selected and enabled by default. Inspection and playback diagnostics are optional. Previously saved settings are retained.
 
 ## Compatibility
