@@ -172,6 +172,48 @@
       "scope": "Resource validators and compiled preference code executed on Android. No Twitch installation or playback test performed for this cleanup."
     },
     "builtBundleSha256": "bf917de8c2148257507422b387033bfbce61ac456fdfd31e5a4b2a947258b0ad",
-    "finalBuildComparison": "Extension entries match the audited bundle; the only changed JVM class has identical instructions and constants after removing an unused import."
+    "finalBuildComparison": "Extension entries match the audited bundle; the only changed JVM class has identical instructions and constants after removing an unused import.",
+    "androidBuild": {
+      "morpheManager": "1.34.0",
+      "patcher": "1.15.1",
+      "androidApi": 33,
+      "patchesApplied": 9,
+      "selection": "All eight feature patches and Inspect Twitch APK",
+      "apkSha256": "8d9a816accf643a731bde7e86a66af59134ad65cf1ea60bedf3e7c6ff9b0637e",
+      "patching": "passed",
+      "resourceCompilation": "passed",
+      "signing": "passed",
+      "originalAwareAudit": "passed",
+      "originalHierarchyFindings": 93,
+      "introducedHierarchyFindings": 0,
+      "typeContracts": 69
+    },
+    "desktopBuild": {
+      "morpheDesktop": "1.18.0",
+      "bytecodeMode": "FULL",
+      "patchesApplied": 10,
+      "bundleSha256": "bf917de8c2148257507422b387033bfbce61ac456fdfd31e5a4b2a947258b0ad",
+      "apkSha256": "d53b3192561e80267054a7af7d242ac0d8dd7b12ebeff0154f2de4c52fc934b8",
+      "fullDexRebuild": "passed",
+      "originalAwareAudit": "passed",
+      "originalHierarchyFindings": 93,
+      "introducedHierarchyFindings": 0,
+      "typeContracts": 69
+    },
+    "deviceInstallation": {
+      "date": "2026-10-07",
+      "versionName": "31.4.2",
+      "versionCode": 3104026,
+      "androidApi": 33,
+      "artifact": "desktopBuild",
+      "install": "passed",
+      "priorInstallation": "Twitch was absent before installation",
+      "signingCertificateSha256": "2f78b7f3b40f4a1859e446317ea7dbeac0070f5b607af4930c6582ed22d18239",
+      "artVerification": "passed",
+      "coldStartup": "passed",
+      "startupErrorLines": 0,
+      "settings": "Patch settings displayed; both ad-block controls present and enabled",
+      "scope": "Installation, ART verification, startup and settings checks. Extended feature acceptance remains pending."
+    }
   }
 }
