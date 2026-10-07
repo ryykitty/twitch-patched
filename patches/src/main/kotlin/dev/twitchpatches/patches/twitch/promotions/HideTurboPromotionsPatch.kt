@@ -32,6 +32,7 @@ val hideTurboPromotionsPatch = bytecodePatch(
     dependsOn(settingsPatch, reactNativeBridgePatch, reactNativeTurboPatch)
     execute {
         hideTurboHomeTab()
+        hideTurboStartupOffer()
         val settings = resolveSettingsHooks()
         val owner = classDefBy(settings.row.definingClass)
         val group = owner.methods.filter { it.returnType == "V" && AccessFlags.STATIC.isSet(it.accessFlags) &&
