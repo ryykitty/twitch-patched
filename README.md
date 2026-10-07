@@ -29,9 +29,10 @@ Supported Twitch versions:
 
 | Version | Version code |
 | --- | --- |
+| 31.5.2 | 3105026 |
 | 31.4.2 | 3104026 |
 
-Twitch 31.4.2 has passed patching and DEX verification. Device testing uses ARM64 on Android 13 and covers settings, stream reloading, emotes and observed ad blocking. See [compatibility data](config/compatibility.json) for verification results and remaining checks.
+Twitch 31.5.2 is the primary target; 31.4.2 remains supported by the same hooks. Verification uses ARM64 on Android 13. See [compatibility data](config/compatibility.json) for build results, device checks and remaining validation.
 
 Ad blocking is under evaluation. Google Play billing is unavailable in the re-signed app.
 

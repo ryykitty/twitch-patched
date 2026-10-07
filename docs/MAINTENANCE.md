@@ -27,7 +27,7 @@ and device testing. Record supported app versions and results in
 records its identity and optionally decompiles or patches it. For example:
 
 ```powershell
-./scripts/evaluate-update.ps1 -InputApk '.local/inputs/twitch.apkm' -ExpectedVersion '31.4.2' -Decompile
+./scripts/evaluate-update.ps1 -InputApk '.local/inputs/twitch.apkm' -ExpectedVersion '31.5.2' -Decompile
 ```
 
 Review the candidate's hooks before updating `TwitchTarget.kt`. Evaluate native

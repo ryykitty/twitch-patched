@@ -3,6 +3,92 @@
   "packageName": "tv.twitch.android.app",
   "targets": [
     {
+      "versionName": "31.5.2",
+      "versionCode": 3105026,
+      "status": "supported",
+      "evaluatedAbis": [
+        "arm64-v8a"
+      ],
+      "deviceAndroidApis": [
+        33
+      ],
+      "original": {
+        "bundleSha256": "357f7b6dd63917603da416c36a5cf81611600bdf730ed9ff5ddf72c0445d65c3",
+        "baseSha256": "c531666060d398fff457aa4e8ef14881eaafee142b01de9b668a2a369184b8d6",
+        "mergedSha256": "a37ae3c60e8c3388cd274770b7b2871fd34b0acda3a7d741a200d07ed1c60a5f",
+        "signerCertificateSha256": "1338f9b049893cc70b78432a177582f90bd4bc6296ea4ed35bcc7df59687ac53"
+      },
+      "toolchain": {
+        "morpheDesktop": "1.18.0",
+        "jadx": "1.5.6",
+        "java": 21,
+        "androidBuildTools": "36.0.0"
+      },
+      "appliedPatches": [
+        "Auto-claim bonus channel points",
+        "BTTV, FFZ and 7TV emotes",
+        "Block client-requested ads",
+        "Block stream ads",
+        "Hide Turbo promotions",
+        "Hide feed and display ads",
+        "Hide subscription discount banners",
+        "Inspect Twitch APK",
+        "Playback diagnostics",
+        "Reload stream"
+      ],
+      "verification": {
+        "javaKotlinTests": 164,
+        "javaScriptTests": 13,
+        "standaloneVerifierTests": "passed",
+        "fullDexRebuild": "passed",
+        "sdkPerDexAndApkChecks": "passed",
+        "originalHierarchyFindings": 93,
+        "introducedHierarchyFindings": 0,
+        "typeContracts": 69,
+        "deviceArtVerification": "passed",
+        "note": "Original-aware checks retain upstream hierarchy findings. Extended device checks are pending."
+      },
+      "evaluatedArtifact": {
+        "date": "2026-10-07",
+        "bundleSha256": "9241a1548ae1c81073ce69bfe7b8b78ef9b7cc45b2e75d19cc5fb49906b5e771",
+        "apkSha256": "623cb050a2953fbd1ddc22405d5168fb3b5ba607d22d02c603bb6efbb56e2a1d",
+        "deviceInstall": "passed; package, signing key, UID and first installation time retained",
+        "startup": "cold launch passed; no fatal app crash or DEX verification error in the observed buffer",
+        "postUpgradeDeviceChecks": "Reload on initial V2 Classic Split entry and external emote previews confirmed by the device tester."
+      },
+      "additionalSelections": [
+        {
+          "name": "Reload only",
+          "patches": [
+            "Reload stream"
+          ],
+          "bundleSha256": "9c6d439a2739b3fc121c321009c2883dff91fbb7db0cf893d1bf86cbb3df37d5",
+          "apkSha256": "1ce62a7386944242621d9c5a9bfc569da79237a8d1f8fd8dfba72657833fe553",
+          "fullDexRebuild": "passed",
+          "originalAwareAudit": "passed; zero introduced findings"
+        }
+      ],
+      "adaptedContracts": [
+        "Existing feature hooks resolve without version-specific alternatives.",
+        "Turbo startup offer navigation is gated by the promotion setting."
+      ],
+      "observedFeatures": [
+        "Same-key update, ART verification and cold startup on Android 13",
+        "Patch settings and individual emote provider controls",
+        "Reload on initial V2 Classic Split entry",
+        "External emote tap previews",
+        "Native Turbo startup offer dispatch suppressed, restored and suppressed again without process restart"
+      ],
+      "remainingChecks": [
+        "Repeated preroll and midroll opportunities, stream quality and ad-state recovery",
+        "Channel-point bonus claiming",
+        "Promotion suppression with Drops and train overlays retained",
+        "Real background live-notification delivery",
+        "Rotation, background playback, raids and extended use",
+        "Additional devices, ABIs and omitted-feature combinations"
+      ]
+    },
+    {
       "versionName": "31.4.2",
       "versionCode": 3104026,
       "status": "supported",
@@ -84,6 +170,30 @@
           "apkSha256": "574842fff70835596023362cd003b2f6f0b3312d8d319d58e9fd5feba899dc93",
           "fullDexRebuild": "passed",
           "originalAwareAudit": "passed; zero introduced findings"
+        },
+        {
+          "name": "31.5.2 shared-hook regression",
+          "date": "2026-10-07",
+          "patches": [
+            "Auto-claim bonus channel points",
+            "BTTV, FFZ and 7TV emotes",
+            "Block client-requested ads",
+            "Block stream ads",
+            "Hide Turbo promotions",
+            "Hide feed and display ads",
+            "Hide subscription discount banners",
+            "Inspect Twitch APK",
+            "Playback diagnostics",
+            "Reload stream"
+          ],
+          "bundleSha256": "cefbcbea089abab77c069043ff09f941879e48c65ef03c0be4505505535ee88c",
+          "apkSha256": "c08e005c4e921c683f515dc9fa15a981cf8491894802411a1dd1fefe8a59918b",
+          "fullDexRebuild": "passed",
+          "originalAwareAudit": "passed; zero introduced findings",
+          "originalHierarchyFindings": 93,
+          "introducedHierarchyFindings": 0,
+          "typeContracts": 69,
+          "deviceTesting": "Native offer bridge verified on Android; full app regression installation not performed."
         }
       ],
       "adaptedContracts": [
