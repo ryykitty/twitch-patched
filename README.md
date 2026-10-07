@@ -19,9 +19,7 @@ Select each feature independently when patching. Included features appear under 
 | Playback diagnostics | Records playlist structure and playback frame counters. Disabled by default. |
 | Inspect Twitch APK | Reports package, version and DEX class count during patching. Does not change the app. |
 
-Push notification registration is included automatically with feature patches.
-
-Shared fixes keep feeds synchronized with the app theme and restore background audio and audio-only controls on DJ streams. Playback uses Twitch's existing player and available renditions.
+Every patch that modifies Twitch includes Patch settings, push notification registration, app-theme fixes and DJ playback settings support. These shared fixes require no separate patch selection. DJ playback uses Twitch's existing player and available renditions.
 
 All feature patches are selected and enabled by default. Inspection and playback diagnostics are optional. Previously saved settings are retained.
 

@@ -121,6 +121,9 @@ audit must pass before the resulting APK becomes a device candidate. Also check
 representative reduced patch selections and rebuild the previous supported
 version when shared hook code changes.
 
+Every modifying selection must include the shared settings, notification, theme
+and DJ playback fixes. An inspection-only selection must leave the app unchanged.
+
 ## Device acceptance
 
 Install the verified APK through the selected recovery route. Record its exact
@@ -136,6 +139,8 @@ in-place update. Retain logs locally while the candidate is used overnight.
 | Promotions | Turbo, discounts and feed cards suppressed; Drops and train overlays remain usable. |
 | Reload | Double-tap works on initial entry and after view changes, retaining quality and mode. |
 | Settings | Feature toggles recover both ways; omitted patches have no settings. |
+| Theme | Dark, Light and System settings update Following, Live, Clips and navigation; headers scroll and category labels remain visible. Patch settings opens immediately after a theme change. |
+| DJ playback | Background audio, audio-only and picture-in-picture controls work in native and V2 playback when the corresponding renditions are available. |
 | Notifications | A real live alert arrives in the background and opens its channel; record delivery timing separately. |
 
 Record a check as unobserved when the necessary event did not occur. For a bug,

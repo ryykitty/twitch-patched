@@ -1,15 +1,14 @@
 (function (global) {
     'use strict';
     var runtime = global.__twitchPatchRuntime;
-    function videoPage(original, React, runtime, require) {
+    runtime.target(__TWITCH_CLIPS_FEED_MODULE__, 'ClipsFeedPage', function (original, React, runtime, require) {
         var ThemeProvider = require(__TWITCH_THEME_MODULE__).ThemeProvider;
         return function (props) {
             // Video controls retain Twitch's dark palette inside the app-themed page.
             var children = React.createElement(ThemeProvider, {children: props.children});
             return React.createElement(original, Object.assign({}, props, {children: children}));
         };
-    }
-    runtime.target(__TWITCH_CLIPS_FEED_MODULE__, 'ClipsFeedPage', videoPage);
+    });
     runtime.target(__TWITCH_STREAM_ITEM_MODULE__, 'FeedStreamItem', function (original, React, runtime, require) {
         var ThemeProvider = require(__TWITCH_THEME_MODULE__).ThemeProvider;
         return React.memo(function (props) {
@@ -45,7 +44,6 @@
         return function (props) {
             var theme = useTheme();
             var light = runtime.policyHook(React, 11);
-            // Change only the gradient color; native opacity and scrolling remain intact.
             var result = original(props);
             return light === true ? tint(result, theme.colors.backgroundBody) : result;
         };

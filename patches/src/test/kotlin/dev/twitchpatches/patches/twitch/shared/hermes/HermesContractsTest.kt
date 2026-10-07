@@ -7,7 +7,6 @@ import java.security.MessageDigest
 import org.junit.Assert.*
 import org.junit.Test
 
-
 class HermesContractsTest {
     @Test fun derivesExportFromFactoryAndDefinitionInsteadOfFixedId() {
         val bundle = HermesBundle(fixture(93))

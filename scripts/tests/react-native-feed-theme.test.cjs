@@ -23,21 +23,20 @@ function adapters(light) {
     const source = fs.readFileSync(path.resolve(__dirname,
         '../../patches/src/main/resources/reactnative/feed-theme.js'), 'utf8')
         .replaceAll('__TWITCH_THEME_MODULE__', '1').replace('__TWITCH_STREAM_ITEM_MODULE__', '2')
-        .replace('__TWITCH_CLIPS_FEED_MODULE__', '3');
-    const expanded = source.replace('__TWITCH_FEED_SCRIM_MODULE__', '5')
+        .replace('__TWITCH_CLIPS_FEED_MODULE__', '3').replace('__TWITCH_FEED_SCRIM_MODULE__', '5')
         .replace('__TWITCH_FEED_CHROME_MODULE__', '6');
-    vm.runInContext(expanded, context);
+    vm.runInContext(source, context);
     return {React, theme, ThemeProvider, wrap(name, original) {
         return targets.get(name)(original, React, runtime, () => ({ThemeProvider, useTheme: () => theme}));
     }};
 }
 
-test('video pages scope the native dark palette to video content and preserve header props', () => {
-    for (const light of [true, false]) for (const name of ['ClipsFeedPage']) {
+test('Clips scopes the native dark palette to video content and preserves header props', () => {
+    for (const light of [true, false]) {
         const state = adapters(light);
         const original = () => {};
         const props = {children: {video: 'fixture'}, topSlot: {header: 'fixture'}, warm: true, fullBleed: true, onScroll() {}};
-        const result = state.wrap(name, original)(props);
+        const result = state.wrap('ClipsFeedPage', original)(props);
         assert.equal(result.type, original);
         assert.equal(result.props.children.type, state.ThemeProvider);
         assert.equal(result.props.children.props.theme, undefined, 'uses the native dark default');

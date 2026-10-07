@@ -5,8 +5,8 @@ final class SettingsOpenRequest {
 
     void request() { pending = true; }
 
-    boolean consume(boolean resumed, boolean alreadyOpen) {
-        if (!pending || !resumed) return false;
+    boolean consume(boolean canShow, boolean alreadyOpen) {
+        if (!pending || !canShow) return false;
         pending = false;
         return !alreadyOpen;
     }
