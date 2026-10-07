@@ -66,6 +66,35 @@
           "apkSha256": "1ce62a7386944242621d9c5a9bfc569da79237a8d1f8fd8dfba72657833fe553",
           "fullDexRebuild": "passed",
           "originalAwareAudit": "passed; zero introduced findings"
+        },
+        {
+          "name": "Full selection after cleanup",
+          "date": "2026-10-07",
+          "sourceRevision": "0fd837300e3cb1a602dbd47386da25c1803d3150",
+          "patches": [
+            "Auto-claim bonus channel points",
+            "BTTV, FFZ and 7TV emotes",
+            "Block client-requested ads",
+            "Block stream ads",
+            "Hide Turbo promotions",
+            "Hide feed and display ads",
+            "Hide subscription discount banners",
+            "Inspect Twitch APK",
+            "Playback diagnostics",
+            "Reload stream"
+          ],
+          "bundleSha256": "dde5c3e66ece7f8c95a358b5ed86621d64a4aff300fdc870714f4a01de12b3f7",
+          "apkSha256": "e0250a65cc128548d058152e60589ea49211abcf67e4dd6e440d1072e2e84845",
+          "javaKotlinTests": 179,
+          "javaScriptTests": 23,
+          "standaloneVerifierTests": "passed",
+          "fullDexRebuild": "passed",
+          "sdkPerDexAndApkChecks": "passed",
+          "originalHierarchyFindings": 93,
+          "introducedHierarchyFindings": 0,
+          "typeContracts": 69,
+          "sharedIntegration": "Patch settings, notification registration, theme synchronization and DJ settings included; adapter placeholders resolved",
+          "deviceInstallation": "not performed for this cleanup build"
         }
       ],
       "adaptedContracts": [
@@ -248,6 +277,26 @@
           "javaKotlinTests": 177,
           "javaScriptTests": 23,
           "deviceTesting": "This revision was not installed on 31.4.2."
+        },
+        {
+          "name": "Playback diagnostics only",
+          "date": "2026-10-07",
+          "sourceRevision": "0fd837300e3cb1a602dbd47386da25c1803d3150",
+          "patches": [
+            "Playback diagnostics"
+          ],
+          "bundleSha256": "dde5c3e66ece7f8c95a358b5ed86621d64a4aff300fdc870714f4a01de12b3f7",
+          "apkSha256": "1f2d8b4964c264841327a24dc8a24627624c4a4b912cb866bb1813209e7b7acc",
+          "javaKotlinTests": 179,
+          "javaScriptTests": 23,
+          "standaloneVerifierTests": "passed",
+          "fullDexRebuild": "passed",
+          "sdkPerDexAndApkChecks": "passed",
+          "originalHierarchyFindings": 93,
+          "introducedHierarchyFindings": 0,
+          "typeContracts": 69,
+          "sharedIntegration": "Patch settings, notification registration, theme synchronization and DJ settings included; adapter placeholders resolved",
+          "deviceInstallation": "not performed for this cleanup build"
         }
       ],
       "adaptedContracts": [
