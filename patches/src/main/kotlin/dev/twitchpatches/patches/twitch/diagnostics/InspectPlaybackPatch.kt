@@ -4,6 +4,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import com.android.tools.smali.dexlib2.AccessFlags
+import dev.twitchpatches.patches.twitch.settings.settingsPatch
 import dev.twitchpatches.patches.twitch.shared.*
 
 private const val TRACE = "Ldev/twitchpatches/extension/diagnostics/PlaybackTrace;"
@@ -15,7 +16,7 @@ val inspectPlaybackPatch = bytecodePatch(
     default = false,
 ) {
     compatibleWith(TwitchTarget.compatibility)
-    dependsOn(twitchExtensionPatch)
+    dependsOn(settingsPatch)
     execute {
         val factory = resolveIvsHttp()
         val response = classDefBy("${IVS_NET}Response;")
