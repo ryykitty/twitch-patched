@@ -1,10 +1,14 @@
 (function (runtime) {
     'use strict';
     var records = new Map(), empty = new Map(), listeners = new Set(), failures = new Map();
-    var globals = [null, null], globalJobs = [null, null], globalRetry = [0, 0];
-    var providers = ['bttv', '7tv'], observations = new Map(), lastMatch = 0;
+    var globals = [null, null, null], globalJobs = [null, null, null], globalRetry = [0, 0, 0];
+    var providers = ['bttv', '7tv', 'ffz'], observations = new Map(), lastMatch = 0;
+    var globalURLs = ['https://api.betterttv.net/3/cached/emotes/global', 'https://7tv.io/v3/emote-sets/global',
+        'https://api.frankerfacez.com/v1/set/global'];
+    var channelURLs = ['https://api.betterttv.net/3/cached/users/twitch/', 'https://7tv.io/v3/users/twitch/',
+        'https://api.frankerfacez.com/v1/room/id/'];
     function imageObservation(category, provider, format) {
-        if (provider !== 'bttv' && provider !== '7tv') provider = 'unknown';
+        if (!providers.includes(provider)) provider = 'unknown';
         if (format !== 'gif' && format !== 'png' && format !== 'webp') format = 'unknown';
         var key = category + '/' + provider + '/' + format;
         if (Date.now() - (observations.get(key) || 0) <= 5000) return;
@@ -14,7 +18,7 @@
     function notify() { listeners.forEach(function (callback) { callback(); }); }
     function compose(record) {
         var next = new Map();
-        globals.concat(record.parts).forEach(function (part) {
+        [globals[2], globals[0], globals[1], record.parts[2], record.parts[0], record.parts[1]].forEach(function (part) {
             if (part) part.forEach(function (value, name) { next.set(name, value); });
         });
         record.snapshot = next;
@@ -37,7 +41,7 @@
     }
     function globalCatalog(index) {
         if (globals[index] || globalJobs[index] || Date.now() < globalRetry[index]) return;
-        var job = request(index === 0 ? 'https://api.betterttv.net/3/cached/emotes/global' : 'https://7tv.io/v3/emote-sets/global');
+        var job = request(globalURLs[index]);
         globalJobs[index] = job;
         job.promise.then(function (data) {
             if (globalJobs[index] !== job) return;
@@ -54,8 +58,7 @@
             globalCatalog(index);
             if (record.jobs[index] || Date.now() < record.retry[index] ||
                 (record.parts[index] && Date.now() - record.loaded[index] < 900000)) return;
-            var url = index === 0 ? 'https://api.betterttv.net/3/cached/users/twitch/' : 'https://7tv.io/v3/users/twitch/';
-            var job = request(url + record.id);
+            var job = request(channelURLs[index] + record.id);
             record.jobs[index] = job;
             job.promise.then(function (data) {
                 if (record.jobs[index] !== job || !record.refs) return;
@@ -70,7 +73,7 @@
     }
     function cancel(record) {
         record.jobs.forEach(function (job) { if (job) job.cancel(); });
-        record.jobs = [null, null];
+        record.jobs = [null, null, null];
     }
     function retain(id) {
         if (typeof id !== 'string' || !/^\d{1,20}$/.test(id)) return function () {};
@@ -81,7 +84,7 @@
                 if (!old) return function () {};
                 cancel(old); records.delete(old.id);
             }
-            record = {id: id, refs: 0, parts: [null, null], jobs: [null, null], loaded: [0, 0], retry: [0, 0], snapshot: empty};
+            record = {id: id, refs: 0, parts: [null, null, null], jobs: [null, null, null], loaded: [0, 0, 0], retry: [0, 0, 0], snapshot: empty};
             records.set(id, record); compose(record);
         }
         record.refs++; ensure(record); notify();

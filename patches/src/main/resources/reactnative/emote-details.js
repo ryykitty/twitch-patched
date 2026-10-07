@@ -11,14 +11,15 @@
         var emote;
         try { emote = JSON.parse(decodeURIComponent(id.slice('twitchpatches:'.length))); }
         catch (error) { return null; }
-        if (!emote || (emote.provider !== 'bttv' && emote.provider !== '7tv') ||
+        if (!emote || !['bttv', '7tv', 'ffz'].includes(emote.provider) ||
             typeof emote.name !== 'string' || !emote.name.length || emote.name.length > 100 || /\s/.test(emote.name) ||
             !runtime.emoteProviders.safeURL(emote.url) || !runtime.emoteProviders.safeURL(emote.staticURL) ||
             typeof emote.ratio !== 'number' || emote.ratio < 0.25 || emote.ratio > 4) return null;
         return emote;
     }
     function label(emote) {
-        return (emote.provider === 'bttv' ? 'BTTV' : '7TV') + (emote.channel ? ' channel emote' : ' global emote');
+        return (emote.provider === 'bttv' ? 'BTTV' : emote.provider === 'ffz' ? 'FrankerFaceZ' : '7TV') +
+            (emote.channel ? ' channel emote' : ' global emote');
     }
     function create(React, require) {
         var Card, Sheet;

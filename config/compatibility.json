@@ -215,5 +215,49 @@
       "settings": "Patch settings displayed; both ad-block controls present and enabled",
       "scope": "Installation, ART verification, startup and settings checks. Extended feature acceptance remains pending."
     }
+  },
+  "emoteSupport": {
+    "date": "2026-10-07",
+    "versionName": "31.4.2",
+    "versionCode": 3104026,
+    "providers": [
+      "BTTV",
+      "FrankerFaceZ",
+      "7TV"
+    ],
+    "patchName": "BTTV, FFZ and 7TV emotes",
+    "bundleSha256": "efe69db95e378275ca25cce3451424037662a3bfef8c622e805764e334cb8198",
+    "apkSha256": "08c5d99ae26a0b4924341297e568b1bfe5003aab93a0763fc506b08ab9776dc0",
+    "javaKotlinTests": 156,
+    "javaScriptTests": 13,
+    "standaloneVerifierTests": "passed",
+    "fullDexRebuild": "passed",
+    "sdkPerDexAndApkChecks": "passed",
+    "introducedHierarchyFindings": 0,
+    "typeContracts": 69,
+    "androidApi": 33,
+    "deviceInstallation": "passed; existing signing key and app data retained",
+    "deviceArtVerification": "passed",
+    "coldStartup": "passed",
+    "androidImageChecks": [
+      "BTTV GIF larger than 1 MiB",
+      "7TV GIF and animated WebP",
+      "7TV animated channel emote",
+      "FrankerFaceZ GIF and animated WebP",
+      "Independent drawable bounds and callbacks",
+      "Animation stop and resume"
+    ],
+    "androidCatalogChecks": [
+      "FrankerFaceZ default global sets and assigned channel set",
+      "7TV global and channel entries",
+      "BTTV global entries"
+    ],
+    "regressionChecks": [
+      "Provider precedence and native emote preservation",
+      "Channel cancellation and late responses",
+      "Provider failure isolation",
+      "FrankerFaceZ preview metadata"
+    ],
+    "scope": "Animation frames and lifecycle verified with compiled runtime code on Android. V2 provider parsing, image routing and previews verified with adapter tests. Live chat acceptance remains pending."
   }
 }

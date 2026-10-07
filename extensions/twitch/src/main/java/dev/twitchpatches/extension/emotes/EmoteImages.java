@@ -34,7 +34,7 @@ final class EmoteImages {
 
     synchronized Drawable drawable(android.content.res.Resources resources, String url) {
         Image image = memory.get(url);
-        return image == null ? null : image.state.newDrawable(resources).mutate();
+        return image == null ? null : image.animation != null ? image.animation.newDrawable() : image.state.newDrawable(resources).mutate();
     }
 
     synchronized void request(Emote emote) {
@@ -54,7 +54,7 @@ final class EmoteImages {
 
     private void load(Emote emote, long ticket) {
         Image image = null;
-        try { image = decode(EmoteHttp.get(emote.url, 1024 * 1024, false)); }
+        try { image = decode(EmoteHttp.get(emote.url, 8 * 1024 * 1024, false)); }
         catch (IOException | IllegalArgumentException error) { android.util.Log.w("TwitchPatchesEmotes", "Emote image unavailable"); }
         synchronized (this) {
             if (ticket != generation) return;
@@ -70,7 +70,7 @@ final class EmoteImages {
         while (failed.size() > 128) failed.remove(failed.keySet().iterator().next());
     }
 
-    private static Image decode(byte[] bytes) throws IOException {
+    static Image decode(byte[] bytes) throws IOException {
         Drawable drawable;
         if (Build.VERSION.SDK_INT >= 28) {
             drawable = ImageDecoder.decodeDrawable(ImageDecoder.createSource(ByteBuffer.wrap(bytes)), (decoder, info, source) -> {
@@ -94,15 +94,19 @@ final class EmoteImages {
             drawable = new BitmapDrawable(android.content.res.Resources.getSystem(), bitmap);
         }
         Drawable.ConstantState state = drawable.getConstantState();
-        if (state == null) throw new IOException("Emote drawable cannot be isolated.");
-        int cost = Build.VERSION.SDK_INT >= 28 && drawable instanceof AnimatedImageDrawable ? 1024 * 1024
+        boolean animated = Build.VERSION.SDK_INT >= 28 && drawable instanceof AnimatedImageDrawable;
+        if (state == null && !animated) throw new IOException("Emote drawable cannot be isolated.");
+        int cost = animated ? Math.max(bytes.length, 1024 * 1024)
                 : Math.max(1, drawable.getIntrinsicWidth() * drawable.getIntrinsicHeight() * 4);
-        return new Image(state, cost);
+        return new Image(state, animated ? new AnimatedEmoteImage(drawable) : null, cost);
     }
 
-    private static final class Image {
+    static final class Image {
         final Drawable.ConstantState state;
+        final AnimatedEmoteImage animation;
         final int cost;
-        Image(Drawable.ConstantState state, int cost) { this.state = state; this.cost = cost; }
+        Image(Drawable.ConstantState state, AnimatedEmoteImage animation, int cost) {
+            this.state = state; this.animation = animation; this.cost = cost;
+        }
     }
 }

@@ -131,7 +131,7 @@ in-place update. Retain logs locally while the candidate is used overnight.
 | --- | --- |
 | Playback | Native, initial V2 Classic Split, Vertical View, swipe feed, rotation, background audio and raids. |
 | Ads | Actual preroll/midroll opportunities, stream continuity, quality and normal controls without stale ad overlays. |
-| Chat | Global/channel BTTV and 7TV emotes, previews, Back navigation and channel changes. |
+| Chat | Static and animated global/channel BTTV, FrankerFaceZ and 7TV emotes, previews, Back navigation and channel changes. |
 | Channel points | An available bonus is claimed without a manual tap. |
 | Promotions | Turbo, discounts and feed cards suppressed; Drops and train overlays remain usable. |
 | Reload | Double-tap works on initial entry and after view changes, retaining quality and mode. |

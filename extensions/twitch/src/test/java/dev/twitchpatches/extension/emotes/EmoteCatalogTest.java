@@ -40,10 +40,15 @@ public class EmoteCatalogTest {
         CountDownLatch ready = new CountDownLatch(1);
         CountDownLatch failed = new CountDownLatch(1);
         AtomicInteger attempts = new AtomicInteger();
-        EmoteCatalog catalog = new EmoteCatalog(id -> { if (id != null) ready.countDown(); }, (url, optional) -> {
+        java.util.concurrent.atomic.AtomicReference<EmoteCatalog> reference = new java.util.concurrent.atomic.AtomicReference<>();
+        EmoteCatalog catalog = new EmoteCatalog(id -> {
+            if (id != null && reference.get().snapshot(id).containsKey("ChannelCode")) ready.countDown();
+        }, (url, optional) -> {
             if (url.contains("7tv")) { attempts.incrementAndGet(); throw new java.io.IOException("Unavailable"); }
+            if (url.contains("frankerfacez")) return "{}";
             return optional ? ENTRY : "[]";
         }, failed::countDown);
+        reference.set(catalog);
         try {
             catalog.ensure("11");
             assertTrue(ready.await(2, TimeUnit.SECONDS));

@@ -50,6 +50,7 @@ const descriptor = descriptors.get('Example');
 const id = runtime.emoteProviders.augment('Example', [], descriptors, new Set())[0].id;
 assert.equal(runtime.emoteDetails.label(descriptor), 'BTTV global emote');
 assert.equal(runtime.emoteDetails.label({...descriptor, provider: '7tv', channel: true}), '7TV channel emote');
+assert.equal(runtime.emoteDetails.label({...descriptor, provider: 'ffz', channel: true}), 'FrankerFaceZ channel emote');
 assert.equal(runtime.emoteDetails.decode('twitchpatches:%invalid'), null);
 for (const change of [{provider: 'other'}, {name: 'bad name'}, {ratio: 50}, {url: 'https://other.test/a'}, {staticURL: ''}]) {
     assert.equal(runtime.emoteDetails.decode('twitchpatches:' + encodeURIComponent(JSON.stringify({...descriptor, ...change}))), null);
