@@ -11,6 +11,7 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import dev.twitchpatches.patches.twitch.shared.*
 
 internal fun BytecodePatchContext.restoreFeedNavigationTheme() {
+    restoreNativeFeedTheme()
     val host = "Ltv/twitch/android/feature/discovery/feed/rn/bridge/TwitchRNHostNavigationModule;"
     val chrome = mutableClassDefBy(host).methods.filter {
         it.name == "setFeedChromeDark" && it.isInstance(listOf("Z"), "V") &&

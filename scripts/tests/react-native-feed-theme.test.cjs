@@ -7,6 +7,7 @@ const vm = require('node:vm');
 function adapters(light) {
     const targets = new Map();
     const theme = {colors: {backgroundBody: '#f7f7f8'}};
+    const videoTheme = {colors: {backgroundBody: '#0e0e10'}};
     const ThemeProvider = () => {};
     const React = {
         createElement(type, props) { return {type, props}; },
@@ -24,10 +25,11 @@ function adapters(light) {
         '../../patches/src/main/resources/reactnative/feed-theme.js'), 'utf8')
         .replaceAll('__TWITCH_THEME_MODULE__', '1').replace('__TWITCH_STREAM_ITEM_MODULE__', '2')
         .replace('__TWITCH_CLIPS_FEED_MODULE__', '3').replace('__TWITCH_FEED_SCRIM_MODULE__', '5')
+        .replaceAll('__TWITCH_PALETTE_MODULE__', '4')
         .replace('__TWITCH_FEED_CHROME_MODULE__', '6');
     vm.runInContext(source, context);
     return {React, theme, ThemeProvider, wrap(name, original) {
-        return targets.get(name)(original, React, runtime, () => ({ThemeProvider, useTheme: () => theme}));
+        return targets.get(name)(original, React, runtime, () => ({ThemeProvider, useTheme: () => videoTheme, lightTheme: theme}));
     }};
 }
 
@@ -92,13 +94,25 @@ test('light header fade stops at measured tabs without altering scrolling or cat
         const state = adapters(light);
         const scrim = state.React.createElement('Scrim', {testID: 'feed-top-scrim', translateY: {value: 13}});
         const tabs = state.React.createElement('Tabs', {onLayout() {}});
-        const root = state.React.createElement('AnimatedView', {style: {transform: [{translateY: 21}]}, children: [scrim, tabs]});
-        const original = {type: () => root, compare: () => true};
+        const animation = {transform: [{translateY: 21}]};
+        const chrome = state.React.createElement('AnimatedView', {testID: 'feed-top-chrome', style: animation,
+            pointerEvents: 'box-none', children: tabs});
+        const root = state.React.createElement('View', {style: {paddingTop: 24}, children: [scrim, chrome]});
+        let received;
+        const original = {type: props => { received = props; return root; }, compare: () => true};
         const wrapped = state.wrap('FeedTopChrome', original);
         const result = wrapped.type({tabsBarHeight: 64});
+        assert.equal(received.feedTheme, light === true ? state.theme : undefined);
         assert.equal(result.props.style, root.props.style);
         assert.equal(result.props.children[0].props.translateY, scrim.props.translateY);
-        assert.equal(result.props.children[1], tabs);
+        const updatedChrome = result.props.children[1];
+        assert.equal(updatedChrome.props.children, tabs);
+        assert.equal(updatedChrome.props.pointerEvents, 'box-none');
+        if (light === true) {
+            assert.equal(updatedChrome.props.style[0], animation);
+            assert.equal(updatedChrome.props.style[1].backgroundColor, state.theme.colors.backgroundBody);
+            assert.deepEqual(Object.keys(updatedChrome.props.style[1]), ['backgroundColor']);
+        } else assert.equal(updatedChrome, chrome);
         assert.equal(result.props.children[0].props.height, light === true ? 64 : undefined);
         assert.equal(wrapped.compare, original.compare);
         assert.equal(wrapped.type({tabsBarHeight: 0}), root);

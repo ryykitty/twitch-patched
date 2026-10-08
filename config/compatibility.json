@@ -95,6 +95,48 @@
           "typeContracts": 69,
           "sharedIntegration": "Patch settings, notification registration, theme synchronization and DJ settings included; adapter placeholders resolved",
           "deviceInstallation": "not performed for this cleanup build"
+        },
+        {
+          "name": "Default selection with feed theme correction",
+          "date": "2026-10-08",
+          "patches": [
+            "Auto-claim bonus channel points",
+            "BTTV, FFZ and 7TV emotes",
+            "Block client-requested ads",
+            "Block stream ads",
+            "Hide Turbo promotions",
+            "Hide feed and display ads",
+            "Hide subscription discount banners",
+            "Reload stream"
+          ],
+          "bundleSha256": "eabcc1f31414f747b1418d09843b978095f59b1fc840526c8e48bcb0165beff5",
+          "apkSha256": "42a6e36f4c8d68fe1d2371b96299f38e251119fbf376b67ebf5b5c64d3b58f01",
+          "javaKotlinTests": 184,
+          "javaScriptTests": 23,
+          "standaloneVerifierTests": "passed",
+          "fullDexRebuild": "passed",
+          "sdkPerDexAndApkChecks": "passed",
+          "originalHierarchyFindings": 93,
+          "introducedHierarchyFindings": 0,
+          "typeContracts": 69,
+          "androidManager": {
+            "version": "1.34.0",
+            "patcherVersion": "1.15.1",
+            "patching": "passed",
+            "apkSha256": "b6541cf5ef6cc4bf9e6e8d05dc8ae833a87a5d5920b190dcf9d9c7873a508161",
+            "signerCertificateSha256": "2359337c7c455b62bd5e040411b24a52b49ecb7fb50eb424ead8b404651187cc",
+            "deviceInstallation": "passed; existing Manager signing key and app data retained",
+            "deviceArtVerification": "passed",
+            "startupErrorLines": 0,
+            "assetComparison": "Hermes bundle and runtime adapter hashes match the verified Desktop output",
+            "deviceChecks": [
+              "Light Clips header and navigation remain correctly themed after playback loads",
+              "Clips header collapses when scrolling; category labels remain visible",
+              "Light Live feed text and navigation",
+              "Dark feed presentation",
+              "Patch settings opens immediately after Dark-to-Light transition without restarting"
+            ]
+          }
         }
       ],
       "adaptedContracts": [
@@ -297,6 +339,18 @@
           "typeContracts": 69,
           "sharedIntegration": "Patch settings, notification registration, theme synchronization and DJ settings included; adapter placeholders resolved",
           "deviceInstallation": "not performed for this cleanup build"
+        },
+        {
+          "name": "Reload only with feed theme correction",
+          "date": "2026-10-08",
+          "patches": [
+            "Reload stream"
+          ],
+          "bundleSha256": "eabcc1f31414f747b1418d09843b978095f59b1fc840526c8e48bcb0165beff5",
+          "apkSha256": "9949cabafbfdaa80959ac2200295f9ec36a397eaf7293abf30327c3eb935cb19",
+          "fullDexRebuild": "passed",
+          "originalAwareAudit": "passed; zero introduced findings, 93 original findings, 69 type contracts",
+          "deviceInstallation": "not performed; device testing used 31.5.2"
         }
       ],
       "adaptedContracts": [
@@ -549,5 +603,17 @@
       "Repeated server-filled ad opportunities and live setting changes on additional devices",
       "V2 display-ad opportunities during extended playback"
     ]
+  },
+  "feedThemeVerification": {
+    "date": "2026-10-08",
+    "versionName": "31.5.2",
+    "androidApi": 33,
+    "javaKotlinTests": 184,
+    "javaScriptTests": 23,
+    "sharedIntegration": "Included with every modifying patch",
+    "nativeContracts": "Feed lifecycle overrides and feed dependency contexts follow the app preference",
+    "reactNativeContracts": "Header palette resolved from the native theme module; existing header animation and geometry retained",
+    "deviceResult": "Manager build verified after clip loading, scrolling and app theme transitions",
+    "scope": "Observed feed theme transitions on one Android device; extended use remains a rollout check"
   }
 }

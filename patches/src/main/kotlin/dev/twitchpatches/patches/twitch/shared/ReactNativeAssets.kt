@@ -5,6 +5,7 @@ import app.morphe.patcher.patch.ResourcePatchContext
 import dev.twitchpatches.patches.twitch.shared.hermes.HermesBundle
 import dev.twitchpatches.patches.twitch.shared.hermes.MetroExports
 import dev.twitchpatches.patches.twitch.shared.hermes.HermesFeedTheme
+import dev.twitchpatches.patches.twitch.shared.hermes.themePaletteModule
 
 internal const val RN_ASSET = "assets/twitchpatches-runtime.js"
 
@@ -24,22 +25,24 @@ internal val reactNativeAssetsPatch = resourcePatch {
         get(RN_ASSET).writeText(assetSource("bootstrap.js").replace("__TWITCH_REACT_MODULE__", react.toString()))
         get(RN_ASSET).appendText("\n" + assetSource("theme.js")
             .replace("__TWITCH_APP_CORE_MODULE__", core.module.toString()))
-        appendFeedThemeAdapters(exports)
+        appendFeedThemeAdapters(exports, themePaletteModule(original))
         get(RN_ASSET).appendText("\n" + assetSource("playback-settings.js")
             .replace("__TWITCH_PLAYBACK_SETTINGS_MODULE__", playback.module.toString()))
     }
 }
 
-private fun ResourcePatchContext.appendFeedThemeAdapters(exports: MetroExports) {
+private fun ResourcePatchContext.appendFeedThemeAdapters(exports: MetroExports, palette: Int) {
     val theme = exports.resolve("ThemeProvider", setOf("theme", "children", "darkTheme", "Provider"))
     val stream = exports.resolveMemo("FeedStreamItem", "FeedStreamItemGuard", setOf("node", "content", "broadcaster"))
     exports.requireFunctionContract("FeedStreamItemComponent", 2, setOf("freeScroll", "CoreText", "FeedFollowButton"))
     val clips = exports.resolve("ClipsFeedPage", setOf("children", "topSlot", "warm"))
     val scrim = exports.resolve("FeedTopScrim", setOf("stops", "translateY", "LinearGradient"))
     val chrome = exports.resolveMemo("FeedTopChrome", "FeedTopChromeComponent",
-        setOf("tabsBarHeight", "FeedTopScrim", "scrimTranslateY", "topInset"))
+        setOf("tabsBarHeight", "FeedTopScrim", "scrimTranslateY", "topInset", "feedTheme"))
+    exports.requireNestedContract("FeedTopChromeComponent", setOf("feed-top-chrome"))
     exports.requireNestedContract("FeedTopScrim", setOf("Stop", "#000000"))
     get(RN_ASSET).appendText("\n" + assetSource("feed-theme.js")
+        .replace("__TWITCH_PALETTE_MODULE__", palette.toString())
         .replace("__TWITCH_THEME_MODULE__", theme.module.toString())
         .replace("__TWITCH_STREAM_ITEM_MODULE__", stream.module.toString())
         .replace("__TWITCH_CLIPS_FEED_MODULE__", clips.module.toString())

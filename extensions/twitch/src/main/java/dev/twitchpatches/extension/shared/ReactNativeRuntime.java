@@ -94,6 +94,8 @@ public final class ReactNativeRuntime implements Application.ActivityLifecycleCa
         for (Object instance : instances.keySet()) dispatch(instance, policy);
     }
 
+    public static boolean lightTheme() { return TwitchTheme.light(); }
+
     private static boolean[] policy() {
         return new boolean[] {selected[0] && ChannelPointsRuntime.isEnabled(),
                 selected[1] && PromotionSettings.blocked(), selected[2] && SubscriptionBannerSettings.blocked(),
