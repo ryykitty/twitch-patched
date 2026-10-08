@@ -1,3 +1,23 @@
+## [1.1.0-dev.1](https://github.com/ryykitty/twitch-patched/compare/v1.0.4...v1.1.0-dev.1) (2026-10-08)
+
+### Bug Fixes
+
+* block Following and V2 display ads ([781a761](https://github.com/ryykitty/twitch-patched/commit/781a7618fc7366a7ddefb4791148f97ed44715e5))
+* hide native Turbo startup offers ([a37999c](https://github.com/ryykitty/twitch-patched/commit/a37999c121a86229d1acdd4ec7b2af419cc7930a))
+* include shared fixes with playback diagnostics ([f16cd6b](https://github.com/ryykitty/twitch-patched/commit/f16cd6b13536bc392209a2f2704f72e6db950a81))
+* preserve feed themes after loading and navigation ([72b2531](https://github.com/ryykitty/twitch-patched/commit/72b2531b05c6e19cd89488004f1ea4d91264da78))
+* restore DJ stream playback settings ([fdfa7db](https://github.com/ryykitty/twitch-patched/commit/fdfa7dbc6ee4b10b110c99ecef920d2447824226))
+* synchronize feed and settings themes ([85ff0fd](https://github.com/ryykitty/twitch-patched/commit/85ff0fd30c806ebb9db8a5f98c51e22ff5a00855))
+
+### Features
+
+* add emote provider settings ([0834660](https://github.com/ryykitty/twitch-patched/commit/0834660d6a4921567323ff4ac4be9b6898a8e2b2))
+* add FrankerFaceZ and fix animated emotes ([a5ecb0d](https://github.com/ryykitty/twitch-patched/commit/a5ecb0dc1c0b2bc50339f53316062a523272d8b5))
+
+### App Support
+
+* support Twitch 31.5.2 ([fb68452](https://github.com/ryykitty/twitch-patched/commit/fb68452d1f0887371fa4500453fc6d37cdabc0ea))
+
 ## [1.0.4](https://github.com/ryykitty/twitch-patched/compare/v1.0.3...v1.0.4) (2026-10-04)
 
 ### Bug Fixes
