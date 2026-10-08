@@ -1,6 +1,6 @@
 (function (runtime) {
     'use strict';
-    var records = new Map(), empty = new Map(), listeners = new Set(), failures = new Map();
+    var records = new Map(), empty = new Map(), emptyPicker = [], listeners = new Set(), failures = new Map();
     var globals = [null, null, null], globalJobs = [null, null, null], globalRetry = [0, 0, 0];
     var providers = ['bttv', '7tv', 'ffz'], observations = new Map(), lastMatch = 0;
     var globalURLs = ['https://api.betterttv.net/3/cached/emotes/global', 'https://7tv.io/v3/emote-sets/global',
@@ -25,6 +25,14 @@
             });
         });
         record.snapshot = next;
+        record.picker = [];
+        providers.forEach(function (provider, index) {
+            if (!runtime.enabled(8 + index)) return;
+            [record.parts[index], globals[index]].forEach(function (part, scope) {
+                if (!part || !part.size) return;
+                record.picker.push({provider: provider, channel: scope === 0, emotes: Array.from(part.values())});
+            });
+        });
     }
     function request(url) {
         var controller = new AbortController();
@@ -113,6 +121,7 @@
     runtime.emotes = {
         retain: retain,
         snapshot: function (id) { var record = records.get(id); return record ? record.snapshot : empty; },
+        pickerSnapshot: function (id) { var record = records.get(id); return record ? record.picker : emptyPicker; },
         subscribe: function (callback) { listeners.add(callback); return function () { listeners.delete(callback); }; },
         failed: {has: function (url) {
             var failed = failures.get(url);

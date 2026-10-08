@@ -62,6 +62,11 @@ final class EmoteCatalog {
         return state == null ? global.combined : state.combined;
     }
 
+    synchronized Map<String, Emote> providerSnapshot(String id, int index) {
+        Channel state = id == null ? global : channels.get(id);
+        return state == null ? Collections.emptyMap() : entries(state, index);
+    }
+
     synchronized void cancelOutside(String id) {
         channels.forEach((key, state) -> { if (!key.equals(id)) cancel(state); });
         workers.purge();

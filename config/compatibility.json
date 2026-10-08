@@ -615,5 +615,70 @@
     "reactNativeContracts": "Header palette resolved from the native theme module; existing header animation and geometry retained",
     "deviceResult": "Manager build verified after clip loading, scrolling and app theme transitions",
     "scope": "Observed feed theme transitions on one Android device; extended use remains a rollout check"
+  },
+  "emotePickerVerification": {
+    "date": "2026-10-09",
+    "patchName": "BTTV, FFZ and 7TV emotes",
+    "bundleSha256": "7ede9a9b8f3afff20a01b234f63747b6652352e321db797eb130cb2de87a85ef",
+    "javaKotlinTests": 187,
+    "javaScriptTests": 24,
+    "standaloneVerifierTests": "passed",
+    "desktopSelection": ["BTTV, FFZ and 7TV emotes"],
+    "desktopArtifacts": [
+      {
+        "versionName": "31.5.2",
+        "versionCode": 3105026,
+        "apkSha256": "3b193533884254038d6b22fa6ea4a45c0806723b87df47cac27eb41302e57bc4"
+      },
+      {
+        "versionName": "31.4.2",
+        "versionCode": 3104026,
+        "apkSha256": "a96dd97f6d1656bd83ba2d4c33afc2ecab3ab59362056456786db9a791bc5cfc"
+      }
+    ],
+    "fullDexRebuild": "passed",
+    "sdkPerDexAndApkChecks": "passed",
+    "introducedHierarchyFindings": 0,
+    "typeContracts": 69,
+    "androidManager": {
+      "version": "1.34.0",
+      "patcherVersion": "1.15.1",
+      "versionName": "31.5.2",
+      "versionCode": 3105026,
+      "androidApi": 33,
+      "patches": [
+        "Auto-claim bonus channel points",
+        "BTTV, FFZ and 7TV emotes",
+        "Block client-requested ads",
+        "Block stream ads",
+        "Hide Turbo promotions",
+        "Hide feed and display ads",
+        "Hide subscription discount banners",
+        "Reload stream"
+      ],
+      "patching": "passed",
+      "apkSha256": "9a45ce269634fca61b4f14bb316c015023b1443ba57692140b1ae73817926710",
+      "assetComparison": "Picker adapter matches the verified Desktop output",
+      "signerCertificateSha256": "2359337c7c455b62bd5e040411b24a52b49ecb7fb50eb424ead8b404651187cc",
+      "deviceInstallation": "passed; existing signing key, package identity and app data retained",
+      "deviceArtVerification": "passed",
+      "startupErrorLines": 0,
+      "deviceChecks": [
+        "Native and V2 picker provider navigation and animated image rendering",
+        "Native and V2 external emote draft insertion and backspace; no chat messages sent",
+        "Native visible grids load while stationary after catalog jumps",
+        "CorgiCam channel catalog follows Twitch channel sections; global-only BTTV catalog remains at the bottom",
+        "Native picker retains keyboard and original footer controls"
+      ]
+    },
+    "regressionChecks": [
+      "Provider catalogs preserve duplicate names and channel/global scope",
+      "Provider settings remove disabled catalogs and controls",
+      "Current-channel sections precede external channel catalogs; global catalogs remain last",
+      "Visible requests replace queued off-screen work",
+      "Cancelled completions cannot overwrite replacement requests",
+      "V2 prefetch is bounded and native image URLs retain their options"
+    ],
+    "scope": "Picker checks on one Android device. Load times depend on provider connectivity; large-catalog scrolling remains a normal-use acceptance check."
   }
 }

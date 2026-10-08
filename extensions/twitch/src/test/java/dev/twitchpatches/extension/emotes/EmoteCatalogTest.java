@@ -22,9 +22,13 @@ public class EmoteCatalogTest {
             assertTrue(ready.await(2, TimeUnit.SECONDS));
             assertTrue(catalog.snapshot("11").containsKey("ChannelCode"));
             assertTrue(catalog.snapshot(null).containsKey("GlobalCode"));
+            assertTrue(catalog.providerSnapshot("11", 0).containsKey("ChannelCode"));
+            assertFalse(catalog.providerSnapshot("11", 0).containsKey("GlobalCode"));
+            assertTrue(catalog.providerSnapshot(null, 0).containsKey("GlobalCode"));
             catalog.setProviderMask(6);
             assertTrue(catalog.snapshot("11").isEmpty());
             assertTrue(catalog.snapshot(null).isEmpty());
+            assertTrue(catalog.providerSnapshot("11", 0).isEmpty());
             catalog.ensure("11");
             assertEquals(6, requests.get());
             catalog.setProviderMask(7);

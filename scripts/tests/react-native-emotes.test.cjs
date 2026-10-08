@@ -96,12 +96,18 @@ async function main() {
         'channel emotes override a global name collision');
     assert.equal(props.message.emotes.length, 0);
     assert.equal(runtime.emotes.snapshot('456').get('FFZChannel').provider, 'ffz');
+    const picker = runtime.emotes.pickerSnapshot('456');
+    assert(picker.some(group => group.provider === 'bttv' && !group.channel && group.emotes.some(emote => emote.name === 'Wankge')));
+    assert(picker.some(group => group.provider === '7tv' && group.channel && group.emotes.some(emote => emote.name === 'Wankge')),
+        'picker retains provider and scope catalogs across duplicate names');
     selection[1] = false; subscriptions.forEach(fn => fn());
+    assert(runtime.emotes.pickerSnapshot('456').every(group => group.provider !== '7tv'));
     assert.equal(runtime.emotes.snapshot('456').get('Wankge').provider, 'ffz', 'disabling 7TV exposes the enabled channel provider');
     selection[2] = false; subscriptions.forEach(fn => fn());
     assert.equal(runtime.emotes.snapshot('456').get('Wankge').provider, 'bttv');
     selection[0] = false; subscriptions.forEach(fn => fn());
     assert.equal(runtime.emotes.snapshot('456').size, 0, 'all providers disabled remove cached emotes');
+    assert.equal(runtime.emotes.pickerSnapshot('456').length, 0);
     selection.fill(true); subscriptions.forEach(fn => fn());
     assert.equal(jobs.length, 6, 'reenabling fresh cached providers requires no requests');
     assert.equal(runtime.emotes.snapshot('456').get('Wankge').provider, '7tv');

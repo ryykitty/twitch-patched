@@ -24,6 +24,7 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
     private final NativeEmotePreview preview = new NativeEmotePreview();
     private volatile int providerMask;
     private volatile String channel;
+    private volatile String channelName;
     private int resumed;
     private long lastObservation;
 
@@ -45,6 +46,9 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
     public static boolean enabled() { return providerMask() != 0; }
     public static int providerMask() { return instance == null ? 0 : instance.providerMask; }
     public static boolean providerEnabled(int provider) { return EmotePolicy.includes(providerMask(), provider); }
+
+    static EmoteCatalog catalog() { return instance == null ? null : instance.catalog; }
+    static String channelName(String id) { return instance != null && id != null && id.equals(instance.channel) ? instance.channelName : null; }
 
     public static void setEnabled(boolean value) {
         setProviderMask(value ? EmotePolicy.ALL : 0);
@@ -68,6 +72,7 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
     public static void onChannelChanged(String id, String name) {
         EmoteRuntime runtime = instance;
         String valid = EmoteProviders.channelId(id);
+        if (runtime != null && valid != null) runtime.channelName = name;
         if (runtime == null || valid == null || valid.equals(runtime.channel)) return;
         runtime.channel = valid;
         runtime.catalog.cancelOutside(valid);
@@ -103,6 +108,7 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
     }
 
     private void refresh(String changedChannel, String image) {
+        if (image == null) EmotePickerRuntime.refresh(changedChannel);
         for (TextView view : new ArrayList<>(rows.keySet())) {
             EmoteRows.Bound bound = rows.get(view);
             if (bound == null) continue;
@@ -150,10 +156,11 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
         }
     }
     @Override public void onViewDetachedFromWindow(View view) { if (view instanceof TextView) EmoteRows.stop(((TextView) view).getText()); }
-    @Override public void onActivityResumed(Activity activity) { resumed++; refresh(null, null); }
+    @Override public void onActivityResumed(Activity activity) { resumed++; EmotePickerImages.resume(); refresh(null, null); }
     @Override public void onActivityPaused(Activity activity) {
         resumed = Math.max(0, resumed - 1);
         if (resumed == 0) {
+            EmotePickerImages.pause();
             preview.close();
             rows.keySet().forEach(view -> EmoteRows.stop(view.getText()));
             catalog.cancelPending();
