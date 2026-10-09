@@ -12,7 +12,7 @@ private const val TRACE = "Ldev/twitchpatches/extension/diagnostics/PlaybackTrac
 @Suppress("unused")
 val inspectPlaybackPatch = bytecodePatch(
     name = "Playback diagnostics",
-    description = "Records playlist structure and playback frame counters. Disabled by default.",
+    description = "Records playlist metadata and playback counters for troubleshooting.",
     default = false,
 ) {
     compatibleWith(TwitchTarget.compatibility)

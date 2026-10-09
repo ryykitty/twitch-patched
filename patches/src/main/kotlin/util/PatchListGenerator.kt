@@ -89,7 +89,7 @@ private fun generatePatchList(version: String, patches: Set<Patch<*>>) {
     jsonObject.addProperty("version", version)
     jsonObject.add("patches", gson.toJsonTree(patchesMap))
 
-    listJson.writeText(gson.toJson(jsonObject))
+    listJson.writeText(gson.toJson(jsonObject) + "\n")
 }
 
 @Suppress("unused")

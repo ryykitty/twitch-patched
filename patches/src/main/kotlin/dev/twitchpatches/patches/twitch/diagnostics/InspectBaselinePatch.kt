@@ -8,7 +8,7 @@ import java.util.logging.Logger
 @Suppress("unused") // Discovered reflectively by Morphe's patch loader.
 val inspectBaselinePatch = bytecodePatch(
     name = "Inspect Twitch APK",
-    description = "Reports package, version and DEX class count during patching. Does not change the app.",
+    description = "Reports the APK package, version and DEX class count without modifying the app.",
     default = false,
 ) {
     compatibleWith(TwitchTarget.compatibility)
