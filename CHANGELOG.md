@@ -1,3 +1,9 @@
+## [1.1.0-dev.2](https://github.com/ryykitty/twitch-patched/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2026-10-09)
+
+### Features
+
+* add external emote catalogs to native and V2 pickers ([a5c1acd](https://github.com/ryykitty/twitch-patched/commit/a5c1acd14cc9aed043dfd3d2cfc619bb839b9b83))
+
 ## [1.1.0-dev.1](https://github.com/ryykitty/twitch-patched/compare/v1.0.4...v1.1.0-dev.1) (2026-10-08)
 
 ### Bug Fixes
