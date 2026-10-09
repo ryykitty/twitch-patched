@@ -1,3 +1,9 @@
+## [1.1.0-dev.3](https://github.com/ryykitty/twitch-patched/compare/v1.1.0-dev.2...v1.1.0-dev.3) (2026-10-09)
+
+### Bug Fixes
+
+* synchronize patch and settings descriptions ([09cc4b2](https://github.com/ryykitty/twitch-patched/commit/09cc4b2a8327e4a11b8fadb830f03f23a3c1cd9d))
+
 ## [1.1.0-dev.2](https://github.com/ryykitty/twitch-patched/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2026-10-09)
 
 ### Features
