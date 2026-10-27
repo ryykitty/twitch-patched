@@ -22,6 +22,12 @@ internal val reactNativeAssetsPatch = resourcePatch {
             "isPlaying", "onPlayingChange", "isPipActive", "audioOnlyMode"))
         exports.requireNestedContract("BackgroundAudioManager",
             setOf("beginBackgroundAudio", "endBackgroundAudio", "background", "active"))
+        val rendition = exports.resolve("useAudioOnlyRendition", setOf("isParticipatingDJ", "playerApiRef",
+            "qualities", "audioOnly", "playInBackground"))
+        val veto = if (original.functions.any { original.strings[it.name] == "backgroundAudioVeto" })
+            exports.resolve("backgroundAudioVeto", setOf("isParticipatingDJ", "chatOnly")) else null
+        if (veto == null) exports.requireFunctionContract("usePlayInBackgroundPreference", 2,
+            setOf("backgroundAudioSetting"))
         exports.requireFunctionContract("ViewingOptionsSection", 2,
             setOf("isParticipatingDJ", "onAudioOnlyChange", "ToggleableSettingsListItem"))
         exports.requireFunctionContract("BgaSettingRow", 2,
@@ -32,7 +38,9 @@ internal val reactNativeAssetsPatch = resourcePatch {
         appendFeedThemeAdapters(exports, themePaletteModule(original))
         get(RN_ASSET).appendText("\n" + assetSource("playback-settings.js")
             .replace("__TWITCH_PLAYBACK_SETTINGS_MODULE__", playback.module.toString())
-            .replace("__TWITCH_BACKGROUND_AUDIO_MODULE__", background.module.toString()))
+            .replace("__TWITCH_BACKGROUND_AUDIO_MODULE__", background.module.toString())
+            .replace("__TWITCH_AUDIO_RENDITION_MODULE__", rendition.module.toString())
+            .replace("__TWITCH_BACKGROUND_VETO_MODULE__", veto?.module?.toString() ?: "null"))
     }
 }
 

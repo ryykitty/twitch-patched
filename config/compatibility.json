@@ -109,23 +109,23 @@
         "originalHierarchyFindings": 118,
         "introducedHierarchyFindings": 0,
         "typeContracts": 89,
-        "deviceAcceptance": "Installed and launched on Android 13. DJ screen-off playback and normal-use acceptance remain pending user testing."
+        "deviceAcceptance": "Corrected DJ background veto and audio-rendition policy. Playback testing is reserved for the user."
       },
       "evaluatedArtifact": {
         "date": "2026-10-27",
         "build": "Morphe Desktop",
-        "bundleSha256": "1033404f592b934e6811a94a88317225a10ed9f47e47e72a7a33b19afb78e074",
-        "apkSha256": "f0f3eb22d8c7fcbaaca540529fed0bc21d92b502ffd9d1be2e3c9c47cb8880a2",
+        "bundleSha256": "c6724de1181102ab4e3fe8afb1d031f061b7b4ee1edede984c980ee382d36b5c",
+        "apkSha256": "dca12c5b2cd1be79bfd2fc4c678b5243bf31883a5d66aa7ccdb9fbc3a156e5b1",
         "patchesApplied": 10,
-        "installedApkSha256": "6edca6977cd30bf8c1606abba8de264c2f560436e72b269962049f8965156628",
-        "deviceInstall": "ADB update with the existing Manager signing key; package identity and app data retained."
+        "installedApkSha256": "48494a8f8364ce475c0567d4a0ba122061b1362bc5f36b11c176f68e252e9498",
+        "deviceInstall": "ADB update succeeded with the existing Manager signing key and app data. No post-install phone testing was performed."
       }
     }
   ],
   "regressionChecks": {
     "date": "2026-10-27",
     "javaKotlinTests": 267,
-    "javaScriptTests": 57,
+    "javaScriptTests": 59,
     "standaloneVerifierTests": "passed",
     "sourceHygiene": "passed",
     "androidApi": 33,
@@ -136,7 +136,7 @@
     "reducedSelection": "Show deleted messages alone passed full DEX rebuilding and SDK verification on 31.7.0; zero introduced findings.",
     "fullscreenRequests": "Android runtime probes passed 20 repeated modern and legacy host requests, live preference changes, restoration and keyboard preservation.",
     "channelActions": "Native metadata models preserve Follow and notification callbacks while filtering Subscribe and gifting. Native chat-overlay Subscribe uses the existing visibility policy.",
-    "backgroundPlayback": "Native stop-lifecycle selector and React Native preference-preservation tests pass. Device screen-off acceptance pending."
+    "backgroundPlayback": "Native lifecycle, React Native background veto and audio-rendition adapter tests pass. DJ veto preserves chat-only mode and the saved background preference. Previous device build failed screen-off playback; corrected device acceptance remains pending."
   },
   "knownLimitations": {
     "streamAds": "Extended preroll and midroll acceptance remains a normal-use check; unmatched-media coverage is under evaluation.",
