@@ -26,7 +26,13 @@ Patch settings include search, emote provider controls and UI customization. Gro
 | Playback diagnostics | Records playlist metadata and playback counters for troubleshooting. |
 | Inspect Twitch APK | Reports the APK package, version and DEX class count without modifying the app. |
 
-Every patch that modifies Twitch includes Patch settings, push notification registration, app-theme fixes and DJ playback settings support. These shared fixes require no separate patch selection. DJ playback uses Twitch's existing player and available renditions.
+Included automatically with any modifying patch:
+
+- **DJ playback:** Enables Audio Only and Play in Background for DJ streams, including screen-off playback when allowed by your background-playback setting.
+- **Light mode:** Fixes theme changes in the Live and Clips feeds, navigation and Patch settings.
+- **Push notifications:** Restores notification registration in the patched app.
+
+These shared fixes require no separate patch selection. DJ playback uses Twitch's existing player and available renditions.
 
 All feature patches are selected and enabled by default. UI customization options are off by default. Inspection and playback diagnostics are optional. Previously saved settings are retained.
 
@@ -36,11 +42,10 @@ Supported Twitch versions:
 
 | Version | Version code |
 | --- | --- |
+| 31.8.0 | 3108006 |
 | 31.7.0 | 3107006 |
-| 31.6.0 | 3106006 |
-| 31.5.2 | 3105026 |
 
-Twitch 31.7.0 is the stable baseline. Earlier versions remain supported by the same hooks. Twitch 31.8.0_BETA (13108003) is an experimental target. Verification uses ARM64 on Android 13. See [compatibility data](config/compatibility.json) for build results, device checks and remaining validation.
+Twitch 31.8.0 is the primary stable target. Twitch 31.9.0_BETA (13109000) is experimental. Verification uses ARM64 on Android 13. See [compatibility data](config/compatibility.json) for build results, device checks and remaining validation.
 
 These patches require Morphe Patcher 2.0.1, available in Morphe Manager 2.2.0 and Morphe Desktop 1.19.1.
 

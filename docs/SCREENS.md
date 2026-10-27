@@ -1,6 +1,6 @@
 # Screen inventory
 
-Stable baseline: Twitch 31.7.0, ARM64. Experimental target: 31.8.0_BETA. Names in the anchor column identify code or resources, not additional user-facing layouts.
+Stable baseline: Twitch 31.8.0, ARM64. Experimental target: 31.9.0_BETA. Names in the anchor column identify code or resources, not additional user-facing layouts.
 
 ## Playback
 

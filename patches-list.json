@@ -22,32 +22,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -76,32 +69,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -126,32 +112,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -177,32 +156,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -229,32 +201,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -281,32 +246,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -333,32 +291,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -381,32 +332,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -431,32 +375,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -483,32 +420,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -534,32 +464,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }
@@ -585,32 +508,25 @@
           "signatures": null,
           "targets": [
             {
-              "version": "31.5.2",
+              "version": "31.7.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": "Tested on ARM64 with native and swipe-feed players."
             },
             {
-              "version": "31.6.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
-            },
-            {
-              "version": "31.8.0_BETA",
+              "version": "31.9.0_BETA",
               "versionCodes": null,
               "isExperimental": true,
               "minSdk": null,
               "description": "ARM64 evaluation of a Twitch prerelease."
             },
             {
-              "version": "31.7.0",
+              "version": "31.8.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": "Tested on ARM64 with native and swipe-feed players."
+              "description": "Primary stable target. ARM64 build verification."
             }
           ]
         }

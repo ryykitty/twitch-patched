@@ -14,7 +14,9 @@ internal val reactNativeEmotesPatch = resourcePatch {
         val exports = MetroExports(bundle)
         val row = exports.resolveMemo("ChatMessageRow", "ChatMessageRowComponent",
             setOf("message", "channelID", "sourceRoomID", "body", "emotes", "stripReplyMention", "MessageBody"))
-        val image = exports.resolve("EmotePart", setOf("emoteId", "forceStatic", "emoteAnimationsEnabled", "CoreImage"))
+        val image = exports.resolve("EmotePart", setOf("emoteId", "forceStatic", "emoteAnimationsEnabled", "onPress"))
+        exports.requireNestedContract("EmotePart", setOf("src", "style", "testID", "chat-emote-wrapper-",
+            "https://static-cdn.jtvnw.net/emoticons/v2/"))
         val card = exports.resolve("EmoteCard", setOf("emote", "imageURL", "fetchEmoteCardData", "useTheme", "testID"))
         val sheet = exports.resolveDeferred("BottomSheet", setOf("visible", "onClose", "onClosed", "accessibilityLabel", "children"))
         val picker = exports.resolveDeferred("EmotePickerTray", setOf("channelID", "sections", "recents", "onSelectEmote",

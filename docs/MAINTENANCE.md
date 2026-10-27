@@ -9,9 +9,9 @@ stable release.
 ## Shared fixes
 
 All patches that modify Twitch include the shared settings integration. It provides
-Patch settings, notification registration, theme synchronization and DJ playback
-settings. These fixes have no separate selection or toggle. APK inspection remains
-read-only.
+Patch settings, notification registration, theme synchronization, and DJ audio and
+background playback. These fixes have no separate selection or toggle. APK
+inspection remains read-only.
 
 Keep reduced-selection coverage alongside full patch builds. Check theme changes
 across Following, Live and Clips, and retain Twitch's player and rendition checks
@@ -48,7 +48,7 @@ after the development tests pass.
 records its identity and optionally decompiles or patches it. For example:
 
 ```powershell
-./scripts/evaluate-update.ps1 -InputApk '.local/inputs/twitch.apkm' -ExpectedVersion '31.7.0' -Decompile
+./scripts/evaluate-update.ps1 -InputApk '.local/inputs/twitch.apkm' -ExpectedVersion '31.8.0' -Decompile
 ```
 
 Review the candidate's hooks before updating `TwitchTarget.kt`. Evaluate native
@@ -56,7 +56,7 @@ and React Native playback, chat, settings and ad handling before declaring a
 version supported. Originals, signing keys and run artifacts stay under `.local/`.
 
 Use the APK's exact version name for prereleases and keep experimental targets
-marked as experimental. The current stable baseline is 31.7.0; 31.8.0_BETA is
+marked as experimental. The current stable baseline is 31.8.0; 31.9.0_BETA is
 being evaluated separately. The [screen inventory](SCREENS.md) lists the surfaces
 to include in regression checks.
 
