@@ -17,6 +17,10 @@ Keep reduced-selection coverage alongside full patch builds. Check theme changes
 across Following, Live and Clips, and retain Twitch's player and rendition checks
 when updating DJ controls.
 
+The patched app loads React Native code from its APK. Downloaded UI bundles can
+change Metro module identifiers and omit Hermes changes, so the shared integration
+pins the host's bundle source to the packaged asset.
+
 ## Verification
 
 Run from the repository root:

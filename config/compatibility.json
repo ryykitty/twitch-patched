@@ -109,22 +109,22 @@
         "originalHierarchyFindings": 118,
         "introducedHierarchyFindings": 0,
         "typeContracts": 89,
-        "deviceAcceptance": "Corrected DJ background veto and audio-rendition policy. Playback testing is reserved for the user."
+        "deviceAcceptance": "Previous candidate still failed DJ screen-off playback in user testing. Bundle-source correction is awaiting installation and user acceptance."
       },
       "evaluatedArtifact": {
         "date": "2026-10-27",
         "build": "Morphe Desktop",
-        "bundleSha256": "c6724de1181102ab4e3fe8afb1d031f061b7b4ee1edede984c980ee382d36b5c",
-        "apkSha256": "dca12c5b2cd1be79bfd2fc4c678b5243bf31883a5d66aa7ccdb9fbc3a156e5b1",
+        "bundleSha256": "bb99326cef13a332c37b337bc36c76f31cd36079d1619d49b58b7bc4b8571e09",
+        "apkSha256": "4faa0a72f0d1af8551efac041a8a6a97925551843ff8611a4b4a680019e3594e",
         "patchesApplied": 10,
-        "installedApkSha256": "48494a8f8364ce475c0567d4a0ba122061b1362bc5f36b11c176f68e252e9498",
-        "deviceInstall": "ADB update succeeded with the existing Manager signing key and app data. No post-install phone testing was performed."
+        "signedApkSha256": "4539ae25c359964a18e722ee5a376c2f52009e935a7a5e965c9851f5b9cc2ac1",
+        "deviceInstall": "Not installed. Signed with the existing Manager key; awaiting the user request for ADB installation."
       }
     }
   ],
   "regressionChecks": {
     "date": "2026-10-27",
-    "javaKotlinTests": 267,
+    "javaKotlinTests": 270,
     "javaScriptTests": 59,
     "standaloneVerifierTests": "passed",
     "sourceHygiene": "passed",
@@ -136,7 +136,8 @@
     "reducedSelection": "Show deleted messages alone passed full DEX rebuilding and SDK verification on 31.7.0; zero introduced findings.",
     "fullscreenRequests": "Android runtime probes passed 20 repeated modern and legacy host requests, live preference changes, restoration and keyboard preservation.",
     "channelActions": "Native metadata models preserve Follow and notification callbacks while filtering Subscribe and gifting. Native chat-overlay Subscribe uses the existing visibility policy.",
-    "backgroundPlayback": "Native lifecycle, React Native background veto and audio-rendition adapter tests pass. DJ veto preserves chat-only mode and the saved background preference. Previous device build failed screen-off playback; corrected device acceptance remains pending."
+    "backgroundPlayback": "Native lifecycle and React Native DJ policy tests pass. User reports screen-off playback still failing on the previous candidate. No device testing performed for the bundle-source correction.",
+    "reactNativeBundleSource": "Host bundle-source contract resolves uniquely on 31.7.0, 31.8.0 and 31.9.0_BETA. Packaged UI code is selected before host availability checks and loader creation; downloaded bundles cannot replace the patched code. Full DEX rebuilding and original-aware SDK verification passed on 31.9.0_BETA with zero new hierarchy findings. Device acceptance pending."
   },
   "knownLimitations": {
     "streamAds": "Extended preroll and midroll acceptance remains a normal-use check; unmatched-media coverage is under evaluation.",
@@ -154,7 +155,8 @@
       "DJ audio and background playback"
     ],
     "hypeTrains": "Native event-state and React Native selector tests passed. Live Hype Train transitions still require an event on an available channel.",
-    "emoteDrafts": "Input previews are confirmed in native chat. The user reports missing draft images in React Native Vertical View; chat rendering and autocomplete remain available."
+    "emoteDrafts": "Input previews are confirmed in native chat. The user reports missing draft images in React Native Vertical View; chat rendering and autocomplete remain available.",
+    "djBackgroundPlayback": "Screen-off playback on 31.9.0_BETA remains unconfirmed after repeated failed device candidates. The packaged-bundle correction requires user acceptance."
   },
   "externalStreamProxy": false,
   "emoteInputDevelopment": {

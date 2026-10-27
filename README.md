@@ -28,11 +28,13 @@ Patch settings include search, emote provider controls and UI customization. Gro
 
 Included automatically with any modifying patch:
 
-- **DJ playback:** Enables Audio Only and Play in Background for DJ streams, including screen-off playback when allowed by your background-playback setting.
+- **DJ playback:** Enables Audio Only and Play in Background controls for DJ streams.
 - **Light mode:** Fixes theme changes in the Live and Clips feeds, navigation and Patch settings.
 - **Push notifications:** Restores notification registration in the patched app.
 
 These shared fixes require no separate patch selection. DJ playback uses Twitch's existing player and available renditions.
+
+DJ screen-off playback on 31.9.0_BETA remains under investigation.
 
 All feature patches are selected and enabled by default. UI customization options are off by default. Inspection and playback diagnostics are optional. Previously saved settings are retained.
 
