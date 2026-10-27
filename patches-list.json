@@ -56,12 +56,13 @@
     },
     {
       "name": "BTTV, FFZ and 7TV emotes",
-      "description": "Adds global and channel emotes to live chat, replay chat and the emote picker, with animations and tap previews.",
+      "description": "Adds global and channel emotes to chat, autocomplete and the emote picker, with animations and input previews.",
       "default": true,
       "category": null,
       "dependencies": [
         "BytecodePatch",
         "ResourcePatch",
+        "BytecodePatch",
         "BytecodePatch",
         "BytecodePatch"
       ],

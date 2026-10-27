@@ -156,8 +156,8 @@
   ],
   "regressionChecks": {
     "date": "2026-10-27",
-    "javaKotlinTests": 260,
-    "javaScriptTests": 52,
+    "javaKotlinTests": 264,
+    "javaScriptTests": 56,
     "standaloneVerifierTests": "passed",
     "sourceHygiene": "passed",
     "androidApi": 33,
@@ -187,6 +187,21 @@
     "hypeTrains": "Native event-state and React Native selector tests passed. Live Hype Train transitions still require an event on an available channel."
   },
   "externalStreamProxy": false,
+  "emoteInputDevelopment": {
+    "date": "2026-10-27",
+    "versionName": "31.8.0_BETA",
+    "evaluatedBundleSha256": "13479063cd62d70e302e0ac93232803372466fb16816a842102aa725fbf56f85",
+    "installedApkSha256": "5110fc10f8c168dcef9d86a65070b6e1c1dd1cf4e776184f003c7a622c7f7bcd",
+    "runtimePayloadSha256": "4cbb9ba36771e2dedd5bb4fb8baf2b41855b9249dd6a3624439d8d6ab3b31f8a",
+    "fullDexRebuild": "passed",
+    "sdkPerDexAndApkChecks": "passed",
+    "introducedHierarchyFindings": 0,
+    "deviceInstall": "ADB update with the existing Manager signing key and app data.",
+    "deviceAcceptance": "User confirmed autocomplete and inline emotes working on mobile. Native suggestions were also inspected with images and names.",
+    "automatedSelection": "Instrumentation could inspect the native catalogue; its completion-selection action was inconclusive.",
+    "composerContracts": "Matched React Native composer and input contracts on 31.5.2, 31.6.0, 31.7.0 and 31.8.0_BETA.",
+    "remainingChecks": "Full APK checks for the updated legacy input binding on 31.5.2, 31.6.0 and 31.7.0."
+  },
   "androidManagerBuild": {
     "date": "2026-10-27",
     "versionName": "31.8.0_BETA",

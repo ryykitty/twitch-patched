@@ -38,5 +38,6 @@ internal val reactNativeEmotesPatch = resourcePatch {
                 .replace("__TWITCH_EMOTE_PREFETCH_MODULE__", prefetch.module.toString())
                 .replace("__TWITCH_CORE_IMAGE_MODULE__", coreImage.module.toString()))
         }
+        get(RN_ASSET).appendText("\n" + renderEmoteInput(bundle))
     }
 }

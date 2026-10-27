@@ -34,6 +34,8 @@ Stable baseline: Twitch 31.7.0, ARM64. Experimental target: 31.8.0_BETA. Names i
 | Live chat | Native list; V2 Classic Split; Vertical View overlay |
 | Replay chat | VOD replay, seek and message rebinding |
 | Chat composer | Native composer; `ChatComposerBar` |
+| Emote autocomplete | Native suggestion provider; `useChatComposer`, `createEmoteProvider`, `AutocompleteMatchList` |
+| Draft emotes | Native `ChatInput`; `NativeEmoteInput`, token image maps and caret reconciliation |
 | Emote picker | Twitch catalogues, history, BTTV, FFZ and 7TV provider tabs |
 | Emote preview | Native preview; V2 sheet |
 | Deleted messages | Native formatter and spans; React Native `ChatMessageRow`, retained deletion state and tap reveal |
