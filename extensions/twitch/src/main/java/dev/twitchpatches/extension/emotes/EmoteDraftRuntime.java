@@ -63,6 +63,7 @@ public final class EmoteDraftRuntime {
     }
 
     static void refresh(String image) {
+        if (!EmoteRuntime.foreground()) return;
         for (Draft draft : new ArrayList<>(inputs.values())) {
             if (image == null || draft.pending.contains(image)) draft.render();
             EditText view = draft.owner.get();
@@ -86,7 +87,7 @@ public final class EmoteDraftRuntime {
 
         void render() {
             EditText view = owner.get();
-            if (view == null || editing) return;
+            if (view == null || editing || !EmoteRuntime.foreground()) return;
             Editable text = view.getText();
             editing = true;
             try {

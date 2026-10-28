@@ -49,6 +49,7 @@ public final class EmoteRuntime implements Application.ActivityLifecycleCallback
 
     static EmoteCatalog catalog() { return instance == null ? null : instance.catalog; }
     static EmoteImages images() { return instance == null ? null : instance.images; }
+    static boolean foreground() { return instance != null && instance.resumed > 0; }
     static String currentChannel() { return instance == null ? null : instance.channel; }
     static String channelName(String id) { return instance != null && id != null && id.equals(instance.channel) ? instance.channelName : null; }
 
