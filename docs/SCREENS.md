@@ -25,7 +25,8 @@ Stable baseline: Twitch 31.8.0, ARM64. Experimental target: 31.9.0_BETA. Names i
 | Feed cards | `requestInFeedAd`, `useFeedAdCoordinator`, `FeedAdItem` |
 | Home headliner | `requestHeadlinerAd`, `useHeadlinerAd` |
 | Player display ads | `StreamDisplayAdSurface` |
-| Vertical banner, 31.8 | `useSkylineBannerSlot`, `SkylineBannerAd` |
+| Vertical banner | `useSkylineBannerSlot`, `SkylineBannerAd`, where present |
+| Creator sponsorships | Native Channel Skins banner and branded avatar; `useChannelSkinsRibbon`, `useChannelSkinCampaignActive` |
 
 ## Chat
 

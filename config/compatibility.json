@@ -42,14 +42,16 @@
         "originalHierarchyFindings": 118,
         "introducedHierarchyFindings": 0,
         "typeContracts": 89,
-        "deviceAcceptance": "Not installed. Stable build passed verification; normal-use acceptance remains pending."
+        "evidence": "Fresh SDK APK check passed; identical DEX reused original-aware per-DEX/hierarchy/type-contract evidence; device pending.",
+        "deviceAcceptance": "Current build is not installed. Previous device checks are historical evidence; normal-use acceptance remains pending."
       },
       "evaluatedArtifact": {
-        "date": "2026-10-27",
+        "date": "2026-10-29",
         "build": "Morphe Desktop",
-        "bundleSha256": "818e1fc6db472dd15a69888afc7fac237886e91739d2e490e99a6ae0c1b8e2df",
-        "apkSha256": "62f2ac94ccc7e562370e7379c95d480493ee834eeb2c2f7637f9aa3b48aeaf84",
-        "patchesApplied": 10
+        "bundleSha256": "705ee82f9af56085a1c7820d888c37bfd33145aa1dec74fb11eddc87aff14305",
+        "apkSha256": "06c5bf05b6d138b204656de2c868bef7a85dffb1f3d0865758a37bff61c0f7a9",
+        "patchesApplied": 10,
+        "deviceInstall": "Not installed. This audit used offline APK rebuilding and SDK verification."
       }
     },
     {
@@ -75,15 +77,16 @@
         "originalHierarchyFindings": 118,
         "introducedHierarchyFindings": 0,
         "typeContracts": 89,
-        "deviceArtVerification": "Previous build evidence. The new background-playback and UI contracts resolve on this original; a full rebuild of this development revision is pending."
+        "evidence": "Fresh SDK APK check passed; identical DEX reused original-aware per-DEX/hierarchy/type-contract evidence; device pending.",
+        "deviceAcceptance": "Current build is not installed. Previous device checks are historical evidence; normal-use acceptance remains pending."
       },
       "evaluatedArtifact": {
-        "date": "2026-10-27",
+        "date": "2026-10-29",
         "build": "Morphe Desktop",
-        "bundleSha256": "ba4b6ac6d614ee6afc11f3990ec768d238743e99fb2962db4e5daf1a981885e6",
-        "apkSha256": "704f442269087507790042b79d00030bbc77b846be05fed4e2c8d21096578a2d",
+        "bundleSha256": "705ee82f9af56085a1c7820d888c37bfd33145aa1dec74fb11eddc87aff14305",
+        "apkSha256": "383d57855059b45692a577820e97f215a0c06083dfa2f8433aa336d30cee7240",
         "patchesApplied": 10,
-        "deviceInstall": "This Desktop artifact was not installed. Android Manager acceptance is recorded separately."
+        "deviceInstall": "Not installed. This audit used offline APK rebuilding and SDK verification."
       }
     },
     {
@@ -109,23 +112,23 @@
         "originalHierarchyFindings": 118,
         "introducedHierarchyFindings": 0,
         "typeContracts": 89,
-        "deviceAcceptance": "Previous candidate still failed DJ screen-off playback in user testing. Bundle-source correction is awaiting installation and user acceptance."
+        "evidence": "Fresh SDK APK check passed; identical DEX reused original-aware per-DEX/hierarchy/type-contract evidence; device pending.",
+        "deviceAcceptance": "Previous candidate failed DJ screen-off playback. Current build is not installed; device acceptance is pending."
       },
       "evaluatedArtifact": {
-        "date": "2026-10-27",
+        "date": "2026-10-29",
         "build": "Morphe Desktop",
-        "bundleSha256": "bb99326cef13a332c37b337bc36c76f31cd36079d1619d49b58b7bc4b8571e09",
-        "apkSha256": "4faa0a72f0d1af8551efac041a8a6a97925551843ff8611a4b4a680019e3594e",
+        "bundleSha256": "705ee82f9af56085a1c7820d888c37bfd33145aa1dec74fb11eddc87aff14305",
+        "apkSha256": "d224889e95ff81b9b0975a9fccf50bc8ee2ba97f05713005423dc021d3e6d5c6",
         "patchesApplied": 10,
-        "signedApkSha256": "4539ae25c359964a18e722ee5a376c2f52009e935a7a5e965c9851f5b9cc2ac1",
-        "deviceInstall": "Not installed. Signed with the existing Manager key; awaiting the user request for ADB installation."
+        "deviceInstall": "Not installed. This audit used offline APK rebuilding and SDK verification."
       }
     }
   ],
   "regressionChecks": {
-    "date": "2026-10-27",
-    "javaKotlinTests": 270,
-    "javaScriptTests": 59,
+    "date": "2026-10-29",
+    "javaKotlinTests": 279,
+    "javaScriptTests": 62,
     "standaloneVerifierTests": "passed",
     "sourceHygiene": "passed",
     "androidApi": 33,
@@ -136,12 +139,16 @@
     "reducedSelection": "Show deleted messages alone passed full DEX rebuilding and SDK verification on 31.7.0; zero introduced findings.",
     "fullscreenRequests": "Android runtime probes passed 20 repeated modern and legacy host requests, live preference changes, restoration and keyboard preservation.",
     "channelActions": "Native metadata models preserve Follow and notification callbacks while filtering Subscribe and gifting. Native chat-overlay Subscribe uses the existing visibility policy.",
-    "backgroundPlayback": "Native lifecycle and React Native DJ policy tests pass. User reports screen-off playback still failing on the previous candidate. No device testing performed for the bundle-source correction.",
-    "reactNativeBundleSource": "Host bundle-source contract resolves uniquely on 31.7.0, 31.8.0 and 31.9.0_BETA. Packaged UI code is selected before host availability checks and loader creation; downloaded bundles cannot replace the patched code. Full DEX rebuilding and original-aware SDK verification passed on 31.9.0_BETA with zero new hierarchy findings. Device acceptance pending."
+    "backgroundPlayback": "Native lifecycle and React Native policy tests pass. DJ screen-off playback failed on the previous candidate; the bundle-source correction awaits device acceptance.",
+    "reactNativeBundleSource": "Host bundle-source contract resolves uniquely on all three declared targets. Full APK rebuilding and original-aware SDK checks pass; no new hierarchy findings. Device acceptance pending.",
+    "streamAdWarmup": "Four tests pass for immediate startup, late clean results, rendition isolation and cancellation. The existing 2.2-second foreground budget is unchanged.",
+    "creatorSponsorships": "Native banner/header contracts and React Native query/placement contracts resolve on all three declared targets. Generated capture instructions and inherited Android method references are tested; three adapter tests cover live toggles and cached creatives. Device acceptance pending.",
+    "releaseAuditDeviceTesting": "No phone interaction or installation during this audit.",
+    "historicalDeviceEvidenceDate": "2026-10-27"
   },
   "knownLimitations": {
-    "streamAds": "Extended preroll and midroll acceptance remains a normal-use check; unmatched-media coverage is under evaluation.",
-    "storyAds": "Not covered.",
+    "streamAds": "If no clean compatible alternative is available within the bounded search, original media is retained and an ad can appear. Live preroll/midroll acceptance remains pending for this build.",
+    "storyAds": "No verified ad-specific request or presentation contract. Stories ad coverage is not claimed.",
     "clientAdRequests": "Native request suppression; changing this setting requires a restart.",
     "deletedMessages": "Native and React Native chat are covered. Text must remain in the received message; earlier deleted history cannot be recovered. A live React Native moderation event remains an acceptance check.",
     "googlePlayBilling": "Unavailable in the evaluated re-signed app.",
@@ -156,7 +163,8 @@
     ],
     "hypeTrains": "Native event-state and React Native selector tests passed. Live Hype Train transitions still require an event on an available channel.",
     "emoteDrafts": "Input previews are confirmed in native chat. The user reports missing draft images in React Native Vertical View; chat rendering and autocomplete remain available.",
-    "djBackgroundPlayback": "Screen-off playback on 31.9.0_BETA remains unconfirmed after repeated failed device candidates. The packaged-bundle correction requires user acceptance."
+    "djBackgroundPlayback": "Screen-off playback on 31.9.0_BETA remains unconfirmed after repeated failed device candidates. The packaged-bundle correction requires user acceptance.",
+    "creatorSponsorships": "Native and React Native suppression is covered by hook and adapter checks. Live sponsorship transitions still require device acceptance."
   },
   "externalStreamProxy": false,
   "emoteInputDevelopment": {

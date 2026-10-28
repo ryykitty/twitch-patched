@@ -9,8 +9,8 @@ stable release.
 ## Shared fixes
 
 All patches that modify Twitch include the shared settings integration. It provides
-Patch settings, notification registration, theme synchronization, and DJ audio and
-background playback. These fixes have no separate selection or toggle. APK
+Patch settings, notification registration, theme synchronization and DJ playback
+controls. These fixes have no separate selection or toggle. APK
 inspection remains read-only.
 
 Keep reduced-selection coverage alongside full patch builds. Check theme changes

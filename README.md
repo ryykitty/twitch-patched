@@ -47,11 +47,11 @@ Supported Twitch versions:
 | 31.8.0 | 3108006 |
 | 31.7.0 | 3107006 |
 
-Twitch 31.8.0 is the primary stable target. Twitch 31.9.0_BETA (13109000) is experimental. Verification uses ARM64 on Android 13. See [compatibility data](config/compatibility.json) for build results, device checks and remaining validation.
+Twitch 31.8.0 is the primary stable target. Twitch 31.9.0_BETA (13109000) is experimental. Builds are verified against ARM64 originals. See [compatibility data](config/compatibility.json) for Android 13 device checks and remaining validation.
 
 These patches require Morphe Patcher 2.0.1, available in Morphe Manager 2.2.0 and Morphe Desktop 1.19.1.
 
-Ad blocking is under evaluation. Google Play billing is unavailable in the re-signed app.
+Live ad replacement depends on finding a clean, compatible Twitch stream. Ads can still appear when no alternative is available. See [ad-blocking coverage](docs/AD_BLOCKING.md) for supported surfaces and limitations. Google Play billing is unavailable in the re-signed app.
 
 Other versions and ABIs require their own hook and device verification.
 
