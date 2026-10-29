@@ -1,5 +1,11 @@
 ## [1.4.0-dev.1](https://github.com/ryykitty/twitch-patched/compare/v1.3.0...v1.4.0-dev.1) (2026-10-29)
 
+Twitch 31.8.0 is the primary target; 31.9.0_BETA is experimental. 31.7.0 remains supported.
+
+All ten feature patches passed full APK rebuilding and original-aware SDK checks on each target. 279 Java/Kotlin tests and 62 JavaScript tests passed. This build has not been installed or tested on a phone.
+
+DJ screen-off playback remains unconfirmed. Stream ads can still appear when no clean alternative is available; Stories ad coverage is not verified. See [ad-blocking coverage and research](https://github.com/ryykitty/twitch-patched/blob/v1.4.0-dev.1/docs/AD_BLOCKING.md).
+
 ### Bug Fixes
 
 * hide creator sponsorships in native and React Native players ([e14935a](https://github.com/ryykitty/twitch-patched/commit/e14935ac02abe76262e1f62a2e59744a0b6b65ca))

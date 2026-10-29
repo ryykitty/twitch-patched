@@ -92,6 +92,12 @@ The automatic run starts after a push or merge. Use **Run workflow** to retry a
 failed run or release changes already on the branch. A second run checks for
 unreleased commits before publishing.
 
+If a dev release stops after creating its tag, preserve the tag and release commit.
+Restore its `refs/notes/semantic-release-<tag>` channel metadata if the push failed.
+Run **Release** on `dev` with **recover_tag** set to the existing tag. Recovery builds
+that exact commit, checks the version and channel, and publishes a draft after
+attestation. It rejects published releases and mismatched existing assets.
+
 The patch-bundle version is independent of the supported Twitch app versions.
 A Twitch update uses `bump:`; a new feature uses `feat:`. Release notes group these
 under App Support and Features, with fixes under Bug Fixes. Commit completed
