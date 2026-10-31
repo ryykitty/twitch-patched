@@ -7,6 +7,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: build
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
     groups:
       release-tooling:
         patterns: ['*']
@@ -17,6 +20,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: ci
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
     groups:
       actions:
         patterns: ['*']
