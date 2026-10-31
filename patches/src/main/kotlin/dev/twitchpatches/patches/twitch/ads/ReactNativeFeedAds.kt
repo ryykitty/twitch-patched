@@ -32,8 +32,11 @@ internal val reactNativeFeedAdsPatch = resourcePatch {
             setOf("enabled", "sdaState", "pushdownSlotAvailable", "leftStripAvailable", "StreamDisplayAdCreative"))
         val item = exports.resolveMemo("FeedAdItem", "FeedAdItemComponent",
             setOf("node", "active", "DisplayAdRenderer", "VideoAdRenderer", "freeScroll"))
+        val coordinator = exports.resolve("useFeedAdCoordinator", setOf("edges", "feedSessionID", "requestAd", "onAdRemoved", "interactive"))
+        exports.requireFunctionContract("extractAdSlots", 2, setOf("node", "__typename", "FeedAd", "id", "adSessionID"))
         get(RN_ASSET).appendText("\n" + assetSource("display-ad-surfaces.js")
             .replace("__TWITCH_STREAM_DISPLAY_MODULE__", stream.module.toString())
+            .replace("__TWITCH_FEED_COORDINATOR_MODULE__", coordinator.module.toString())
             .replace("__TWITCH_FEED_AD_ITEM_MODULE__", item.module.toString()))
         appendChannelSkins(exports)
         val slot = exports.resolve("useSkylineBannerSlot",
