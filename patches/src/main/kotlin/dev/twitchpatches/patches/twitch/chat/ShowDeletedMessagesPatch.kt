@@ -1,15 +1,33 @@
 package dev.twitchpatches.patches.twitch.chat
 
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.bytecodePatch
-import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.iface.Method
 import dev.twitchpatches.patches.twitch.settings.settingsPatch
 import dev.twitchpatches.patches.twitch.shared.*
 
 // Adapted from arandomhooman/hoomans-morphe-patches (GPL-3.0), Show deleted messages.
 internal const val DELETED_POLICY = "Ldev/twitchpatches/extension/chat/DeletedMessageSettings;"
 internal const val CHAT_DISPATCHER = "Ltv/twitch/android/core/mvp/viewdelegate/EventDispatcher;"
+
+private object DeletedMessageSpanConstructorFingerprint : Fingerprint(
+    superclass = "Landroid/text/style/ClickableSpan;",
+    name = "<init>",
+    isStatic = false,
+    parameters = listOf("Ljava/lang/String;", "Landroid/text/SpannedString;", "Z", CHAT_DISPATCHER),
+)
+
+private object DeletedMessageFormatterFingerprint : Fingerprint(
+    isStatic = true,
+    returnType = "Landroid/text/Spanned;",
+    parameters = listOf(
+        "Ljava/lang/String;",
+        "Landroid/text/SpannedString;",
+        "Landroid/content/Context;",
+        CHAT_DISPATCHER,
+        "Z"
+    ),
+)
 
 @Suppress("unused")
 val showDeletedMessagesPatch = bytecodePatch(
@@ -20,26 +38,12 @@ val showDeletedMessagesPatch = bytecodePatch(
     compatibleWith(TwitchTarget.compatibility)
     dependsOn(settingsPatch, reactNativeDeletedMessagesPatch)
     execute {
-        val spans = mutableListOf<Method>()
-        classDefForEach { type ->
-            if (type.superclass == "Landroid/text/style/ClickableSpan;") spans.addAll(type.methods.filter {
-                it.name == "<init>" && it.parameterTypes.map { p -> p.toString() } ==
-                    listOf("Ljava/lang/String;", "Landroid/text/SpannedString;", "Z", CHAT_DISPATCHER)
-            })
-        }
-        val constructor = spans.uniqueHook("deleted message span constructor")
+        val constructor = DeletedMessageSpanConstructorFingerprint.originalMethod
         val span = mutableClassDefBy(constructor.definingClass)
         val access = span.fields.filter { it.type == "Z" }.uniqueHook("deleted message access flag")
         val original = span.fields.filter { it.type == "Landroid/text/SpannedString;" }.uniqueHook("deleted message text")
 
-        val formatters = mutableListOf<Method>()
-        classDefForEach { type -> formatters.addAll(type.methods.filter {
-            AccessFlags.STATIC.isSet(it.accessFlags) && it.returnType == "Landroid/text/Spanned;" &&
-                it.parameterTypes.map { p -> p.toString() } == listOf("Ljava/lang/String;",
-                    "Landroid/text/SpannedString;", "Landroid/content/Context;", CHAT_DISPATCHER, "Z")
-        }) }
-        val formatterHook = formatters.uniqueHook("deleted message formatter")
-        val formatter = mutableClassDefBy(formatterHook.definingClass).methods.single { it.reference == formatterHook.reference }
+        val formatter = DeletedMessageFormatterFingerprint.method
         restoreDeletedMessageFormatter(formatter, original)
         enableDeletedMessageAccess(formatter, access, 1)
         val readers = span.methods.filter { method -> method.code().any { it.opcode == Opcode.IGET_BOOLEAN } }

@@ -1,18 +1,20 @@
 package dev.twitchpatches.patches.twitch.ui
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.patch.BytecodePatchContext
-import app.morphe.patcher.util.smali.ExternalLabel
+import app.morphe.patcher.string
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
+import app.morphe.patcher.util.smali.ExternalLabel
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction11n
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.reference.FieldReference
-import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import dev.twitchpatches.patches.twitch.shared.*
@@ -23,6 +25,15 @@ private const val INTENT = "Lcom/facebook/react/modules/intent/IntentModule;"
 private const val RN = "Lcom/facebook/react/runtime/ReactInstance;"
 private const val ARRAY = "Lcom/facebook/react/bridge/WritableNativeArray;"
 private const val RUNTIME = "Ldev/twitchpatches/extension/shared/ReactNativeRuntime;"
+
+private object UiStreamSettingsModelFingerprint : Fingerprint(
+    strings = listOf(string("StreamSettingsModel(configurablePlayer=", StringComparisonType.STARTS_WITH)),
+)
+
+private class UiPlayerSettingsDelegateFingerprint(model: String) : Fingerprint(
+    superclass = "Ltv/twitch/android/core/mvp/viewdelegate/RxViewDelegate;",
+    filters = listOf(fieldAccess(definingClass = model)),
+)
 
 internal fun injectUiHeaderCapability(method: MutableMethod, available: Boolean) {
     val code = method.code()
@@ -35,20 +46,8 @@ internal fun injectUiHeaderCapability(method: MutableMethod, available: Boolean)
 }
 
 internal fun BytecodePatchContext.injectUiPlayerEntry() {
-    val models = mutableListOf<String>()
-    classDefForEach { type ->
-        if (type.methods.any { method -> method.references().filterIsInstance<StringReference>()
-            .any { it.string.startsWith("StreamSettingsModel(configurablePlayer=") } }) models.add(type.type)
-    }
-    val model = models.uniqueHook("UI player settings model")
-    val delegates = mutableListOf<String>()
-    classDefForEach { type ->
-        if (type.superclass == "Ltv/twitch/android/core/mvp/viewdelegate/RxViewDelegate;" &&
-            type.methods.any { method -> method.references().filterIsInstance<FieldReference>().any {
-                it.definingClass == model
-            } }) delegates.add(type.type)
-    }
-    val owner = mutableClassDefBy(delegates.uniqueHook("UI player settings delegate"))
+    val model = UiStreamSettingsModelFingerprint.originalClassDef.type
+    val owner = UiPlayerSettingsDelegateFingerprint(model).classDef
     val constructor = owner.methods.filter { it.name == "<init>" && it.returnType == "V" &&
         it.parameterTypes.size == 2 && it.parameterTypes[1] == "Landroid/view/View;" }
         .uniqueHook("UI player settings root constructor")

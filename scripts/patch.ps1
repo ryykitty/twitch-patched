@@ -11,6 +11,13 @@ param(
 )
 . "$PSScriptRoot/common.ps1"
 
+$Patch = @($Patch | ForEach-Object {
+    $str = $_.Replace('BTTV, FFZ and 7TV emotes', '__BTTV_EMOTES__')
+    $str -split ',' | ForEach-Object {
+        $_.Trim().Replace('__BTTV_EMOTES__', 'BTTV, FFZ and 7TV emotes')
+    }
+} | Where-Object { $_ })
+
 $inputPath = (Resolve-Path -LiteralPath $InputApk).Path
 if ([IO.Path]::GetExtension($inputPath) -notin @('.apk', '.apkm', '.apks', '.xapk')) {
     throw 'Input must be an original APK or a complete split bundle.'
@@ -80,7 +87,13 @@ $arguments += @('--keystore', $keystore,
     createdUtc = [DateTime]::UtcNow.ToString('o')
 } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $run 'run.json') -Encoding utf8
 
-& java @arguments 2>&1 | Tee-Object -FilePath (Join-Path $run 'patch.log')
+$previousPreference = $ErrorActionPreference
+try {
+    $ErrorActionPreference = 'Continue'
+    & java @arguments 2>&1 | Tee-Object -FilePath (Join-Path $run 'patch.log')
+} finally {
+    $ErrorActionPreference = $previousPreference
+}
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $output)) {
     throw "Patching failed. Inspect $run. No installation attempted."
 }
