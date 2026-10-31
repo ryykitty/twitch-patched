@@ -15,9 +15,8 @@ internal val reactNativeDeletedMessagesPatch = resourcePatch {
 internal fun renderDeletedMessages(bundle: HermesBundle): String {
     val exports = MetroExports(bundle)
     val row = exports.resolveMemo("ChatMessageRow", "ChatMessageRowComponent",
-        setOf("message", "channelID", "deleted", "modActionType", "modLogin", "MessageBody", "Pressable"))
-    exports.requireNestedContract("ChatMessageRowComponent",
-        setOf("chat-message-row", "message deleted by a moderator.", "strikethrough", "onPress", "accessibilityLabel"))
+        setOf("message", "channelID", "deleted", "modActionType", "modLogin", "MessageBody", "deletedAttribution"))
+    exports.requireNestedContract("ChatMessageRowComponent", setOf("(Deleted)", "message deleted by a moderator."))
     exports.requireFunctionContract("overlayDeleted", 3, setOf("type", "id", "deleted", "has"))
     exports.requireFunctionContract("markDeleted", 2, setOf("deletedIds", "Set", "add"))
     return assetSource("deleted-messages.js").replace("__TWITCH_DELETED_ROW_MODULE__", row.module.toString())

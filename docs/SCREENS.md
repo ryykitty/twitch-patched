@@ -39,7 +39,7 @@ Stable baseline: Twitch 31.8.0, ARM64. Experimental target: 31.9.0_BETA. Names i
 | Draft emotes | Native `ChatInput`; `NativeEmoteInput`, token image maps and caret reconciliation |
 | Emote picker | Twitch catalogues, history, BTTV, FFZ and 7TV provider tabs |
 | Emote preview | Native preview; V2 sheet |
-| Deleted messages | Native formatter and spans; React Native `ChatMessageRow`, retained deletion state and tap reveal |
+| Deleted messages | Native formatter; React Native `ChatMessageRow` |
 | Hype Trains | Native highlight events and expanded banner; vertical Compose host; React Native highlight selectors and Skyline hosts |
 | Leaderboards | Native chat header and ranking container; `ChannelLeaderboardStripHost`; Skyline trophy |
 | Channel actions | Classic Split action row and metadata container; vertical support row; gift and leaderboard controls |
