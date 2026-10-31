@@ -1,3 +1,28 @@
+## [1.4.0-dev.1](https://github.com/ryykitty/twitch-patched/compare/v1.3.0...v1.4.0-dev.1) (2026-10-29)
+
+Twitch 31.8.0 is the primary target; 31.9.0_BETA is experimental. 31.7.0 remains supported.
+
+All ten feature patches passed full APK rebuilding and original-aware SDK checks on each target. 279 Java/Kotlin tests and 62 JavaScript tests passed. This build has not been installed or tested on a phone.
+
+DJ screen-off playback remains unconfirmed. Stream ads can still appear when no clean alternative is available; Stories ad coverage is not verified. See [ad-blocking coverage and research](https://github.com/ryykitty/twitch-patched/blob/v1.4.0-dev.1/docs/AD_BLOCKING.md).
+
+### Bug Fixes
+
+* hide creator sponsorships in native and React Native players ([e14935a](https://github.com/ryykitty/twitch-patched/commit/e14935ac02abe76262e1f62a2e59744a0b6b65ca))
+* keep React Native hooks on the packaged bundle ([9f4857c](https://github.com/ryykitty/twitch-patched/commit/9f4857c49d7e168b4430a954e5d00c9b6b0f43d4))
+* preserve background playback preferences on DJ streams ([b63f31d](https://github.com/ryykitty/twitch-patched/commit/b63f31d6326593036d73963a45c5af01a1a997ca))
+* restore DJ background playback and update Twitch targets ([7d4bed3](https://github.com/ryykitty/twitch-patched/commit/7d4bed3e89217a5c3f3f77e797a446d0782de078))
+* start preroll backup preparation without delay ([2819663](https://github.com/ryykitty/twitch-patched/commit/281966306bcbb7ed8e17aa404b0ac829c2209d86))
+* suspend emote draft rendering while Twitch is paused ([ef0128b](https://github.com/ryykitty/twitch-patched/commit/ef0128b314d5c736bc49e24f028bc375e661f550))
+
+### Features
+
+* add external emote autocomplete and draft previews ([4ce1fc7](https://github.com/ryykitty/twitch-patched/commit/4ce1fc74d4ff3ba50171fb00b48cf6f419af19ed))
+
+### App Support
+
+* verify Twitch 31.8.0 and 31.9.0 beta compatibility ([752b79e](https://github.com/ryykitty/twitch-patched/commit/752b79e8ba4e53e512d250b9d3de31aca8a4a162))
+
 ## [1.3.0](https://github.com/ryykitty/twitch-patched/compare/v1.2.0...v1.3.0) (2026-10-26)
 
 ### Bug Fixes
