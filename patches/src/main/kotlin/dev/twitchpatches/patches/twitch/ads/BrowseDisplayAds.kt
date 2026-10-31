@@ -1,14 +1,18 @@
 package dev.twitchpatches.patches.twitch.ads
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.InstructionLocation.MatchAfterImmediately
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
+import app.morphe.patcher.methodCall
+import app.morphe.patcher.opcode
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.smali.ExternalLabel
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import dev.twitchpatches.patches.twitch.shared.*
 
@@ -19,7 +23,7 @@ internal fun browseNoFill(method: Method): BrowseNoFill {
     return code.indices.mapNotNull { index ->
         val empty = (code[index] as? ReferenceInstruction)?.reference as? MethodReference ?: return@mapNotNull null
         if (code[index].opcode != Opcode.INVOKE_STATIC ||
-            empty.definingClass != "Ltv/twitch/android/util/Optional\$Companion;" ||
+            empty.definingClass != $$"Ltv/twitch/android/util/Optional$Companion;" ||
             empty.parameterTypes.isNotEmpty() || empty.returnType != "Ltv/twitch/android/util/Optional;")
             return@mapNotNull null
         val move = code.getOrNull(index + 1) as? OneRegisterInstruction ?: return@mapNotNull null
@@ -37,23 +41,44 @@ internal fun browseNoFill(method: Method): BrowseNoFill {
     }.uniqueHook("browse display-ad no-fill completion")
 }
 
-internal fun BytecodePatchContext.blockBrowseDisplayAds(methods: List<Method>) {
-    val request = methods.filter { it.parameterTypes == listOf("Ljava/lang/Object;") &&
-        it.returnType == "Ljava/lang/Object;" && it.hasStrings("show_headliner_ad", "ad_request_format_declined") &&
-        it.references().any { ref -> ref.toString() == "Ltv/twitch/android/shared/ads/models/edge/api/BrowseDisplayAdResponse;" }
-    }.uniqueHook("Following headliner request")
-    val noFill = browseNoFill(request)
-    val method = mutable(request)
-    if ((method.implementation?.registerCount ?: 0) <= 2)
+private object FollowingHeadlinerRequestFingerprint : Fingerprint(
+    isStatic = false,
+    parameters = listOf("Ljava/lang/Object;"),
+    returnType = "Ljava/lang/Object;",
+    strings = listOf("show_headliner_ad", "ad_request_format_declined"),
+    filters = listOf(
+        methodCall(
+            definingClass = $$"Ltv/twitch/android/util/Optional$Companion;",
+            returnType = "Ltv/twitch/android/util/Optional;",
+            opcode = Opcode.INVOKE_STATIC,
+        ),
+        opcode(Opcode.MOVE_RESULT_OBJECT, location = MatchAfterImmediately()),
+        methodCall(
+            definingClass = "Lio/reactivex/u;",
+            parameters = listOf("Ljava/lang/Object;"),
+            opcode = Opcode.INVOKE_STATIC,
+            location = MatchAfterImmediately(),
+        ),
+        opcode(Opcode.MOVE_RESULT_OBJECT, location = MatchAfterImmediately()),
+        opcode(Opcode.RETURN_OBJECT, location = MatchAfterImmediately()),
+    ),
+)
+
+internal fun BytecodePatchContext.blockBrowseDisplayAds() {
+    val request = FollowingHeadlinerRequestFingerprint.method
+    val matches = FollowingHeadlinerRequestFingerprint.instructionMatches
+    val empty = (matches[0].instruction as ReferenceInstruction).reference as MethodReference
+    val single = (matches[2].instruction as ReferenceInstruction).reference as MethodReference
+    if ((request.implementation?.registerCount ?: 0) <= 2)
         throw PatchException("Browse display ads: no local register at request entry.")
-    method.addInstructionsWithLabels(0, """
+    request.addInstructionsWithLabels(0, """
         invoke-static {}, $AD_SETTINGS->displayAdsBlocked()Z
         move-result v0
         if-eqz v0, :original
-        invoke-static {}, ${noFill.empty}
+        invoke-static {}, $empty
         move-result-object v0
-        invoke-static {v0}, ${noFill.single}
+        invoke-static {v0}, $single
         move-result-object v0
         return-object v0
-    """, ExternalLabel("original", method.code().first()))
+    """, ExternalLabel("original", request.code().first()))
 }

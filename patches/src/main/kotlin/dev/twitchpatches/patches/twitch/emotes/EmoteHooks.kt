@@ -1,7 +1,11 @@
 package dev.twitchpatches.patches.twitch.emotes
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.StringComparisonType
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.string
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -15,27 +19,35 @@ import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import dev.twitchpatches.patches.twitch.shared.*
 
 internal const val EMOTES = "Ldev/twitchpatches/extension/emotes/EmoteRuntime;"
-internal const val TEXT_SETTER = "Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;Landroid/widget/TextView\$BufferType;)V"
+internal const val TEXT_SETTER = $$"Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;Landroid/widget/TextView$BufferType;)V"
 private const val CONNECTION = "Ltv/twitch/android/shared/chat/pub/messages/data/ChannelChatConnectionKey;"
 internal const val CHANNEL_ID = "Ltv/twitch/android/models/Tuid;"
 
 internal data class EmoteHooks(val connection: Method, val binder: Method, val setterIndex: Int,
     val source: FieldReference, val textView: FieldReference)
 
+private object MessageRecyclerItemModelFingerprint : Fingerprint(
+    name = "toString",
+    strings = listOf(
+        string("MessageRecyclerItem(messageId=", StringComparisonType.CONTAINS),
+        string(", sourceChannelId=", StringComparisonType.CONTAINS),
+    ),
+)
+
+private class FormattedChatTextBinderFingerprint(modelType: String) : Fingerprint(
+    parameters = listOf(modelType, "Z"),
+    returnType = "V",
+    filters = listOf(methodCall(TEXT_SETTER)),
+)
+
 internal fun BytecodePatchContext.resolveEmoteHooks(): EmoteHooks {
-    val classes = mutableListOf<ClassDef>().apply { classDefForEach { add(it) } }
-    val model = classes.filter { type -> type.methods.any { it.name == "toString" &&
-            it.hasStrings("MessageRecyclerItem(messageId=", ", sourceChannelId=") } }.uniqueHook("chat message row model")
+    val model = MessageRecyclerItemModelFingerprint.originalClassDef
     val source = sourceChannelField(model.methods.filter { it.name == "toString" }.uniqueHook("chat model description"))
-    val binders = classes.flatMap { it.methods }.filter { method ->
-        method.isInstance(listOf(model.type, "Z"), "V") &&
-            method.references().count { it.toString() == TEXT_SETTER } == 1
-    }
-    val binder = binders.uniqueHook("formatted chat text binder")
+    val binder = FormattedChatTextBinderFingerprint(model.type).originalMethod
     val setterIndex = binder.code().indexOfFirst { (it as? ReferenceInstruction)?.reference?.toString() == TEXT_SETTER }
     val field = textViewField(binder, setterIndex)
     var owner: ClassDef? = classDefBy(binder.definingClass)
-    while (owner != null && owner.type != field.definingClass) owner = owner.superclass?.let { parent -> classes.singleOrNull { it.type == parent } }
+    while (owner != null && owner.type != field.definingClass) owner = owner.superclass?.let { parent -> classDefByOrNull(parent) }
     if (owner == null) throw PatchException("Emotes: text field is outside the chat row hierarchy.")
     val declaration = owner.fields.filter { it.name == field.name && it.type == field.type }.uniqueHook("chat text field declaration")
     if (AccessFlags.STATIC.isSet(declaration.accessFlags) || AccessFlags.PRIVATE.isSet(declaration.accessFlags))
@@ -111,6 +123,5 @@ private fun isHolderAlias(method: Method, before: Int, register: Int, holderPara
     if (writes.size != 1) return false
     val assignment = writes.single()
     val move = assignment.value as? TwoRegisterInstruction ?: return false
-    if (move.opcode !in setOf(Opcode.MOVE_OBJECT, Opcode.MOVE_OBJECT_FROM16, Opcode.MOVE_OBJECT_16) || move.registerB != holderParameter) return false
-    return code.take(assignment.index).none { !it.opcode.canContinue() || it.opcode.name.startsWith("if-") || it.opcode.name.endsWith("-switch") }
+    return !(move.opcode !in setOf(Opcode.MOVE_OBJECT, Opcode.MOVE_OBJECT_FROM16, Opcode.MOVE_OBJECT_16) || move.registerB != holderParameter) && code.take(assignment.index).none { !it.opcode.canContinue() || it.opcode.name.startsWith("if-") || it.opcode.name.endsWith("-switch") }
 }

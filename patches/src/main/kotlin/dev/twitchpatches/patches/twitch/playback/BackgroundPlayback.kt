@@ -1,5 +1,6 @@
 package dev.twitchpatches.patches.twitch.playback
 
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -24,10 +25,23 @@ internal fun nativeBackgroundEligibility(all: List<Method>): Method {
     }.uniqueHook("vertical background playback eligibility")
 }
 
+private object VerticalBackgroundEligibilityFingerprint : Fingerprint(
+    isStatic = true,
+    returnType = "Z",
+    parameters = listOf(VERTICAL),
+    strings = listOf("audioDeviceManager"),
+)
+
 internal fun BytecodePatchContext.restoreNativeBackgroundPlayback() {
-    val all = mutableListOf<Method>()
-    classDefForEach { all.addAll(it.methods) }
-    val eligibility = nativeBackgroundEligibility(all)
+    val lifecycle = classDefBy(VERTICAL).methods.filter {
+        it.name == "onStop" && it.parameterTypes.isEmpty() && it.returnType == "V"
+    }.uniqueHook("vertical playback stop lifecycle")
+    val calls = lifecycle.references().filterIsInstance<MethodReference>().map { it.toString() }.toSet()
+
+    val eligibility = VerticalBackgroundEligibilityFingerprint.originalMethod
+    require(eligibility.reference in calls && eligibility.references().filterIsInstance<MethodReference>().count(::isDjStatus) == 1) {
+        "vertical background playback eligibility contract changed"
+    }
     val code = eligibility.code()
     val read = code.indexOfFirst { isDjStatus((it as? ReferenceInstruction)?.reference as? MethodReference) }
     val result = code[read + 1] as? OneRegisterInstruction
@@ -35,6 +49,5 @@ internal fun BytecodePatchContext.restoreNativeBackgroundPlayback() {
         "Background playback: DJ result contract changed."
     }
     // Keep Twitch's audio-device preference and foreground-service lifecycle intact.
-    mutableClassDefBy(eligibility.definingClass).methods.single { it.reference == eligibility.reference }
-        .replaceInstruction(read + 1, "const/16 v${result.registerA}, 0x0")
+    VerticalBackgroundEligibilityFingerprint.method.replaceInstruction(read + 1, "const/16 v${result.registerA}, 0x0")
 }
