@@ -36,14 +36,12 @@ internal val reactNativeFeedAdsPatch = resourcePatch {
             .replace("__TWITCH_STREAM_DISPLAY_MODULE__", stream.module.toString())
             .replace("__TWITCH_FEED_AD_ITEM_MODULE__", item.module.toString()))
         appendChannelSkins(exports)
-        if (bundle.functions.any { bundle.strings[it.name] == "useSkylineBannerSlot" }) {
-            val slot = exports.resolve("useSkylineBannerSlot",
-                setOf("sdaState", "skylineBannerSlotAvailable", "useControllerState", "skylineBannerSize"), params = 5)
-            exports.requireFunctionContract("skylineBannerSlotAvailable", 2,
-                setOf("enabled", "chromeActive", "splitLayout", "isTheatreDocked", "pipSettled", "adIsPlaying"))
-            get(RN_ASSET).appendText("\n" + assetSource("skyline-banner.js")
-                .replace("__TWITCH_SKYLINE_BANNER_SLOT_MODULE__", slot.module.toString()))
-        }
+        val slot = exports.resolve("useSkylineBannerSlot",
+            setOf("sdaState", "skylineBannerSlotAvailable", "useControllerState", "skylineBannerSize"), params = 5)
+        exports.requireFunctionContract("skylineBannerSlotAvailable", 2,
+            setOf("enabled", "chromeActive", "splitLayout", "isTheatreDocked", "pipSettled", "adIsPlaying"))
+        get(RN_ASSET).appendText("\n" + assetSource("skyline-banner.js")
+            .replace("__TWITCH_SKYLINE_BANNER_SLOT_MODULE__", slot.module.toString()))
     }
 }
 

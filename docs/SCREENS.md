@@ -25,7 +25,7 @@ Stable baseline: Twitch 31.8.0, ARM64. Experimental target: 31.9.0_BETA. Names i
 | Feed cards | `requestInFeedAd`, `useFeedAdCoordinator`, `FeedAdItem` |
 | Home headliner | `requestHeadlinerAd`, `useHeadlinerAd` |
 | Player display ads | `StreamDisplayAdSurface` |
-| Vertical banner | `useSkylineBannerSlot`, `SkylineBannerAd`, where present |
+| Vertical banner | `useSkylineBannerSlot`, `SkylineBannerAd` |
 | Creator sponsorships | Native Channel Skins banner and branded avatar; `useChannelSkinsRibbon`, `useChannelSkinCampaignActive` |
 
 ## Chat
@@ -43,7 +43,7 @@ Stable baseline: Twitch 31.8.0, ARM64. Experimental target: 31.9.0_BETA. Names i
 | Hype Trains | Native highlight events and expanded banner; vertical Compose host; React Native highlight selectors and Skyline hosts |
 | Leaderboards | Native chat header and ranking container; `ChannelLeaderboardStripHost`; Skyline trophy |
 | Channel actions | Classic Split action row and metadata container; vertical support row; gift and leaderboard controls |
-| Channel extensions | Native extension gallery and overflow; `ClassicExtensionsIcon`; `ExtensionsEntryButton` where present |
+| Channel extensions | Native extension gallery and overflow; `ClassicExtensionsIcon`; `ExtensionsEntryButton` |
 
 ## Settings and sheets
 

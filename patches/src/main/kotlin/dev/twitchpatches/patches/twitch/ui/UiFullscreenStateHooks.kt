@@ -33,11 +33,12 @@ internal fun BytecodePatchContext.injectUiFullscreenState() {
     for ((operation, hidden) in listOf("hide" to true, "show" to false)) {
         val method = controller.methods.filter { candidate -> controllerCalls.any { it.toString() == candidate.reference } &&
             candidate.references().filterIsInstance<MethodReference>().any { call ->
-                fun MethodReference.matches() = definingClass == "Landroid/view/WindowInsetsController;" &&
-                    name == operation && parameterTypes.map(CharSequence::toString) == listOf("I")
-                call.matches() || (call.parameterTypes.firstOrNull() == "Landroid/view/WindowInsetsController;" &&
+                call.parameterTypes.firstOrNull() == "Landroid/view/WindowInsetsController;" &&
                     classDefBy(call.definingClass).methods.single { it.reference == call.toString() }
-                        .references().filterIsInstance<MethodReference>().any { it.matches() })
+                        .references().filterIsInstance<MethodReference>().any {
+                            it.definingClass == "Landroid/view/WindowInsetsController;" &&
+                                it.name == operation && it.parameterTypes.map(CharSequence::toString) == listOf("I")
+                        }
             }
         }.uniqueHook("host system bar $operation")
         val owner = mutableClassDefBy(method.definingClass)
