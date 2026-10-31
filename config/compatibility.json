@@ -97,7 +97,7 @@
     "reducedSelection": "Show deleted messages alone passed full DEX rebuilding and the original-aware audit on 31.8.0; zero introduced findings.",
     "fullscreenRequests": "Android runtime probes passed 20 repeated modern and legacy host requests, live preference changes, restoration and keyboard preservation.",
     "channelActions": "Native metadata models preserve Follow and notification callbacks while filtering Subscribe and gifting. Native chat-overlay Subscribe uses the existing visibility policy.",
-    "backgroundPlayback": "Native lifecycle and React Native policy tests pass. DJ screen-off playback failed on the previous candidate; the bundle-source correction is pending device acceptance.",
+    "backgroundPlayback": "Native lifecycle and React Native policy tests pass. DJ screen-off playback works on a device.",
     "reactNativeBundleSource": "Host bundle-source contract resolves uniquely on both targets. Full APK rebuilding and original-aware SDK checks pass; no new hierarchy findings.",
     "streamAdWarmup": "Four tests pass for immediate startup, late clean results, rendition isolation and cancellation. The existing 2.2-second foreground budget is unchanged.",
     "creatorSponsorships": "Native banner/header contracts and React Native query/placement contracts resolve on both targets. Generated capture instructions and inherited Android method references are tested; three adapter tests cover live toggles and cached creatives. Device acceptance pending.",
@@ -107,7 +107,7 @@
     "streamAds": "If no clean compatible alternative is available within the bounded search, original media is retained and an ad can appear. Live preroll/midroll acceptance remains pending for this build.",
     "storyAds": "No verified ad-specific request or presentation contract. Stories ad coverage is not claimed.",
     "clientAdRequests": "Native request suppression; changing this setting requires a restart.",
-    "deletedMessages": "Native and React Native chat are covered. Text must remain in the received message; earlier deleted history cannot be recovered. A live React Native moderation event remains an acceptance check.",
+    "deletedMessages": "Rows with a forced deleted state were checked on native Classic Split, native Vertical View and React Native Classic. React Native Vertical renders the same row and could not be opened on the test account. Text must remain in the received message; earlier deleted history cannot be recovered. A live moderation event remains an acceptance check.",
     "googlePlayBilling": "Unavailable in the evaluated re-signed app.",
     "notifications": "Registration is included; actual delivery timing requires a live notification event.",
     "experimentalVersion": "31.9.0_BETA is experimental and requires normal-use acceptance.",
@@ -120,7 +120,6 @@
     ],
     "hypeTrains": "Native event-state and React Native selector tests passed. Live Hype Train transitions still require an event on an available channel.",
     "emoteDrafts": "Input previews are confirmed in native chat. Draft images are missing in React Native Vertical View; chat rendering and autocomplete remain available.",
-    "djBackgroundPlayback": "Screen-off playback on 31.9.0_BETA remains unconfirmed after repeated failed device candidates. The packaged-bundle correction requires device acceptance.",
     "creatorSponsorships": "Native and React Native suppression is covered by hook and adapter checks. Live sponsorship transitions still require device acceptance."
   },
   "externalStreamProxy": false

@@ -20,7 +20,7 @@ Patch settings include search, emote provider controls and UI customization. Gro
 | Auto-claim bonus channel points | Automatically claims bonus channel points while watching live streams. |
 | BTTV, FFZ and 7TV emotes | Adds global and channel emotes to live and replay chat, autocomplete and the emote picker, with animations, tap previews and inline draft images. |
 | Reload stream | Reloads live streams with a double-tap control. |
-| Show deleted messages | Reveals retained deleted and moderated messages on tap in native and React Native chat. |
+| Show deleted messages | Keeps deleted and moderated messages readable in native and React Native chat. |
 | UI settings | Controls player buttons, channel actions, extensions, Hype Trains, leaderboards and fullscreen system bars. |
 | Block client-requested ads | Blocks native player ad requests. Restart Twitch after changing this setting. |
 | Playback diagnostics | Records playlist metadata and playback counters for troubleshooting. |
@@ -33,8 +33,6 @@ Included automatically with any modifying patch:
 - **Push notifications:** Restores notification registration in the patched app.
 
 These shared fixes require no separate patch selection. DJ playback uses Twitch's existing player and available renditions.
-
-DJ screen-off playback on 31.9.0_BETA remains under investigation.
 
 All feature patches are selected and enabled by default. UI customization options are off by default. Inspection and playback diagnostics are optional. Previously saved settings are retained.
 
