@@ -16,17 +16,12 @@ object TwitchTarget {
             AppTarget(
                 version = BASELINE_VERSION,
                 isExperimental = false,
-                description = "Primary stable target. ARM64 build verification.",
+                description = "Latest stable Twitch release. ARM64 build verification.",
             ),
             AppTarget(
                 version = "31.9.0_BETA",
                 isExperimental = true,
-                description = "ARM64 evaluation of a Twitch prerelease.",
-            ),
-            AppTarget(
-                version = "31.7.0",
-                isExperimental = false,
-                description = "Tested on ARM64 with native and swipe-feed players.",
+                description = "Latest Twitch beta. ARM64 build verification.",
             ),
         ),
     )

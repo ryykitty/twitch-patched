@@ -59,10 +59,12 @@ Review the candidate's hooks before updating `TwitchTarget.kt`. Evaluate native
 and React Native playback, chat, settings and ad handling before declaring a
 version supported. Originals, signing keys and run artifacts stay under `.local/`.
 
-Use the APK's exact version name for prereleases and keep experimental targets
-marked as experimental. The current stable baseline is 31.8.0; 31.9.0_BETA is
-being evaluated separately. The [screen inventory](SCREENS.md) lists the surfaces
-to include in regression checks.
+Patches support the latest stable Twitch release and the latest beta, and nothing
+older. A version update starts when the stable release advances. A beta moving on
+its own does not start one. Use the APK's exact version name for prereleases and
+keep beta targets marked as experimental. The current targets are 31.8.0 and
+31.9.0_BETA. The [screen inventory](SCREENS.md) lists the surfaces to include in
+regression checks.
 
 Morphe Patcher 2 decodes resources lazily. Use `ResourcePatchContext.decode` for
 wildcard resource scans before enumerating matched files. Direct file access
@@ -79,6 +81,7 @@ The workflow uses semantic-release. With `PATCH_RELEASES_ENABLED=true`, pushes t
 `package.json` overrides the `npm` package with a small placeholder. semantic-release
 installs npm for its publishing plugin, which this project does not load, and the
 copies bundled inside it raise security alerts that cannot be fixed here.
+
 | Commit type | Version change |
 | --- | --- |
 | `fix:`, `perf:`, `bump:` | Patch |
