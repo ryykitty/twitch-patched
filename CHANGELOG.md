@@ -1,3 +1,25 @@
+## [1.5.0-dev.1](https://github.com/ryykitty/twitch-patched/compare/v1.4.0...v1.5.0-dev.1) (2026-11-01)
+
+### Bug Fixes
+
+* claim bonus channel points that appear before the stream starts playing ([69cc3fa](https://github.com/ryykitty/twitch-patched/commit/69cc3fa0783bf6102e4717909589ca320c95cedd))
+* keep deleted messages readable in native and React Native chat ([6a99df2](https://github.com/ryykitty/twitch-patched/commit/6a99df290c3cf7bc08ed575bcdcc73f0480ee6c0)), closes [#25](https://github.com/ryykitty/twitch-patched/issues/25)
+* keep UI settings patching on the latest 31.9.0 beta build ([0551a64](https://github.com/ryykitty/twitch-patched/commit/0551a6457b59437147f575e95201b0387ba166f7))
+* let Morphe Manager 2.0.0 and newer load the patches ([cabafa6](https://github.com/ryykitty/twitch-patched/commit/cabafa6b1714686063f83196a07b525451efa9c7))
+* stop the Live feed jumping when feed ads are hidden ([ce1a9a4](https://github.com/ryykitty/twitch-patched/commit/ce1a9a49b16799158c3fd9b78616610789bd6396)), closes [#25](https://github.com/ryykitty/twitch-patched/issues/25)
+
+### Features
+
+* add favorite emotes to the picker and emote cards ([979d829](https://github.com/ryykitty/twitch-patched/commit/979d829e2ec0642d665f4400cc11bbf45789bd84)), closes [#20](https://github.com/ryykitty/twitch-patched/issues/20)
+
+### App Support
+
+* support only the latest stable and beta Twitch ([c709c33](https://github.com/ryykitty/twitch-patched/commit/c709c33490624f83533019a96c0cac8dc79d594e))
+
+### Improvements
+
+* patch about twice as fast with indexed hook lookups ([133c078](https://github.com/ryykitty/twitch-patched/commit/133c07806cbf90116f5f55a4d8e1d0bc447765e5))
+
 ## [1.4.0](https://github.com/ryykitty/twitch-patched/compare/v1.3.0...v1.4.0) (2026-10-31)
 
 ### Bug Fixes
