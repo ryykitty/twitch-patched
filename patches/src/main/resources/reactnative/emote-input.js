@@ -44,8 +44,9 @@
             var tokens = React.useMemo(function () {
                 return enabled ? images(result.cheermoteTokenImages, catalog, native) : result.cheermoteTokenImages;
             }, [result.cheermoteTokenImages, catalog, native, enabled]);
-            var changed = React.useCallback(function (text) {
-                return result.onSendTextChange(runtime.enabled(5) ? normalize(text, catalog) : text);
+            var changed = React.useCallback(function (draft, sendText) {
+                if (!runtime.enabled(5)) return result.onSendTextChange(draft, sendText);
+                return result.onSendTextChange(normalize(draft, catalog), normalize(sendText, catalog));
             }, [result.onSendTextChange, catalog]);
             return Object.assign({}, result, {cheermoteTokenImages: tokens,
                 onSendTextChange: typeof result.onSendTextChange === 'function' ? changed : result.onSendTextChange});

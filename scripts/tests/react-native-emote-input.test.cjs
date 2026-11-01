@@ -30,7 +30,7 @@ function fixture() {
     const native = [{id: '25', token: 'Kappa'}], bits = {Cheer100: {url: 'https://example.test/bits.gif', imageCharCount: 5}};
     function original(props) {
         received = props;
-        return {draft: ':KEK:', cheermoteTokenImages: bits, onSendTextChange(text) { changed.push(text); },
+        return {draft: ':KEK:', cheermoteTokenImages: bits, onSendTextChange(draft, sendText) { changed.push([draft, sendText]); },
             appendToken(emote) { changed.push(emote.token); }, sentinel: 'retained'};
     }
     const Composer = targets.get('useChatComposer')(original, React);
@@ -74,8 +74,8 @@ test('only known complete tokens are normalized for sending; commands, case and 
     assert.equal(normalize('hello :KEK: :Channel: :Missing: :kek: :KE', catalog), 'hello KEK Channel :Missing: :kek: :KE');
     assert.equal(normalize('/me :KEK:', catalog), '/me :KEK:');
     assert.equal(normalize('https://host/:KEK: foo:KEK:', catalog), 'https://host/:KEK: foo:KEK:');
-    result.onSendTextChange(':KEK: :FeelsGoodMan:');
-    assert.deepEqual(f.changed, ['KEK FeelsGoodMan']);
+    result.onSendTextChange(':KEK: :FeelsGoodMan:', ':KEK: :FeelsGoodMan:');
+    assert.deepEqual(f.changed, [['KEK FeelsGoodMan', 'KEK FeelsGoodMan']]);
     const receiver = {};
     assert.equal(f.received.send.call(receiver, ':KEK:', {reply: '42'}), 'sent');
     assert.equal(f.sent[0].context, receiver);
@@ -95,6 +95,14 @@ test('channel changes and provider changes update both autocomplete and previews
     const disabled = f.render();
     assert.equal(f.received.emoteSuggestions, f.native);
     assert.equal(disabled.cheermoteTokenImages, f.bits);
-    disabled.onSendTextChange(':KEK:');
-    assert.deepEqual(f.changed, [':KEK:']);
+    disabled.onSendTextChange(':KEK:', ':KEK:');
+    assert.deepEqual(f.changed, [[':KEK:', ':KEK:']]);
+});
+
+test('every keystroke keeps both the draft and the send text, with the setting on or off', () => {
+    const f = fixture();
+    f.render().onSendTextChange('shown', 'sent');
+    f.setEnabled(false);
+    f.render().onSendTextChange('shown', 'sent');
+    assert.deepEqual(f.changed, [['shown', 'sent'], ['shown', 'sent']]);
 });
