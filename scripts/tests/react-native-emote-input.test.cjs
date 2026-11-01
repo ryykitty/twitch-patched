@@ -39,7 +39,8 @@ function fixture() {
             send() { sent.push({context: this, args: [...arguments]}); return 'sent'; }});
     }
     const Bar = targets.get('ChatComposerBar')(props => props, React);
-    return {runtime, catalogs, retained, sent, changed, bits, native, effects, render, Bar,
+    const createEmoteProvider = factory => targets.get('createEmoteProvider')(factory)();
+    return {runtime, catalogs, retained, sent, changed, bits, native, effects, render, Bar, createEmoteProvider,
         get received() { return received; }, setEnabled(value) { enabled = value; }, setInline(value) { inline = value; }};
 }
 
@@ -113,6 +114,16 @@ test('turning inline emotes off shows names for every emote and keeps Bits image
     assert.ok(f.received.emoteSuggestions.some(value => value.token === 'KEK'));
     f.setInline(true);
     assert.ok(f.render().cheermoteTokenImages.KEK);
+});
+
+test('suggestions list names starting with the query first, then alphabetically', () => {
+    const f = fixture(), matches = ['CoolCat', 'catJAM', 'mcaT', 'CatBag'].map(replacement => ({replacement: replacement + ' '}));
+    const provider = f.createEmoteProvider(() => ({autocompleteType: 'emote', getMatches: () => matches}));
+    assert.equal(provider.autocompleteType, 'emote');
+    assert.deepEqual(Array.from(provider.getMatches(':cat'), match => match.replacement.trim()), ['CatBag', 'catJAM', 'CoolCat', 'mcaT']);
+    assert.equal(matches[0].replacement, 'CoolCat ', 'the original list is not reordered');
+    const plainText = f.createEmoteProvider(() => ({getMatches: () => null}));
+    assert.equal(plainText.getMatches('hello'), null, 'text that is not an emote query stays without suggestions');
 });
 
 test('every keystroke keeps both the draft and the send text, with the setting on or off', () => {

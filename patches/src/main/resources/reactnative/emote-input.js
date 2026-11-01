@@ -26,6 +26,23 @@
         return result;
     }
     runtime.emoteInput = {normalize: normalize, suggestions: suggestions, images: images};
+    function ranked(matches, query) {
+        var needle = String(query).replace(/^:/, '').toLowerCase();
+        function code(match) { return String(match.replacement).trim().toLowerCase(); }
+        function rank(match) { return code(match).indexOf(needle) === 0 ? 0 : 1; }
+        return matches.slice().sort(function (first, second) {
+            return rank(first) - rank(second) || code(first).localeCompare(code(second));
+        });
+    }
+    runtime.target(__TWITCH_EMOTE_PROVIDER_MODULE__, 'createEmoteProvider', function (original) {
+        return function createEmoteProvider() {
+            var provider = original.apply(this, arguments);
+            return Object.assign({}, provider, {getMatches: function (query) {
+                var matches = provider.getMatches.apply(provider, arguments);
+                return Array.isArray(matches) ? ranked(matches, query) : matches;
+            }});
+        };
+    });
     var noInlineEmotes = {};
     runtime.target(__TWITCH_COMPOSER_BAR_MODULE__, 'ChatComposerBar', function (original, React) {
         return function ChatComposerBar(props) {

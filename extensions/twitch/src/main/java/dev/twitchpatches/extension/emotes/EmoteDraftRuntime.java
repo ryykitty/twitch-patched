@@ -22,9 +22,7 @@ import java.util.WeakHashMap;
 import java.util.function.Function;
 
 public final class EmoteDraftRuntime {
-    private static final int MAX_NATIVE_SUGGESTIONS = 10;
     private static final int MAX_SUGGESTIONS = 20;
-    private static final int LEADING_NATIVE_SUGGESTIONS = 5;
     private static final WeakHashMap<EditText, Draft> inputs = new WeakHashMap<>();
 
     private EmoteDraftRuntime() { }
@@ -58,17 +56,14 @@ public final class EmoteDraftRuntime {
         if (!EmoteRuntime.enabled() || catalog == null || query == null) return nativeMatches;
         String channel = EmoteRuntime.currentChannel();
         catalog.ensure(channel);
-        List<Object> result = new ArrayList<>(nativeMatches.subList(0, Math.min(MAX_NATIVE_SUGGESTIONS, nativeMatches.size())));
+        List<Object> merged = new ArrayList<>(nativeMatches);
         Set<String> names = new HashSet<>();
         for (Object value : nativeMatches) names.add(EmoteInputBridge.code(value).trim());
-        int added = 0;
         for (Emote emote : EmoteDraftTokens.suggestions(query.startsWith(":") ? query : ":" + query, catalog.snapshot(channel))) {
-            if (result.size() >= MAX_SUGGESTIONS) break;
-            if (names.contains(emote.code)) continue;
-            int position = Math.min(LEADING_NATIVE_SUGGESTIONS + added++, result.size());
-            result.add(position, EmoteInputBridge.model(EmotePickerRuntime.PREFIX + emote.url, emote.code, emote.animated));
+            if (!names.contains(emote.code))
+                merged.add(EmoteInputBridge.model(EmotePickerRuntime.PREFIX + emote.url, emote.code, emote.animated));
         }
-        return result;
+        return EmoteDraftTokens.ranked(query, merged, EmoteInputBridge::code, MAX_SUGGESTIONS);
     }
 
     static Function<String, Emote> draftEmotes() {
