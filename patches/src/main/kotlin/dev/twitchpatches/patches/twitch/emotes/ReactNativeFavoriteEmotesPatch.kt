@@ -3,15 +3,15 @@ package dev.twitchpatches.patches.twitch.emotes
 import app.morphe.patcher.patch.resourcePatch
 import dev.twitchpatches.patches.twitch.shared.RN_ASSET
 import dev.twitchpatches.patches.twitch.shared.assetSource
-import dev.twitchpatches.patches.twitch.shared.hermes.HermesBundle
 import dev.twitchpatches.patches.twitch.shared.hermes.MetroExports
+import dev.twitchpatches.patches.twitch.shared.hermes.twitchBundle
 import dev.twitchpatches.patches.twitch.shared.hermes.dependencyModule
 import dev.twitchpatches.patches.twitch.shared.reactNativeBridgePatch
 
 internal val reactNativeFavoriteEmotesPatch = resourcePatch {
     dependsOn(reactNativeBridgePatch)
     execute {
-        val bundle = HermesBundle(get("assets/index.android.bundle").readBytes())
+        val bundle = twitchBundle()
         val exports = MetroExports(bundle)
         val picker = exports.resolveDeferred("EmotePickerTray", setOf("channelID", "sections", "recents",
             "useEmotePreview", "previewEmote", "dismissPreview", "emote-preview-insert", "figure", "emote-nav-tablist"))

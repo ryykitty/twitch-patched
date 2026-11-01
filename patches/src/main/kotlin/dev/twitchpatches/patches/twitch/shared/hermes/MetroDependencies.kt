@@ -6,11 +6,10 @@ internal fun HermesBundle.dependencyModule(functionName: String, property: Strin
     val code = instructions(function)
     val read = code.withIndex().filter { it.value.name.startsWith("GetById") && strings[it.value.args.last()] == property }
         .singleOrNull() ?: error("Modern Twitch: $functionName dependency read changed.")
-    val factory = functions.filter { it.params == 8 }.singleOrNull { parent ->
-        instructions(parent).any { it.name == "CreateClosure" && it.args[2] == function.id }
-    } ?: error("Modern Twitch: $functionName factory is ambiguous.")
+    val factory = metroIndex.factoriesCreating(function.id).singleOrNull()
+        ?: error("Modern Twitch: $functionName factory is ambiguous.")
     val dependencyIndex = inlineImportIndex(code, read.index) ?: environmentImportIndex(code, read.index, factory, property)
-    val globalCode = instructions(functions[global])
+    val globalCode = metroIndex.globalCode
     val definition = globalCode.withIndex().single { it.value.name == "CreateClosure" && it.value.args[2] == factory.id }
     val define = globalCode.getOrNull(definition.index + 1)
     require(define?.name == "Call4" && define.args[3] == definition.value.args[0]) {

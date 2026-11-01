@@ -4,11 +4,12 @@ import app.morphe.patcher.patch.resourcePatch
 import dev.twitchpatches.patches.twitch.shared.*
 import dev.twitchpatches.patches.twitch.shared.hermes.HermesBundle
 import dev.twitchpatches.patches.twitch.shared.hermes.MetroExports
+import dev.twitchpatches.patches.twitch.shared.hermes.twitchBundle
 
 internal val reactNativeDeletedMessagesPatch = resourcePatch {
     dependsOn(reactNativeBridgePatch)
     execute {
-        get(RN_ASSET).appendText("\n" + renderDeletedMessages(HermesBundle(get("assets/index.android.bundle").readBytes())))
+        get(RN_ASSET).appendText("\n" + renderDeletedMessages(twitchBundle()))
     }
 }
 

@@ -3,13 +3,13 @@ package dev.twitchpatches.patches.twitch.ads
 import app.morphe.patcher.patch.ResourcePatchContext
 import app.morphe.patcher.patch.resourcePatch
 import dev.twitchpatches.patches.twitch.shared.*
-import dev.twitchpatches.patches.twitch.shared.hermes.HermesBundle
 import dev.twitchpatches.patches.twitch.shared.hermes.MetroExports
+import dev.twitchpatches.patches.twitch.shared.hermes.twitchBundle
 
 internal val reactNativeFeedAdsPatch = resourcePatch {
     dependsOn(reactNativeAssetsPatch)
     execute {
-        val bundle = HermesBundle(get("assets/index.android.bundle").readBytes())
+        val bundle = twitchBundle()
         val exports = MetroExports(bundle)
         val target = exports.resolveAsync("requestInFeedAd",
             setOf("fetchImpl", "parseVast", "urlParams", "adPlacementId", "adType", "adjacentItems", "adEdgeRequestInit"),
