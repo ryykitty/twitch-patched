@@ -10,7 +10,7 @@ Stable baseline: Twitch 31.8.0, ARM64. Experimental target: 31.9.0_BETA. Names i
 | Native live player | Landscape fullscreen, chat shown or hidden | Native theatre controls, `fullscreen_layout`, metadata action model, `follow_subscribe_button_view` |
 | Native vertical player | Vertical theatre | `VerticalTheatreFragment`, vertical player view model |
 | React Native live player | Classic Split; channel details expanded or collapsed | `PlayerControlsOverlay`, `ChannelMetadata`, `SupportActionRow`, `ClassicExtensionsIcon` |
-| React Native live player | V2 Vertical View | `SkylineControlsOverlay`, `SkylineSupportActionRow`, `SkylineBandActions`, `SkylineSheetActions` |
+| React Native live player | Vertical View | `SkylineControlsOverlay`, `SkylineSupportActionRow`, `SkylineBandActions`, `SkylineSheetActions` |
 | React Native live player | Vertical chat overlay | `SkylineChatBand`, `ChatComposerBar`, `OverlayActionButtons` |
 | Playback controls | Clip, cast, share, support actions | Native control views; `TheatreClipButton`, `TheatreClipButtonImpl` |
 | VOD player | Video playback and chat replay | Native replay presenter and message binding |
@@ -32,15 +32,15 @@ Stable baseline: Twitch 31.8.0, ARM64. Experimental target: 31.9.0_BETA. Names i
 
 | Surface | Variants |
 | --- | --- |
-| Live chat | Native list; V2 Classic Split; Vertical View overlay |
+| Live chat | Native list; React Native Classic Split; Vertical View overlay |
 | Replay chat | VOD replay, seek and message rebinding |
 | Chat composer | Native composer; `ChatComposerBar` |
 | Emote autocomplete | Native suggestion provider; `useChatComposer`, `createEmoteProvider`, `AutocompleteMatchList` |
 | Draft emotes | Native `ChatInput`, the Vertical View Compose field and its collapsed text; `ChatComposerBar`, `NativeEmoteInput`, token image maps and caret reconciliation |
 | Emote picker | Twitch catalogues, history, BTTV, FFZ and 7TV provider tabs |
-| Emote preview | Native preview; V2 sheet |
+| Emote preview | Native preview; React Native sheet |
 | Third-party badges | Native chat row builder for live and replay chat; `ChatMessageRow`, `BadgePart` and the badge registry |
-| Favorite emotes | Native picker long click, section and footer button; native emote card and preview; V2 `EmotePickerTray`, `useEmotePreview`, `EmoteCard` and sheet |
+| Favorite emotes | Native picker long click, section and footer button; native emote card and preview; React Native `EmotePickerTray`, `useEmotePreview`, `EmoteCard` and sheet |
 | Deleted messages | Native formatter; React Native `ChatMessageRow` |
 | Hype Trains | Native highlight events and expanded banner; vertical Compose host; React Native highlight selectors and Skyline hosts |
 | Leaderboards | Native chat header and ranking container; `ChannelLeaderboardStripHost`; Skyline trophy |
@@ -64,7 +64,7 @@ Stable baseline: Twitch 31.8.0, ARM64. Experimental target: 31.9.0_BETA. Names i
 | Area | States |
 | --- | --- |
 | Player lifecycle | Initial entry, channel change, reused controls, stream end, foreground/background |
-| Layout | Native/V2, split/vertical, fullscreen, rotation, picture-in-picture |
+| Layout | Native/React Native, split/vertical, fullscreen, rotation, picture-in-picture |
 | Controls | Visible/hidden, enabled/disabled, open settings sheet |
 | Chat | Live/replay, High/Medium/Low/Hidden, provider enabled/disabled, emote preview, deleted-message visibility |
 | Presentation | Light/Dark/System, cutout insets, status/navigation bars, delayed legacy and controller bar requests |

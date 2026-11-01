@@ -1,7 +1,7 @@
 # UI settings
 
-UI settings are available through Patch settings, player settings and V2 chat
-settings. Customization options are off by default and apply without restarting
+UI settings are available through Patch settings, player settings and React Native
+chat settings. Customization options are off by default and apply without restarting
 Twitch.
 
 ## Controls
@@ -70,7 +70,7 @@ bound any tree traversal. Update parent availability as well as child visibility
 ## Verification
 
 Check both toggle directions, mixed groups, search, Back navigation and omitted
-patches. Cover native and V2 players, themes, rotation and temporary detachment.
+patches. Cover native and React Native players, themes, rotation and temporary detachment.
 System-bar tests must include enabling an option again with unchanged insets.
 Check unlocked landscape playback as well as rotation-locked fullscreen, and
 confirm that Home and the mini-player retain normal insets.

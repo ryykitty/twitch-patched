@@ -123,7 +123,7 @@ in-place update. Retain logs locally while the candidate is used overnight.
 
 | Area | Checks |
 | --- | --- |
-| Playback | Native, initial V2 Classic Split, Vertical View, swipe feed, rotation, background audio and raids. |
+| Playback | Native, initial React Native Classic Split, Vertical View, swipe feed, rotation, background audio and raids. |
 | Ads | Actual preroll/midroll opportunities, stream continuity, quality and normal controls without stale ad overlays. |
 | Chat | Static and animated BTTV, FrankerFaceZ and 7TV emotes in live chat, VOD replay and the picker; provider switches, previews, Back navigation and channel changes. |
 | Channel points | An available bonus is claimed without a manual tap. |
@@ -132,7 +132,7 @@ in-place update. Retain logs locally while the candidate is used overnight.
 | Settings | Feature toggles recover both ways; omitted patches have no settings. |
 | UI settings | Group and individual controls work independently, empty action rows collapse, and fullscreen player/settings windows respond to both system-bar toggle directions. |
 | Theme | Dark, Light and System settings update Following, Live, Clips and navigation. Check initial entry, clip loading, refresh and tab changes; headers scroll and category labels remain visible. Patch settings opens immediately after a theme change. |
-| DJ playback | Background audio, audio-only and picture-in-picture controls work in native and V2 playback when the corresponding renditions are available. |
+| DJ playback | Background audio, audio-only and picture-in-picture controls work in native and React Native playback when the corresponding renditions are available. |
 | Notifications | A real live alert arrives in the background and opens its channel; record delivery timing separately. |
 
 Record a check as unobserved when the necessary event did not occur. For a bug,
