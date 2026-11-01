@@ -114,7 +114,8 @@ public final class ReactNativeRuntime implements Application.ActivityLifecycleCa
                 selected[5] && AdSettings.enabled(2), selected[6] && ReloadRuntime.enabled(),
                 selected[4] && EmoteRuntime.providerEnabled(0), selected[4] && EmoteRuntime.providerEnabled(1),
                 selected[4] && EmoteRuntime.providerEnabled(2), TwitchTheme.light(),
-                selected[8] && DeletedMessageSettings.enabled(), selected[9] && FavoriteEmotes.enabled()};
+                selected[8] && DeletedMessageSettings.enabled(), selected[9] && FavoriteEmotes.enabled(),
+                selected[4] && EmoteRuntime.inlineEnabled()};
     }
 
     private static void dispatch(Object instance, boolean[] policy) {

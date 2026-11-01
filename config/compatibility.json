@@ -123,7 +123,7 @@
       "DJ audio and background playback"
     ],
     "hypeTrains": "Native event-state and React Native selector tests passed. Live Hype Train transitions still require an event on an available channel.",
-    "emoteDrafts": "Input previews are confirmed in native chat. Draft images are missing in React Native Vertical View; chat rendering and autocomplete remain available.",
+    "emoteDrafts": "Twitch and provider draft images are confirmed in React Native chat, native Classic Split and native Vertical View. In native layouts, backspace removes one character and shows the remaining text.",
     "creatorSponsorships": "Native and React Native suppression is covered by hook and adapter checks. Live sponsorship transitions still require device acceptance."
   },
   "externalStreamProxy": false

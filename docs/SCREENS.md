@@ -36,7 +36,7 @@ Stable baseline: Twitch 31.8.0, ARM64. Experimental target: 31.9.0_BETA. Names i
 | Replay chat | VOD replay, seek and message rebinding |
 | Chat composer | Native composer; `ChatComposerBar` |
 | Emote autocomplete | Native suggestion provider; `useChatComposer`, `createEmoteProvider`, `AutocompleteMatchList` |
-| Draft emotes | Native `ChatInput`; `NativeEmoteInput`, token image maps and caret reconciliation |
+| Draft emotes | Native `ChatInput`, the Vertical View Compose field and its collapsed text; `ChatComposerBar`, `NativeEmoteInput`, token image maps and caret reconciliation |
 | Emote picker | Twitch catalogues, history, BTTV, FFZ and 7TV provider tabs |
 | Emote preview | Native preview; V2 sheet |
 | Favorite emotes | Native picker long click, section and footer button; native emote card and preview; V2 `EmotePickerTray`, `useEmotePreview`, `EmoteCard` and sheet |

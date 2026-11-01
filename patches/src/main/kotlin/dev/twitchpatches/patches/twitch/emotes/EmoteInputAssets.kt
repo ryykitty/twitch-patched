@@ -10,5 +10,8 @@ internal fun renderEmoteInput(bundle: HermesBundle): String {
     exports.requireNestedContract("useChatComposer", setOf("cheermoteTokenImages", "appendToken", "onSend"))
     exports.requireFunctionContract("createEmoteProvider", 2, setOf("autocompleteType", "getMatches", "token", "renderElement"))
     exports.requireFunctionContract("NativeEmoteInput", 2, setOf("emoteMap", "tokenImageMap", "onChangeText", "onSendTextChange", "sendText", "value"))
-    return assetSource("emote-input.js").replace("__TWITCH_CHAT_COMPOSER_MODULE__", composer.module.toString())
+    val bar = exports.resolve("ChatComposerBar", setOf("emoteMap", "cheermoteTokenImages", "onSendTextChange"))
+    return assetSource("emote-input.js")
+        .replace("__TWITCH_CHAT_COMPOSER_MODULE__", composer.module.toString())
+        .replace("__TWITCH_COMPOSER_BAR_MODULE__", bar.module.toString())
 }

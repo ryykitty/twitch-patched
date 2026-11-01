@@ -7,7 +7,7 @@ const {test} = require('node:test');
 function fixture() {
     const external = (name, provider) => ({name, provider, url: `https://example.test/${provider}/${name}.webp`,
         staticURL: `https://example.test/${provider}/${name}.png`, ratio: 1, format: 'webp'});
-    let enabled = true;
+    let enabled = true, inline = true;
     const catalogs = new Map([
         ['1', new Map([['KEK', external('KEK', '7tv')], ['FeelsGoodMan', external('FeelsGoodMan', 'bttv')],
             ['Channel', external('Channel', 'ffz')], ['Kappa', external('Kappa', 'ffz')]])],
@@ -16,7 +16,7 @@ function fixture() {
     const targets = new Map(), retained = [], sent = [], changed = [];
     const runtime = {
         target(id, name, adapter) { targets.set(name, adapter); },
-        enabled() { return enabled; }, policyHook() { return enabled; }, subscribe() {},
+        enabled() { return enabled; }, policyHook(react, index) { return index === 14 ? inline : enabled; }, subscribe() {},
         emotes: {subscribe() {}, snapshot(channel) { return catalogs.get(channel) || new Map(); },
             retain(channel) { retained.push(channel); return () => retained.push(`release:${channel}`); }}
     };
@@ -38,8 +38,9 @@ function fixture() {
         return Composer({channelID: channel, emoteSuggestions: native,
             send() { sent.push({context: this, args: [...arguments]}); return 'sent'; }});
     }
-    return {runtime, catalogs, retained, sent, changed, bits, native, effects, render,
-        get received() { return received; }, setEnabled(value) { enabled = value; }};
+    const Bar = targets.get('ChatComposerBar')(props => props, React);
+    return {runtime, catalogs, retained, sent, changed, bits, native, effects, render, Bar,
+        get received() { return received; }, setEnabled(value) { enabled = value; }, setInline(value) { inline = value; }};
 }
 
 test('provider emotes use Twitch suggestion models and channel precedence without changing native entries', () => {
@@ -97,6 +98,21 @@ test('channel changes and provider changes update both autocomplete and previews
     assert.equal(disabled.cheermoteTokenImages, f.bits);
     disabled.onSendTextChange(':KEK:', ':KEK:');
     assert.deepEqual(f.changed, [[':KEK:', ':KEK:']]);
+});
+
+test('turning inline emotes off shows names for every emote and keeps Bits images and autocomplete', () => {
+    const f = fixture(), props = {emoteMap: {Kappa: '25'}, cheermoteTokenImages: f.bits};
+    assert.equal(f.Bar(props), props);
+    f.setInline(false);
+    const rendered = f.Bar(props);
+    assert.equal(Object.keys(rendered.emoteMap).length, 0, 'Twitch emotes stay as their names');
+    assert.equal(rendered.emoteMap, f.Bar(props).emoteMap, 'a stable map avoids rebuilding the input spans');
+    assert.equal(rendered.cheermoteTokenImages, f.bits);
+    const result = f.render();
+    assert.equal(result.cheermoteTokenImages, f.bits);
+    assert.ok(f.received.emoteSuggestions.some(value => value.token === 'KEK'));
+    f.setInline(true);
+    assert.ok(f.render().cheermoteTokenImages.KEK);
 });
 
 test('every keystroke keeps both the draft and the send text, with the setting on or off', () => {
