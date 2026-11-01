@@ -1,17 +1,23 @@
 package dev.twitchpatches.patches.twitch.emotes
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
-import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import dev.twitchpatches.patches.twitch.shared.*
 
 private const val TUID = "Ltv/twitch/android/models/Tuid;"
 
-internal fun resolveLockedEmoteConstructor(classes: List<ClassDef>, h: NativePickerHooks): Method {
-    val clicked = classes.first { it.type == h.unlocked.definingClass }.superclass.orEmpty()
+private class LockedEmoteConstructorFingerprint(clicked: String, parameters: List<String>) : Fingerprint(
+    superclass = clicked,
+    name = "<init>",
+    parameters = parameters,
+)
+
+internal fun BytecodePatchContext.resolveLockedEmoteConstructor(h: NativePickerHooks): Method {
+    val clicked = classDefBy(h.unlocked.definingClass).superclass.orEmpty()
     val parameters = listOf(h.generic.parameterTypes[3].toString(), PICKER_STRING, PICKER_STRING, TUID)
-    return classes.filter { it.superclass == clicked }.flatMap { it.methods }.filter { it.name == "<init>" &&
-        it.parameterTypes.map(CharSequence::toString) == parameters }.uniqueHook("picker locked emote constructor")
+    return LockedEmoteConstructorFingerprint(clicked, parameters).originalMethod
 }
 
 internal fun lockedEmoteBridges(bridge: MutableClass, h: NativePickerHooks, locked: Method) {

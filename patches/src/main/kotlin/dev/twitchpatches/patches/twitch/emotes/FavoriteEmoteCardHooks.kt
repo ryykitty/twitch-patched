@@ -1,5 +1,6 @@
 package dev.twitchpatches.patches.twitch.emotes
 
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.patch.BytecodePatchContext
@@ -7,7 +8,6 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
-import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
@@ -41,17 +41,28 @@ internal fun insertFavoriteEmoteStar(document: Document) {
     name.parentNode.insertBefore(star, name)
 }
 
-internal fun BytecodePatchContext.applyFavoriteEmoteCard(classes: List<ClassDef>, bridge: MutableClass) {
-    fun model(marker: String) = classes.filter { type -> type.methods.any { it.name == "toString" && it.hasStrings(marker) } }
-    val loaded = model("Loaded(emoteCardUiModel=").uniqueHook("emote card loaded state")
-    val channel = model("ChannelEmoteCardModel(emoteId=").uniqueHook("channel emote card")
-    val generic = model("GenericEmoteCardModel(emoteId=").uniqueHook("generic emote card")
-    val render = classes.filter { it.superclass == "Ltv/twitch/android/core/mvp/viewdelegate/RxViewDelegate;" }
-        .flatMap { it.methods }.filter { it.isInstance(listOf(loaded.superclass.orEmpty()), "V") }.uniqueHook("emote card render")
+private class EmoteCardModelFingerprint(marker: String, parent: String? = null) : Fingerprint(
+    superclass = parent,
+    name = "toString",
+    strings = listOf(marker),
+)
+
+private class EmoteCardRenderFingerprint(state: String) : Fingerprint(
+    superclass = "Ltv/twitch/android/core/mvp/viewdelegate/RxViewDelegate;",
+    isStatic = false,
+    returnType = "V",
+    parameters = listOf(state),
+)
+
+internal fun BytecodePatchContext.applyFavoriteEmoteCard(bridge: MutableClass) {
+    val loaded = EmoteCardModelFingerprint("Loaded(emoteCardUiModel=").originalClassDef
+    val channel = EmoteCardModelFingerprint("ChannelEmoteCardModel(emoteId=").originalClassDef
+    val generic = EmoteCardModelFingerprint("GenericEmoteCardModel(emoteId=").originalClassDef
+    val render = EmoteCardRenderFingerprint(loaded.superclass.orEmpty()).originalMethod
     val channelConstructor = channel.methods.filter { it.name == "<init>" && it.parameterTypes.size == 6 }.uniqueHook("channel emote card constructor")
     val genericConstructor = generic.methods.filter { it.name == "<init>" && it.parameterTypes.size == 4 }.uniqueHook("generic emote card constructor")
     val cardType = channelConstructor.parameterTypes[3].toString()
-    fun variant(marker: String) = model(marker).filter { it.superclass == cardType }.uniqueHook("emote card $marker")
+    fun variant(marker: String) = EmoteCardModelFingerprint(marker, cardType).originalClassDef
     val cardModel = loaded.fields.filter { it.type == channel.superclass }.uniqueHook("emote card state model")
     val channelModel = channelConstructor.parameterTypes[4].toString()
     val channelId = classDefBy(channelModel).methods.filter { it.name == "getTuid" && it.parameterTypes.isEmpty() }.uniqueHook("emote card channel id")

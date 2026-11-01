@@ -1,11 +1,12 @@
 package dev.twitchpatches.patches.twitch.emotes
 
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -18,6 +19,16 @@ private const val FAVORITES = "Ldev/twitchpatches/extension/emotes/FavoriteEmote
 private const val FAVORITE_PICKER = "Ldev/twitchpatches/extension/emotes/FavoriteEmotePicker;"
 private const val FAVORITE_BRIDGE = "Ldev/twitchpatches/extension/emotes/FavoriteEmoteBridge;"
 private const val INTEGER_BOX = "Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;"
+
+private object PickerLongClickEventFingerprint : Fingerprint(
+    name = "toString",
+    strings = listOf("LongClick(emoteView="),
+)
+
+private class PickerFooterReducerFingerprint(event: String) : Fingerprint(
+    filters = listOf(methodCall(INTEGER_BOX)),
+    custom = { method, _ -> method.references().any { (it as? TypeReference)?.type == event } },
+)
 
 private val favoriteEmoteResources = resourcePatch {
     execute {
@@ -42,11 +53,10 @@ val favoriteEmotesPatch = bytecodePatch(
     dependsOn(settingsPatch, nativeEmotePickerPatch, reactNativeFavoriteEmotesPatch, favoriteEmoteResources)
     execute {
         val hooks = resolveNativePickerHooks()
-        val classes = mutableListOf<ClassDef>().apply { classDefForEach { add(it) } }
-        favoriteEmoteBridges(hooks, classes)
-        applyFavoriteEmoteCard(classes, mutableClassDefBy(FAVORITE_BRIDGE))
-        insertFavoriteLongClick(classes, hooks)
-        insertFavoriteFooterTarget(classes, hooks)
+        favoriteEmoteBridges(hooks)
+        applyFavoriteEmoteCard(mutableClassDefBy(FAVORITE_BRIDGE))
+        insertFavoriteLongClick(hooks)
+        insertFavoriteFooterTarget(hooks)
         interceptReactNativeLink("twitchPatchesToggleFavoriteEmote", "$FAVORITES->openLink(Ljava/lang/String;)Z")
         generateReactNativeStringDispatch("dispatchFavorites", "TwitchPatchFavorites")
         val application = mutableClassDefBy("Ltv/twitch/android/app/consumer/TwitchApplication;").methods
@@ -57,9 +67,8 @@ val favoriteEmotesPatch = bytecodePatch(
     }
 }
 
-private fun BytecodePatchContext.insertFavoriteLongClick(classes: List<ClassDef>, hooks: NativePickerHooks) {
-    val event = classes.filter { type -> type.methods.any { it.name == "toString" && it.hasStrings("LongClick(emoteView=") } }
-        .uniqueHook("picker long click event")
+private fun BytecodePatchContext.insertFavoriteLongClick(hooks: NativePickerHooks) {
+    val event = PickerLongClickEventFingerprint.originalClassDef
     val clicked = classDefBy(hooks.unlocked.definingClass).superclass.orEmpty()
     val constructor = mutableClassDefBy(event.type).methods.filter { it.name == "<init>" &&
         it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/view/View;", clicked) }
@@ -69,21 +78,17 @@ private fun BytecodePatchContext.insertFavoriteLongClick(classes: List<ClassDef>
     }
 }
 
-private fun BytecodePatchContext.insertFavoriteFooterTarget(classes: List<ClassDef>, hooks: NativePickerHooks) {
-    val owner = classes.flatMap { it.methods }.filter { method ->
-        method.references().any { (it as? TypeReference)?.type == hooks.event.definingClass } &&
-            method.references().any { it.toString() == INTEGER_BOX }
-    }.uniqueHook("picker footer reducer")
-    val reducer = mutableClassDefBy(owner.definingClass).methods.single { it.reference == owner.reference }
+private fun BytecodePatchContext.insertFavoriteFooterTarget(hooks: NativePickerHooks) {
+    val reducer = PickerFooterReducerFingerprint(hooks.event.definingClass).method
     val box = reducer.code().withIndex().filter { (it.value as? ReferenceInstruction)?.reference?.toString() == INTEGER_BOX }
         .uniqueHook("picker footer scroll target")
     val register = (box.value as FiveRegisterInstruction).registerC
     reducer.replaceInstruction(box.index, "invoke-static {v$register}, $FAVORITE_PICKER->footerTarget(I)Ljava/lang/Integer;")
 }
 
-private fun BytecodePatchContext.favoriteEmoteBridges(h: NativePickerHooks, classes: List<ClassDef>) {
+private fun BytecodePatchContext.favoriteEmoteBridges(h: NativePickerHooks) {
     val bridge = mutableClassDefBy(FAVORITE_BRIDGE)
-    val locked = resolveLockedEmoteConstructor(classes, h)
+    val locked = resolveLockedEmoteConstructor(h)
     lockedEmoteBridges(bridge, h, locked)
     val unlocked = classDefBy(h.unlocked.definingClass)
     val model = classDefBy(h.model.definingClass)
