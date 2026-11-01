@@ -29,6 +29,7 @@ internal fun ResourcePatchContext.prepareUiViewResources() {
             "media_route_button" to "classic_controls_hide_cast", "share_button" to "classic_controls_hide_share"),
         "profile_card_no_divider" to mapOf("subscribe_button" to "classic_support_hide_subscribe"),
         "follow_subscribe_button_view" to mapOf("sub_button_container" to "classic_support_hide_subscribe"),
+        "message_input" to mapOf("bit_picker" to "classic_support_hide_bits"),
         "one_chat_layout" to mapOf("bits_button" to "classic_support_hide_bits",
             "one_chat_hype_train_landscape_container" to "hide_hype_trains"),
         "player_metadata_view_extended" to mapOf("extended_subscribe_button_container" to "classic_support_hide_subscribe"),
@@ -93,6 +94,7 @@ private fun replaceUiView(document: Document, element: Element, key: String?, ty
     for (index in 0 until element.attributes.length) {
         val attribute = element.attributes.item(index)
         view.setAttribute(attribute.nodeName, attribute.nodeValue)
+        if (attribute.nodeName == "app:tint") view.setAttribute("android:tint", attribute.nodeValue)
     }
     while (element.hasChildNodes()) view.appendChild(element.firstChild)
     if (key != null) view.setAttribute("android:tag", "twitchpatches_ui:$key")
