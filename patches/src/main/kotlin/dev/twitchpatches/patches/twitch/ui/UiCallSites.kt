@@ -1,8 +1,14 @@
 package dev.twitchpatches.patches.twitch.ui
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+
+internal class MethodCallFingerprint(method: MethodReference) : Fingerprint(
+    filters = listOf(methodCall(method)),
+)
 
 internal fun collectUiActionCallers(methods: Iterable<Method>, targets: Collection<MethodReference>): Map<String, List<Method>> {
     val owners = targets.mapTo(mutableSetOf()) { it.definingClass }

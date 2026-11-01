@@ -1,9 +1,12 @@
 package dev.twitchpatches.patches.twitch.promotions
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.string
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -18,6 +21,16 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import dev.twitchpatches.patches.twitch.shared.*
+
+private object TurboAppStartUpsellModelFingerprint : Fingerprint(
+    name = "toString",
+    strings = listOf(string("TurboAppStartUpsell", StringComparisonType.CONTAINS)),
+)
+
+private object TurboStartupOfferCoroutineFingerprint : Fingerprint(
+    name = "invokeSuspend",
+    strings = listOf("turboAppStartUpsellHelper"),
+)
 
 internal fun turboStartupDispatch(method: Method, model: String): Int {
     if (method.name != "invokeSuspend" || !method.isInstance(listOf("Ljava/lang/Object;"), "Ljava/lang/Object;") ||
@@ -44,14 +57,8 @@ internal fun turboStartupDispatch(method: Method, model: String): Int {
 }
 
 internal fun BytecodePatchContext.hideTurboStartupOffer() {
-    val models = mutableListOf<String>()
-    val coroutines = mutableListOf<Method>()
-    classDefForEach { type ->
-        if (type.methods.any { it.name == "toString" && it.hasStrings("TurboAppStartUpsell") }) models.add(type.type)
-        coroutines.addAll(type.methods.filter { it.name == "invokeSuspend" && it.hasStrings("turboAppStartUpsellHelper") })
-    }
-    val model = models.uniqueHook("Turbo startup offer model")
-    val coroutine = coroutines.uniqueHook("Turbo startup offer coroutine")
+    val model = TurboAppStartUpsellModelFingerprint.originalClassDef.type
+    val coroutine = TurboStartupOfferCoroutineFingerprint.originalMethod
     val index = turboStartupDispatch(coroutine, model)
     val call = coroutine.code()[index]
     val original = (call as ReferenceInstruction).reference as MethodReference

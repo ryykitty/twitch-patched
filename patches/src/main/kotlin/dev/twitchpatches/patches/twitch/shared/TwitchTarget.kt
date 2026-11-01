@@ -12,6 +12,7 @@ object TwitchTarget {
         name = "Twitch",
         packageName = PACKAGE_NAME,
         apkFileType = ApkFileType.APKM,
+        appIconColor = 0x9146FF,
         targets = listOf(
             AppTarget(
                 version = BASELINE_VERSION,

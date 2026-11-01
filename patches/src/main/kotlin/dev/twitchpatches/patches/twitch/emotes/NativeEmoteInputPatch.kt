@@ -1,10 +1,15 @@
 package dev.twitchpatches.patches.twitch.emotes
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.StringComparisonType
+import app.morphe.patcher.methodCall
+import app.morphe.patcher.string
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
@@ -12,6 +17,22 @@ import dev.twitchpatches.patches.twitch.shared.*
 
 private const val DRAFT = "Ldev/twitchpatches/extension/emotes/EmoteDraftRuntime;"
 private const val INPUT_BRIDGE = "Ldev/twitchpatches/extension/emotes/EmoteInputBridge;"
+
+private object AutocompleteEmoteModelFingerprint : Fingerprint(
+    name = "toString",
+    strings = listOf(
+        string("Emote(emoteModel=", StringComparisonType.CONTAINS),
+        string(", emoteUrl=", StringComparisonType.CONTAINS),
+    ),
+)
+
+private class AutocompleteQueryFingerprint(
+    constructorRef: String,
+) : Fingerprint(
+    parameters = listOf(PICKER_STRING),
+    returnType = PICKER_LIST,
+    filters = listOf(methodCall(constructorRef)),
+)
 
 internal fun inputMethod(owner: String, name: String, parameters: List<String>, returns: String, registers: Int,
                          flags: Int, body: String) = ImmutableMethod(owner, name,
@@ -21,17 +42,13 @@ internal fun inputMethod(owner: String, name: String, parameters: List<String>, 
 internal val nativeEmoteInputPatch = bytecodePatch {
     dependsOn(nativeEmotePickerPatch)
     execute {
-        val all = mutableListOf<com.android.tools.smali.dexlib2.iface.ClassDef>().apply { classDefForEach { add(it) } }
-        val suggestion = all.filter { type -> type.methods.any {
-            it.name == "toString" && it.hasStrings("Emote(emoteModel=", ", emoteUrl=")
-        } }.uniqueHook("native autocomplete emote model")
+        val suggestion = AutocompleteEmoteModelFingerprint.originalClassDef
         val picker = resolveNativePickerHooks()
-        val constructor = suggestion.methods.filter { it.name == "<init>" &&
+        val constructor = suggestion.methods.filter { it ->
+            it.name == "<init>" &&
             it.parameterTypes.map(CharSequence::toString) == listOf(picker.generic.definingClass.let { classDefBy(it).superclass }, PICKER_STRING)
         }.uniqueHook("native autocomplete suggestion constructor")
-        val query = all.flatMap { it.methods }.filter { it.isInstance(listOf(PICKER_STRING), PICKER_LIST) &&
-            it.references().filterIsInstance<MethodReference>().any { call -> call.toString() == constructor.reference }
-        }.uniqueHook("native autocomplete query")
+        val query = AutocompleteQueryFingerprint(constructor.reference).originalMethod
         val lookup = query.references().filterIsInstance<MethodReference>().filter {
             it.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/CharSequence;") && it.returnType == "Ljava/util/ArrayList;"
         }.uniqueHook("native emote suggestion catalogue")
@@ -87,7 +104,7 @@ internal val nativeEmoteInputPatch = bytecodePatch {
                 invoke-direct {v0, p0, p1, v1, v2}, ${picker.generic.reference}
                 return-object v0
             """))
-        injectLegacyEmoteInput(all.flatMap { it.methods })
+        injectLegacyEmoteInput()
         val input = mutableClassDefBy("Ltv/twitch/android/core/ui/kit/primitives/input/ChatInput;")
         val edit = classDefBy(requireNotNull(input.superclass)).methods.filter { it.name == "getInputEditText" &&
             it.parameterTypes.isEmpty() && it.returnType == "Landroidx/appcompat/widget/AppCompatEditText;"
@@ -103,7 +120,7 @@ internal val nativeEmoteInputPatch = bytecodePatch {
         val rich = mutableClassDefBy("Lcom/twitchrn/emoteinput/TwitchEmoteInputView;")
         val setter = rich.methods.filter { it.name == "setTokenImageMap" && it.parameterTypes.map(CharSequence::toString) ==
             listOf("Lcom/facebook/react/bridge/ReadableMap;") }.uniqueHook("native rich input image map")
-        val images = setter.references().filterIsInstance<com.android.tools.smali.dexlib2.iface.reference.FieldReference>()
+        val images = setter.references().filterIsInstance<FieldReference>()
             .filter { it.definingClass == rich.type && it.type == "Ljava/util/Map;" }.distinctBy { it.toString() }
             .uniqueHook("native rich input image storage")
         val spans = rich.methods.filter { it.name == "applyEmoteSpans" && it.parameterTypes.map(CharSequence::toString) == listOf("Z") &&
