@@ -57,7 +57,7 @@ internal fun BytecodePatchContext.injectNativeUiMenus(contract: UiCompositionCon
         const-string v0, "UI settings"
         const/4 v1, 0x0
         const/4 v2, 0x0
-        const/4 v3, 0x0
+        const/4 v3, 0x1
         sget-object v4, $ACTION->INSTANCE:$ACTION
         const/4 v5, 0x0
         const/4 v6, 0x0
