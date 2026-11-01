@@ -2,6 +2,7 @@ package dev.twitchpatches.patches.twitch.emotes
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
 import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
@@ -72,26 +73,29 @@ internal fun BytecodePatchContext.emotePickerStartBridge(start: Method): String 
     return method.reference
 }
 
+internal fun replacePickerBridge(bridge: MutableClass, name: String, locals: Int, body: String) {
+    val original = bridge.methods.filter { it.name == name }.uniqueHook("picker $name bridge")
+    val method = ImmutableMethod(original.definingClass, original.name, original.parameters, original.returnType,
+        original.accessFlags, original.annotations, original.hiddenApiRestrictions,
+        MutableMethodImplementation(locals + original.parameterTypes.size)).toMutable()
+    method.addInstructionsWithLabels(0, body)
+    bridge.methods.remove(original)
+    bridge.methods.add(method)
+}
+
+internal fun pickerParameterField(method: Method, parameter: Int) = method.code().filter {
+    it.opcode == Opcode.IPUT_OBJECT && (it as TwoRegisterInstruction).registerA ==
+        requireNotNull(method.implementation).registerCount - method.parameterTypes.size + parameter
+}.map { (it as ReferenceInstruction).reference as FieldReference }.uniqueHook("picker model parameter field")
+
 internal fun BytecodePatchContext.nativePickerBridges(h: NativePickerHooks, footer: Int) {
     val bridge = mutableClassDefBy(PICKER_BRIDGE)
-    fun replace(name: String, locals: Int, body: String) {
-        val original = bridge.methods.filter { it.name == name }.uniqueHook("picker $name bridge")
-        val method = ImmutableMethod(original.definingClass, original.name, original.parameters, original.returnType,
-            original.accessFlags, original.annotations, original.hiddenApiRestrictions,
-            MutableMethodImplementation(locals + original.parameterTypes.size)).toMutable()
-        method.addInstructionsWithLabels(0, body)
-        bridge.methods.remove(original)
-        bridge.methods.add(method)
-    }
+    fun replace(name: String, locals: Int, body: String) = replacePickerBridge(bridge, name, locals, body)
     val asset = h.generic.parameterTypes[2].toString()
     val kind = h.generic.parameterTypes[3].toString()
     val badge = h.model.parameterTypes[3].toString()
-    fun parameterField(method: Method, parameter: Int) = method.code().filter {
-        it.opcode == Opcode.IPUT_OBJECT && (it as TwoRegisterInstruction).registerA ==
-            requireNotNull(method.implementation).registerCount - method.parameterTypes.size + parameter
-    }.map { (it as ReferenceInstruction).reference as FieldReference }.uniqueHook("picker model parameter field")
-    val sectionHeader = parameterField(h.section, 0)
-    val headerLogin = parameterField(h.header, 0)
+    val sectionHeader = pickerParameterField(h.section, 0)
+    val headerLogin = pickerParameterField(h.header, 0)
     replace("insertionIndex", 6, """
         const/4 v0, 0x0
         const/4 v5, -0x1

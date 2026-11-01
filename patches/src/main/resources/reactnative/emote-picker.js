@@ -73,7 +73,9 @@
             var active = enabled && provider && (mask & (1 << providers.indexOf(provider))) ? provider : null;
             var merged = React.useMemo(function () {
                 if (!enabled) return props.sections || [];
-                return active ? sections(catalog, active) : arrange(props.sections || [], catalog);
+                if (!active) return arrange(props.sections || [], catalog);
+                return (props.sections || []).filter(function (section) { return section.id === 'twitchpatches-favorites'; })
+                    .concat(sections(catalog, active));
             }, [props.sections, catalog, enabled, active]);
             var tree = original(Object.assign({}, props, {sections: merged,
                 isLoading: merged.length ? false : props.isLoading, isError: merged.length ? false : props.isError}));

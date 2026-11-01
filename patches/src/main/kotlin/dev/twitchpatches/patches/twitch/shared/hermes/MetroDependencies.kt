@@ -6,11 +6,33 @@ internal fun HermesBundle.dependencyModule(functionName: String, property: Strin
     val code = instructions(function)
     val read = code.withIndex().filter { it.value.name.startsWith("GetById") && strings[it.value.args.last()] == property }
         .singleOrNull() ?: error("Modern Twitch: $functionName dependency read changed.")
-    val slot = code.take(read.index).lastOrNull { it.name == "LoadFromEnvironment" && it.args[0] == read.value.args[1] }
-        ?.args?.get(2) ?: error("Modern Twitch: $property dependency environment changed.")
     val factory = functions.filter { it.params == 8 }.singleOrNull { parent ->
         instructions(parent).any { it.name == "CreateClosure" && it.args[2] == function.id }
     } ?: error("Modern Twitch: $functionName factory is ambiguous.")
+    val dependencyIndex = inlineImportIndex(code, read.index) ?: environmentImportIndex(code, read.index, factory, property)
+    val globalCode = instructions(functions[global])
+    val definition = globalCode.withIndex().single { it.value.name == "CreateClosure" && it.value.args[2] == factory.id }
+    val define = globalCode.getOrNull(definition.index + 1)
+    require(define?.name == "Call4" && define.args[3] == definition.value.args[0]) {
+        "Modern Twitch: $functionName module definition changed."
+    }
+    val array = globalCode.take(definition.index).lastOrNull {
+        it.name.startsWith("NewArrayWithBuffer") && it.args[0] == define.args[5]
+    } ?: error("Modern Twitch: $functionName dependency array missing.")
+    return integerArray(array.args[3], array.args[2])[dependencyIndex]
+}
+
+private fun inlineImportIndex(code: List<HermesInstruction>, readIndex: Int): Int? {
+    val call = code.getOrNull(readIndex - 1)
+    val dependency = code.getOrNull(readIndex - 2)
+    val imported = call?.name == "Call2" && call.args[0] == code[readIndex].args[1] &&
+        dependency?.name == "GetByIndex" && call.args[3] == dependency.args[0]
+    return if (imported) dependency!!.args[2] else null
+}
+
+private fun HermesBundle.environmentImportIndex(code: List<HermesInstruction>, readIndex: Int, factory: HermesBundle.Function, property: String): Int {
+    val slot = code.take(readIndex).lastOrNull { it.name == "LoadFromEnvironment" && it.args[0] == code[readIndex].args[1] }
+        ?.args?.get(2) ?: error("Modern Twitch: $property dependency environment changed.")
     val body = instructions(factory)
     val environment = body.single { it.name == "CreateFunctionEnvironment" }.args[0]
     val store = body.withIndex().singleOrNull { it.value.name == "StoreToEnvironment" &&
@@ -25,14 +47,5 @@ internal fun HermesBundle.dependencyModule(functionName: String, property: Strin
         call.args[3] == dependency.args[0] && dependency.args[1] == dependenciesRegister) {
         "Modern Twitch: $property import flow changed."
     }
-    val globalCode = instructions(functions[global])
-    val definition = globalCode.withIndex().single { it.value.name == "CreateClosure" && it.value.args[2] == factory.id }
-    val define = globalCode.getOrNull(definition.index + 1)
-    require(define?.name == "Call4" && define.args[3] == definition.value.args[0]) {
-        "Modern Twitch: $functionName module definition changed."
-    }
-    val array = globalCode.take(definition.index).lastOrNull {
-        it.name.startsWith("NewArrayWithBuffer") && it.args[0] == define.args[5]
-    } ?: error("Modern Twitch: $functionName dependency array missing.")
-    return integerArray(array.args[3], array.args[2])[dependency.args[2]]
+    return dependency!!.args[2]
 }

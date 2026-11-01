@@ -12,6 +12,7 @@
     "Auto-claim bonus channel points",
     "BTTV, FFZ and 7TV emotes",
     "Block client-requested ads",
+    "Favorite emotes",
     "Block stream ads",
     "Hide Turbo promotions",
     "Hide feed and display ads",
@@ -101,6 +102,7 @@
     "reactNativeBundleSource": "Host bundle-source contract resolves uniquely on both targets. Full APK rebuilding and original-aware SDK checks pass; no new hierarchy findings.",
     "streamAdWarmup": "Four tests pass for immediate startup, late clean results, rendition isolation and cancellation. The existing 2.2-second foreground budget is unchanged.",
     "creatorSponsorships": "Native banner/header contracts and React Native query/placement contracts resolve on both targets. Generated capture instructions and inherited Android method references are tested; three adapter tests cover live toggles and cached creatives. Device acceptance pending.",
+    "favoriteEmotes": "The patch resolves on both targets alone and with the full selection. On a device, favorites stayed in sync between native and React Native pickers, cards in live and VOD chat showed the star, Twitch emotes that cannot be used showed locked with the correct upsell or card, and channel provider emotes stayed out of other channels. React Native Vertical renders the same tray and card but could not be opened on the test account.",
     "hookCoverage": "The patcher ran under line coverage on both targets. Hook variants that neither target uses were removed. Variants that remain differ between 31.8.0 and 31.9.0_BETA or depend on the patch selection."
   },
   "knownLimitations": {

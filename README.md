@@ -19,6 +19,7 @@ Patch settings include search, emote provider controls and UI customization. Gro
 | Hide subscription discount banners | Hides subscription offers, discount banners and promotional labels. |
 | Auto-claim bonus channel points | Automatically claims bonus channel points while watching live streams. |
 | BTTV, FFZ and 7TV emotes | Adds global and channel emotes to live and replay chat, autocomplete and the emote picker, with animations, tap previews and inline draft images. |
+| Favorite emotes | Adds a Favorites section to the emote picker in native and React Native chat. Long-press an emote in the picker or tap the star on its card. Emotes you cannot use yet show as locked, and channel BTTV, FFZ and 7TV emotes only show where they are available. |
 | Reload stream | Reloads live streams with a double-tap control. |
 | Show deleted messages | Keeps deleted and moderated messages readable in native and React Native chat. |
 | UI settings | Controls player buttons, channel actions, extensions, Hype Trains, leaderboards and fullscreen system bars. |

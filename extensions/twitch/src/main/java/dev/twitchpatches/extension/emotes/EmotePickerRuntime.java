@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class EmotePickerRuntime {
-    private static final String PREFIX = "twitchpatches-picker:";
+    static final String PREFIX = "twitchpatches-picker:";
     private static final String[] PROVIDERS = {"BTTV", "7TV", "FrankerFaceZ"};
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
     private static WeakReference<Object> presenter = new WeakReference<>(null);
@@ -47,16 +47,25 @@ public final class EmotePickerRuntime {
         original = Collections.emptyList();
         for (int index = 0; index < 3; index++) buttons[index] = null;
         EmotePickerImages.close();
+        FavoriteEmotePicker.close();
     }
 
     public static List<?> augment(List<?> sections, boolean visible) {
         original = sections;
         received = true;
         channelVisible = visible;
+        List<?> result = FavoriteEmotePicker.insert(withProviders(sections));
+        for (int provider = 0; provider < 3; provider++) {
+            if (positions[provider] >= 0) positions[provider] += FavoriteEmotePicker.insertedItems();
+        }
+        updateButtons();
+        return result;
+    }
+
+    private static List<?> withProviders(List<?> sections) {
         EmoteCatalog catalog = EmoteRuntime.catalog();
         if (catalog == null || presenter.get() == null || !EmoteRuntime.enabled()) {
             java.util.Arrays.fill(positions, -1);
-            updateButtons();
             return sections;
         }
         int insertion = EmotePickerBridge.insertionIndex(sections, EmoteRuntime.channelName(channel));
@@ -67,7 +76,6 @@ public final class EmotePickerRuntime {
         }
         result.addAll(sections.subList(insertion, sections.size()));
         for (int provider = 0; provider < 3; provider++) append(result, catalog, provider, null);
-        updateButtons();
         return result;
     }
 
@@ -98,6 +106,11 @@ public final class EmotePickerRuntime {
         root = new WeakReference<>(view);
         EmotePickerImages.open(view);
         LinearLayout bar = (LinearLayout) anchor.getParent();
+        FavoriteEmotePicker.bind(bar, anchor, position -> {
+            Object target = delegate.get();
+            View current = root.get();
+            if (target != null && current != null) EmotePickerBridge.scroll(target, current, position);
+        });
         for (int provider = 0; provider < 3; provider++) {
             final int index = provider;
             ImageView button = new ImageView(view.getContext());
