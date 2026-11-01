@@ -62,6 +62,11 @@ private class BitsRendererFingerprint(bitsId: Long) : Fingerprint(
     filters = listOf(literal(bitsId)),
 )
 
+private class ClipButtonFingerprint(clipId: Long) : Fingerprint(
+    returnType = "V",
+    filters = listOf(literal(clipId)),
+)
+
 internal fun BytecodePatchContext.resolveUiComposition(): UiCompositionContract {
     val volume = UiVolumeRendererFingerprint(uiResourceIds.getValue("string/mute_button_text")).originalMethod
     require(volume.parameterTypes.size == 4 && volume.parameterTypes.first().toString() == "Z") {
@@ -125,8 +130,14 @@ internal fun BytecodePatchContext.resolveUiComposition(): UiCompositionContract 
                 call.definingClass == "Landroidx/mediarouter/app/MediaRouteButton;" && call.name == "<init>"
             }
         } } }.uniqueHook("UI native Cast renderer")
-    val clip = renderers.filter { it.parameterTypes == listOf("I", composer, callback, callback, "Z") &&
-        vertical.references().any { ref -> ref.toString() == it.reference } }.uniqueHook("UI native Clip renderer")
+    val clipButton = ClipButtonFingerprint(uiResourceIds.getValue("string/clip")).matchAll()
+        .map { it.originalMethod }
+        .filter { it.parameterTypes.map { p -> p.toString() } == listOf("Z", callback, composer, "I") }
+        .uniqueHook("UI native Clip button")
+    val clip = classDefBy(clipButton.definingClass).methods.filter {
+        it.references().any { ref -> ref.toString() == clipButton.reference } &&
+            vertical.references().any { ref -> ref.toString() == it.reference }
+    }.uniqueHook("UI native Clip renderer")
     val support = ChannelActionRendererFingerprint(
         uiResourceIds.getValue("string/follow"),
         uiResourceIds.getValue("string/subscribe"),
