@@ -34,6 +34,8 @@ val blockClientAdsPatch = bytecodePatch(
     dependsOn(settingsPatch)
     execute {
         val constructor = DisabledClientAdStateConstructorFingerprint.originalMethod
+        if (!AccessFlags.PUBLIC.isSet(constructor.accessFlags) || constructor.parameterTypes.count { it.toString() == "Z" } != 1)
+            throw PatchException("Client-ad disabled-state constructor contract changed")
         val disabled = disabledClientAdState(constructor)
         val state = classDefBy(disabled.type)
         if (state.fields.any { !AccessFlags.STATIC.isSet(it.accessFlags) } ||

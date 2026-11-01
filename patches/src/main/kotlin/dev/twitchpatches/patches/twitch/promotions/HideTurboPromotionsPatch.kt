@@ -36,7 +36,7 @@ private object ProfileCardViewModelFingerprint : Fingerprint(
 )
 
 private object VisibleIngressTypeFingerprint : Fingerprint(
-    strings = listOf(string("Visible(ingressType=", StringComparisonType.CONTAINS)),
+    strings = listOf(string("Visible(ingressType=")),
 )
 
 private object TurboErrorIngressFingerprint : Fingerprint(

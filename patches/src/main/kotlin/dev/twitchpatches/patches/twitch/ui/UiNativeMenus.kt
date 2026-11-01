@@ -1,7 +1,6 @@
 package dev.twitchpatches.patches.twitch.ui
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.literal
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.string
@@ -23,13 +22,13 @@ private class PlaybackMenuHeadingFingerprint(optionsTitleId: Long, composer: Str
 private object VerticalHeaderSubscribeModelFingerprint : Fingerprint(
     name = "toString",
     returnType = "Ljava/lang/String;",
-    strings = listOf(string("Subscribe(isIconOnly=", StringComparisonType.CONTAINS)),
+    strings = listOf(string("Subscribe(isIconOnly=")),
 )
 
 private object VerticalHeaderGiftModelFingerprint : Fingerprint(
     name = "toString",
     returnType = "Ljava/lang/String;",
-    strings = listOf(string("Gift(isIconOnly=", StringComparisonType.CONTAINS)),
+    strings = listOf(string("Gift(isIconOnly=")),
 )
 
 private class VerticalLeaderboardFingerprint(leaderboardStringId: Long, leaderboardDrawableId: Long) : Fingerprint(
@@ -70,8 +69,7 @@ internal fun BytecodePatchContext.injectNativeUiMenus(contract: UiCompositionCon
     """, static = true)
     val bridge = mutableClassDefBy(BRIDGE)
     bridge.methods.add(menu)
-    val titleCallers = MethodCallFingerprint(title).matchAll().map { it.originalMethod }
-    replaceNativeUiCalls(titleCallers, title.reference, menu)
+    replaceNativeUiCalls(nativeCallers(title), title.reference, menu)
 
     val subscribe = VerticalHeaderSubscribeModelFingerprint.originalMethod.definingClass
     val gift = VerticalHeaderGiftModelFingerprint.originalMethod.definingClass

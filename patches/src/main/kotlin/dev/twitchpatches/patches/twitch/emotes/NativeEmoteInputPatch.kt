@@ -1,7 +1,6 @@
 package dev.twitchpatches.patches.twitch.emotes
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.string
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
@@ -21,8 +20,8 @@ private const val INPUT_BRIDGE = "Ldev/twitchpatches/extension/emotes/EmoteInput
 private object AutocompleteEmoteModelFingerprint : Fingerprint(
     name = "toString",
     strings = listOf(
-        string("Emote(emoteModel=", StringComparisonType.CONTAINS),
-        string(", emoteUrl=", StringComparisonType.CONTAINS),
+        string("Emote(emoteModel="),
+        string(", emoteUrl="),
     ),
 )
 

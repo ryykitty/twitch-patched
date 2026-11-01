@@ -28,6 +28,7 @@ val hideDisplayAdsPatch = bytecodePatch(
     dependsOn(settingsPatch, reactNativeBridgePatch, reactNativeFeedAdsPatch)
     execute {
         val parser = DisplayAdResponseParserFingerprint.method
+        if (!AccessFlags.PUBLIC.isSet(parser.accessFlags)) throw PatchException("Display ads: response parser is no longer public.")
         val noAd = parser.code().filter { it.opcode == Opcode.SGET_OBJECT }
             .mapNotNull { (it as? ReferenceInstruction)?.reference as? FieldReference }
             .filter { it.type == it.definingClass && classDefBy(it.type).superclass == parser.returnType }

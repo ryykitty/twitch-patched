@@ -20,6 +20,7 @@ import dev.twitchpatches.patches.twitch.shared.*
 private class FeedThemeHelperFingerprint(helperType: String) : Fingerprint(
     name = "feedThemeHelper",
     returnType = helperType,
+    custom = { method, _ -> method.implementation != null },
 )
 
 private object FeedContextThemeFingerprint : Fingerprint(

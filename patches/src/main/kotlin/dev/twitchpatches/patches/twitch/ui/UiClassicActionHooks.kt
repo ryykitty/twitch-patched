@@ -1,7 +1,6 @@
 package dev.twitchpatches.patches.twitch.ui
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.checkCast
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.string
@@ -22,8 +21,8 @@ private object ClassicActionStateFingerprint : Fingerprint(
     name = "toString",
     returnType = "Ljava/lang/String;",
     strings = listOf(
-        string("Visible(buttons=", StringComparisonType.CONTAINS),
-        string(", isViewerFollowing=", StringComparisonType.CONTAINS),
+        string("Visible(buttons="),
+        string(", isViewerFollowing="),
     ),
 )
 
@@ -36,7 +35,7 @@ private class ClassicActionRendererFingerprint(concrete: String) : Fingerprint(
 private object ClassicBitsModelFingerprint : Fingerprint(
     name = "toString",
     returnType = "Ljava/lang/String;",
-    strings = listOf(string("BitsIconButton", StringComparisonType.CONTAINS)),
+    strings = listOf(string("BitsIconButton")),
 )
 
 internal fun BytecodePatchContext.resolveClassicActionRow(composer: String, concrete: String): UiClassicActionContract {

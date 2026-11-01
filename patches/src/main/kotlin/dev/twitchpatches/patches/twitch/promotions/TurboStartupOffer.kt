@@ -1,12 +1,10 @@
 package dev.twitchpatches.patches.twitch.promotions
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.string
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -24,7 +22,7 @@ import dev.twitchpatches.patches.twitch.shared.*
 
 private object TurboAppStartUpsellModelFingerprint : Fingerprint(
     name = "toString",
-    strings = listOf(string("TurboAppStartUpsell", StringComparisonType.CONTAINS)),
+    strings = listOf("TurboAppStartUpsell"),
 )
 
 private object TurboStartupOfferCoroutineFingerprint : Fingerprint(

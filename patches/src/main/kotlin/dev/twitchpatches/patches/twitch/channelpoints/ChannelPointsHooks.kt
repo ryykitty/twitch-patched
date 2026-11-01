@@ -51,6 +51,11 @@ private object PointsClaimFingerprint : Fingerprint(
     isStatic = false,
     returnType = "V",
     parameters = listOf("Ljava/lang/String;", METADATA),
+    custom = { method, type ->
+        method.implementation != null && type.fields.any {
+            it.type == MODEL && !AccessFlags.STATIC.isSet(it.accessFlags) && !AccessFlags.FINAL.isSet(it.accessFlags)
+        }
+    },
 )
 
 private class PointsModelStoreFingerprint(providerType: String, modelFieldName: String) : Fingerprint(
@@ -68,15 +73,12 @@ private object IvsPlaybackConfigureFingerprint : Fingerprint(
     isStatic = false,
     returnType = "V",
     strings = listOf("player", "channel_id"),
+    custom = { method, type -> method.parameterTypes.size == 2 && type.fields.any { it.type == IVS_PLAYER } },
 )
 
 internal fun BytecodePatchContext.resolvePointsHooks(): PointsHooks {
     val claim = PointsClaimFingerprint.originalMethod
     val provider = PointsClaimFingerprint.originalClassDef
-    require(provider.fields.any {
-        it.type == MODEL && !AccessFlags.STATIC.isSet(it.accessFlags) && !AccessFlags.FINAL.isSet(it.accessFlags)
-    }) { "Points provider does not contain non-static non-final CommunityPointsModel field" }
-
     val model = classDefBy(MODEL)
     val getClaim = model.methods.filter { it.name == "getClaim" && it.isInstance(emptyList(), it.returnType) }
         .uniqueHook("claim getter")
@@ -121,8 +123,7 @@ internal fun BytecodePatchContext.resolvePointsHooks(): PointsHooks {
 internal fun BytecodePatchContext.resolvePlayerHooks(): PlayerHooks {
     val configure = IvsPlaybackConfigureFingerprint.originalMethod
     val player = IvsPlaybackConfigureFingerprint.originalClassDef
-    if (configure.parameterTypes.size != 2 || !player.fields.any { it.type == IVS_PLAYER } ||
-        !configure.isInstance(configure.parameterTypes.map { it.toString() }, "V") ||
+    if (!configure.isInstance(configure.parameterTypes.map { it.toString() }, "V") ||
         configure.parameterTypes.any { !it.startsWith("L") }) throw PatchException("Channel points: invalid player parameters.")
     val metadata = classDefBy(configure.parameterTypes.last().toString())
     val channel = metadata.methods.filter { it.parameterTypes.isEmpty() && it.returnType == TUID }

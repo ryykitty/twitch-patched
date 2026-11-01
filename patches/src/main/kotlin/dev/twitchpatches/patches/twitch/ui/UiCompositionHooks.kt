@@ -1,10 +1,8 @@
 package dev.twitchpatches.patches.twitch.ui
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
-import app.morphe.patcher.string
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction35c
@@ -19,9 +17,10 @@ import dev.twitchpatches.patches.twitch.shared.*
 
 private const val BRIDGE = "Ldev/twitchpatches/extension/ui/UiComposeBridge;"
 
-private object VerticalHypeTrainContainerFingerprint : Fingerprint(
+private class VerticalHypeTrainContainerFingerprint(composer: String) : Fingerprint(
     returnType = "V",
-    strings = listOf(string("VerticalTheatreHypeTrainHighlightsFragment/arguments", StringComparisonType.CONTAINS)),
+    strings = listOf("VerticalTheatreHypeTrainHighlightsFragment/arguments"),
+    custom = { method, _ -> method.parameterTypes.size == 3 && method.parameterTypes[1].toString() == composer },
 )
 
 internal fun BytecodePatchContext.injectUiComposition() {
@@ -56,10 +55,7 @@ internal fun BytecodePatchContext.injectUiComposition() {
     """, static = true))
     injectNativeUiMenus(contract)
     restoreVerticalLayoutControls(contract)
-    val train = VerticalHypeTrainContainerFingerprint.originalMethod
-    require(train.parameterTypes.size == 3 && train.parameterTypes[1].toString() == contract.composer) {
-        "UI settings: native vertical Hype Train container changed."
-    }
+    val train = VerticalHypeTrainContainerFingerprint(contract.composer).originalMethod
     val trainWrapper = uiWrapper(train, "verticalHypeTrain", contract, """
         const-string v1, "hide_hype_trains"
         invoke-static {v1, v0}, $BRIDGE->hidden(Ljava/lang/String;${contract.composer})Z
@@ -67,8 +63,7 @@ internal fun BytecodePatchContext.injectUiComposition() {
         if-nez v1, :done
     """)
     owner.methods.add(trainWrapper)
-    val trainCallers = MethodCallFingerprint(train).matchAll().map { it.originalMethod }
-    replaceUiCalls(trainCallers, train.reference, trainWrapper)
+    replaceUiCalls(nativeCallers(train), train.reference, trainWrapper)
     for ((layout, renderer) in listOf("classic" to contract.classic, "vertical" to contract.vertical)) {
         for ((part, original) in contract.controls) {
             if (renderer.references().none { it.toString() == original.reference }) continue
@@ -159,6 +154,7 @@ private fun BytecodePatchContext.replaceUiCalls(methods: List<Method>, original:
 internal fun rewriteUiCalls(methods: List<Method>, original: String, replacement: MethodReference,
     mutableMethod: (Method) -> MutableMethod) {
     methods.forEach { source ->
+        require(source.reference != replacement.toString()) { "UI settings: a wrapper cannot replace the call it wraps." }
         if (source.implementation?.instructions?.none {
             (it as? ReferenceInstruction)?.reference?.toString() == original
         } != false) return@forEach

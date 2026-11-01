@@ -1,7 +1,6 @@
 package dev.twitchpatches.patches.twitch.ui
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.string
@@ -23,8 +22,8 @@ private const val BASE_VIEW = "Ltv/twitch/android/core/mvp/viewdelegate/BaseView
 private object TheatreViewStateModelFingerprint : Fingerprint(
     name = "toString",
     strings = listOf(
-        string("TheatreViewState(isPortrait=", StringComparisonType.CONTAINS),
-        string(", playerMode=", StringComparisonType.CONTAINS),
+        string("TheatreViewState(isPortrait="),
+        string(", playerMode="),
     ),
 )
 

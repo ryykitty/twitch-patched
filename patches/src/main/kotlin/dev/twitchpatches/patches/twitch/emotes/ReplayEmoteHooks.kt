@@ -1,7 +1,6 @@
 package dev.twitchpatches.patches.twitch.emotes
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.string
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
@@ -23,8 +22,8 @@ import dev.twitchpatches.patches.twitch.shared.*
 private object ReplayCommentModelFingerprint : Fingerprint(
     name = "toString",
     strings = listOf(
-        string("ChommentModel(id=", StringComparisonType.CONTAINS),
-        string(", channelId=", StringComparisonType.CONTAINS),
+        string("ChommentModel(id="),
+        string(", channelId="),
     ),
 )
 

@@ -1,9 +1,7 @@
 package dev.twitchpatches.patches.twitch.ui
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.patch.BytecodePatchContext
-import app.morphe.patcher.string
 import app.morphe.patcher.util.proxy.mutableTypes.MutableField.Companion.toMutable
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -19,7 +17,7 @@ private const val STATE = "Ldev/twitchpatches/extension/ui/UiHypeTrainState;"
 
 private class HypeTrainEventFingerprint(label: String) : Fingerprint(
     name = "toString",
-    strings = listOf(string(label, StringComparisonType.CONTAINS)),
+    strings = listOf(label),
 )
 
 private object HypeTrainHandlerFingerprint : Fingerprint(

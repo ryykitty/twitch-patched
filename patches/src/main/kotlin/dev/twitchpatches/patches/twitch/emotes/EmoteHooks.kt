@@ -1,7 +1,6 @@
 package dev.twitchpatches.patches.twitch.emotes
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
@@ -29,12 +28,13 @@ internal data class EmoteHooks(val connection: Method, val binder: Method, val s
 private object MessageRecyclerItemModelFingerprint : Fingerprint(
     name = "toString",
     strings = listOf(
-        string("MessageRecyclerItem(messageId=", StringComparisonType.CONTAINS),
-        string(", sourceChannelId=", StringComparisonType.CONTAINS),
+        string("MessageRecyclerItem(messageId="),
+        string(", sourceChannelId="),
     ),
 )
 
 private class FormattedChatTextBinderFingerprint(modelType: String) : Fingerprint(
+    isStatic = false,
     parameters = listOf(modelType, "Z"),
     returnType = "V",
     filters = listOf(methodCall(TEXT_SETTER)),
@@ -44,6 +44,8 @@ internal fun BytecodePatchContext.resolveEmoteHooks(): EmoteHooks {
     val model = MessageRecyclerItemModelFingerprint.originalClassDef
     val source = sourceChannelField(model.methods.filter { it.name == "toString" }.uniqueHook("chat model description"))
     val binder = FormattedChatTextBinderFingerprint(model.type).originalMethod
+    if (binder.references().count { it.toString() == TEXT_SETTER } != 1)
+        throw PatchException("Emotes: chat binder no longer sets its text exactly once.")
     val setterIndex = binder.code().indexOfFirst { (it as? ReferenceInstruction)?.reference?.toString() == TEXT_SETTER }
     val field = textViewField(binder, setterIndex)
     var owner: ClassDef? = classDefBy(binder.definingClass)
@@ -123,5 +125,6 @@ private fun isHolderAlias(method: Method, before: Int, register: Int, holderPara
     if (writes.size != 1) return false
     val assignment = writes.single()
     val move = assignment.value as? TwoRegisterInstruction ?: return false
-    return !(move.opcode !in setOf(Opcode.MOVE_OBJECT, Opcode.MOVE_OBJECT_FROM16, Opcode.MOVE_OBJECT_16) || move.registerB != holderParameter) && code.take(assignment.index).none { !it.opcode.canContinue() || it.opcode.name.startsWith("if-") || it.opcode.name.endsWith("-switch") }
+    if (move.opcode !in setOf(Opcode.MOVE_OBJECT, Opcode.MOVE_OBJECT_FROM16, Opcode.MOVE_OBJECT_16) || move.registerB != holderParameter) return false
+    return code.take(assignment.index).none { !it.opcode.canContinue() || it.opcode.name.startsWith("if-") || it.opcode.name.endsWith("-switch") }
 }

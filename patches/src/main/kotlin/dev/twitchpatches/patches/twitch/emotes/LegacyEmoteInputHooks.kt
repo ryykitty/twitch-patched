@@ -5,26 +5,16 @@ import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.BytecodePatchContext
 import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
-import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import dev.twitchpatches.patches.twitch.shared.*
 
 private const val TOKENIZER = $$"Landroid/widget/MultiAutoCompleteTextView;->setTokenizer(Landroid/widget/MultiAutoCompleteTextView$Tokenizer;)V"
 
-internal fun legacyEmoteInputBinding(methods: List<Method>): Method =
-    methods.filter { method ->
-        method.references().any { it.toString() == TOKENIZER } &&
-            method.references().any { ref ->
-                ref is MethodReference && ref.definingClass == "Landroid/widget/AutoCompleteTextView;" && ref.name == "setAdapter"
-            }
-    }.uniqueHook("legacy emote autocomplete binding")
-
 private object LegacyEmoteInputBindingFingerprint : Fingerprint(
     filters = listOf(
         methodCall(definingClass = "Landroid/widget/AutoCompleteTextView;", name = "setAdapter"),
-        methodCall($$"Landroid/widget/MultiAutoCompleteTextView;->setTokenizer(Landroid/widget/MultiAutoCompleteTextView$Tokenizer;)V"),
+        methodCall(TOKENIZER),
     ),
 )
 

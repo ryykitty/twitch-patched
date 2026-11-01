@@ -1,7 +1,6 @@
 package dev.twitchpatches.patches.twitch.ui
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.string
@@ -17,8 +16,8 @@ private object VisibleChatHeaderFingerprint : Fingerprint(
     name = "toString",
     returnType = "Ljava/lang/String;",
     strings = listOf(
-        string("Visible(channelInfo=", StringComparisonType.CONTAINS),
-        string(", chatHeaderUiModel=", StringComparisonType.CONTAINS),
+        string("Visible(channelInfo="),
+        string(", chatHeaderUiModel="),
     ),
 )
 
@@ -26,7 +25,7 @@ private object ChatHeaderUiModelFingerprint : Fingerprint(
     name = "toString",
     returnType = "Ljava/lang/String;",
     strings = listOf(
-        string("ChatHeaderUiModel(chatName=", StringComparisonType.CONTAINS),
+        string("ChatHeaderUiModel(chatName="),
     ),
 )
 
@@ -40,7 +39,7 @@ private class HiddenChatActionsFingerprint(buttonsBase: String) : Fingerprint(
     name = "toString",
     returnType = "Ljava/lang/String;",
     superclass = buttonsBase,
-    strings = listOf(string("Hidden", StringComparisonType.CONTAINS)),
+    strings = listOf(string("Hidden")),
 )
 
 internal fun BytecodePatchContext.injectClassicHeader(owner: MutableClass, row: UiClassicActionContract) {

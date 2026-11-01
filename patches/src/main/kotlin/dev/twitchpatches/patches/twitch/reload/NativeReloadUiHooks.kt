@@ -27,10 +27,6 @@ private class VolumeRendererFingerprint(nativeMuteLabel: Long) : Fingerprint(
     filters = listOf(literal(nativeMuteLabel)),
 )
 
-private object ControlsEventOwnerFingerprint : Fingerprint(
-    strings = listOf("mute_button", "go_to_classic_view", "player_settings_button"),
-)
-
 internal fun BytecodePatchContext.resolveNativeReloadUi(): NativeReloadUiHooks {
     val volume = VolumeRendererFingerprint(nativeMuteLabel).originalMethod
     require(volume.parameterTypes.size == 4 && volume.parameterTypes.first().toString() == "Z" &&
@@ -64,11 +60,10 @@ internal fun BytecodePatchContext.resolveNativeReloadUi(): NativeReloadUiHooks {
         (it as? ReferenceInstruction)?.reference as? MethodReference
     }.firstOrNull { it.definingClass == concrete && it.parameterTypes.isEmpty() && it.returnType == "V" }
         ?: throw PatchException("Reload stream: native composition group end missing.")
-    val fragmentMethods = classDefBy(NATIVE_FRAGMENT).methods.toList()
-    val controls = ControlsEventOwnerFingerprint.originalMethod
-    require(fragmentMethods.any { it.parameterTypes.isEmpty() && it.returnType == controls.definingClass }) {
-        "native controls event owner is not returned by VerticalTheatreFragment"
-    }
+    val fragmentGetters = classDefBy(NATIVE_FRAGMENT).methods.filter { it.parameterTypes.isEmpty() }.map { it.returnType }.toSet()
+    val controls = fragmentGetters.mapNotNull { classDefByOrNull(it) }.flatMap { it.methods }.filter {
+        it.hasStrings("mute_button", "go_to_classic_view", "player_settings_button")
+    }.uniqueHook("native controls event owner")
     val root = classDefBy(volume.definingClass).methods.filter { method ->
         method.references().any { ref ->
             ref is TypeReference && ref.type == controls.definingClass

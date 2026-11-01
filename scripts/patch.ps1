@@ -11,13 +11,6 @@ param(
 )
 . "$PSScriptRoot/common.ps1"
 
-$Patch = @($Patch | ForEach-Object {
-    $str = $_.Replace('BTTV, FFZ and 7TV emotes', '__BTTV_EMOTES__')
-    $str -split ',' | ForEach-Object {
-        $_.Trim().Replace('__BTTV_EMOTES__', 'BTTV, FFZ and 7TV emotes')
-    }
-} | Where-Object { $_ })
-
 $inputPath = (Resolve-Path -LiteralPath $InputApk).Path
 if ([IO.Path]::GetExtension($inputPath) -notin @('.apk', '.apkm', '.apks', '.xapk')) {
     throw 'Input must be an original APK or a complete split bundle.'
@@ -67,7 +60,7 @@ $env:PATH = "$(Join-Path $sdk 'platform-tools');$env:PATH"
 $arguments = @("-Xmx${HeapMb}m", '-jar', $morphe, 'patch', '-p', $bundle, '--exclusive')
 if ($KeepScratch) { $arguments += '--disable-purge' }
 foreach ($name in $Patch) { $arguments += @('-e', $name) }
-$arguments += @('--bytecode-mode=FULL')
+$arguments += @('--bytecode-mode=FULL', '--validate')
 if (-not $auditBase) { $arguments += "--verify-with-sdk=$sdk" }
 $arguments += @('--keystore', $keystore,
     '-o', $output, '-r', (Join-Path $run 'result.json'),

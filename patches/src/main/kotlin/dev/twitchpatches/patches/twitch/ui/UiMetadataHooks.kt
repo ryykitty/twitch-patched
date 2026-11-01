@@ -1,7 +1,6 @@
 package dev.twitchpatches.patches.twitch.ui
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.checkCast
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.string
@@ -14,15 +13,16 @@ private object FullscreenMetadataActionStateFingerprint : Fingerprint(
     name = "toString",
     returnType = "Ljava/lang/String;",
     strings = listOf(
-        string("Visible(buttons=", StringComparisonType.CONTAINS),
-        string(", onNotificationSettingSelected=", StringComparisonType.CONTAINS),
+        string("Visible(buttons="),
+        string(", onNotificationSettingSelected="),
     ),
 )
 
 private object MetadataGiftActionFingerprint : Fingerprint(
     name = "toString",
     returnType = "Ljava/lang/String;",
-    strings = listOf(string("GiftASubButton", StringComparisonType.CONTAINS)),
+    strings = listOf(string("GiftASubButton")),
+    custom = { _, type -> type.methods.any { it.name == "<clinit>" && it.hasStrings("gift_button") } },
 )
 
 private class MetadataRendererFingerprint(concrete: String) : Fingerprint(
@@ -79,6 +79,5 @@ internal fun BytecodePatchContext.injectMetadataActions(owner: MutableClass, con
         move-result-object p1
     """)
     owner.methods.add(wrapper)
-    val callers = MethodCallFingerprint(renderer).matchAll().map { it.originalMethod }
-    replaceNativeUiCalls(callers, renderer.reference, wrapper)
+    replaceNativeUiCalls(nativeCallers(renderer), renderer.reference, wrapper)
 }

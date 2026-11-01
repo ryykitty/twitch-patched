@@ -1,9 +1,7 @@
 package dev.twitchpatches.patches.twitch.emotes
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.methodCall
-import app.morphe.patcher.string
 import app.morphe.patcher.patch.BytecodePatchContext
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -31,7 +29,7 @@ internal data class NativePickerHooks(
 
 private class PickerModelFingerprint(marker: String) : Fingerprint(
     name = "toString",
-    strings = listOf(string(marker, StringComparisonType.CONTAINS)),
+    strings = listOf(marker),
 )
 
 private object NativePickerPresenterFingerprint : Fingerprint(
@@ -126,8 +124,8 @@ internal fun BytecodePatchContext.resolveNativePickerHooks(): NativePickerHooks 
         header.constructor(listOf(PICKER_STRING, PICKER_STRING, PICKER_STRING, "Z")),
         section.constructor(listOf(header.superclass.orEmpty(), PICKER_LIST)), entries,
         state, update, delegateList, layout, smooth, target, scroll, url, imageBinder).also {
-        classDefBy(assetType).fields.filter { field -> field.name in setOf("STATIC", "ANIMATED") }.let { f ->
-            require(f.size == 2) { "Emotes: picker asset types changed." }
+        classDefBy(assetType).fields.filter { field -> field.name in setOf("STATIC", "ANIMATED") }.let { fields ->
+            require(fields.size == 2) { "Emotes: picker asset types changed." }
         }
     }
 }

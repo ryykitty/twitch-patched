@@ -3,7 +3,6 @@ package dev.twitchpatches.patches.twitch.playback
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
-import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
@@ -13,18 +12,6 @@ import dev.twitchpatches.patches.twitch.shared.*
 
 private const val VERTICAL = "Ltv/twitch/android/feature/theatre/vertical/VerticalTheatreFragment;"
 
-internal fun nativeBackgroundEligibility(all: List<Method>): Method {
-    val lifecycle = all.filter { it.definingClass == VERTICAL && it.name == "onStop" &&
-        it.parameterTypes.isEmpty() && it.returnType == "V" }.uniqueHook("vertical playback stop lifecycle")
-    val calls = lifecycle.references().filterIsInstance<MethodReference>().map { it.toString() }.toSet()
-    return all.filter { method ->
-        AccessFlags.STATIC.isSet(method.accessFlags) && method.returnType == "Z" &&
-            method.parameterTypes.map { it.toString() } == listOf(VERTICAL) &&
-            method.reference in calls && method.hasStrings("audioDeviceManager") &&
-            method.references().filterIsInstance<MethodReference>().count(::isDjStatus) == 1
-    }.uniqueHook("vertical background playback eligibility")
-}
-
 private object VerticalBackgroundEligibilityFingerprint : Fingerprint(
     isStatic = true,
     returnType = "Z",
@@ -32,16 +19,19 @@ private object VerticalBackgroundEligibilityFingerprint : Fingerprint(
     strings = listOf("audioDeviceManager"),
 )
 
+internal fun requireBackgroundEligibilityContract(lifecycle: Method, eligibility: Method) {
+    val calls = lifecycle.references().filterIsInstance<MethodReference>().map { it.toString() }
+    require(eligibility.reference in calls && eligibility.references().filterIsInstance<MethodReference>().count(::isDjStatus) == 1) {
+        "Background playback: eligibility is no longer the DJ check used by the stop lifecycle."
+    }
+}
+
 internal fun BytecodePatchContext.restoreNativeBackgroundPlayback() {
     val lifecycle = classDefBy(VERTICAL).methods.filter {
         it.name == "onStop" && it.parameterTypes.isEmpty() && it.returnType == "V"
     }.uniqueHook("vertical playback stop lifecycle")
-    val calls = lifecycle.references().filterIsInstance<MethodReference>().map { it.toString() }.toSet()
-
     val eligibility = VerticalBackgroundEligibilityFingerprint.originalMethod
-    require(eligibility.reference in calls && eligibility.references().filterIsInstance<MethodReference>().count(::isDjStatus) == 1) {
-        "vertical background playback eligibility contract changed"
-    }
+    requireBackgroundEligibilityContract(lifecycle, eligibility)
     val code = eligibility.code()
     val read = code.indexOfFirst { isDjStatus((it as? ReferenceInstruction)?.reference as? MethodReference) }
     val result = code[read + 1] as? OneRegisterInstruction

@@ -1,7 +1,6 @@
 package dev.twitchpatches.patches.twitch.ui
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.literal
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.string
@@ -34,9 +33,9 @@ private class UiVolumeRendererFingerprint(nativeMuteLabel: Long) : Fingerprint(
 private object PlayerPreferenceFlowConstructorFingerprint : Fingerprint(
     name = "<init>",
     strings = listOf(
-        string("VerticalTheatrePlayable", StringComparisonType.CONTAINS),
-        string("VerticalTheatre", StringComparisonType.CONTAINS),
-        string("video_cc", StringComparisonType.CONTAINS),
+        string("VerticalTheatrePlayable"),
+        string("VerticalTheatre"),
+        string("video_cc"),
     ),
 )
 
@@ -145,9 +144,7 @@ internal fun BytecodePatchContext.resolveUiComposition(): UiCompositionContract 
     }.uniqueHook("UI classic Subscribe renderer")
     val classicRow = resolveClassicActionRow(composer, concrete)
     val actionCallers = listOf(support, classicGift, classicSubscribe, classicRow.renderer).associate { target ->
-        target.reference to MethodCallFingerprint(target).matchAll()
-            .map { it.originalMethod }
-            .filter { it.definingClass != "Ldev/twitchpatches/extension/ui/UiComposeBridge;" }
+        target.reference to nativeCallers(target)
     }
     val supportCallers = actionCallers.getValue(support.reference)
     val bits = BitsRendererFingerprint(uiResourceIds.getValue("string/bits")).matchAll()
