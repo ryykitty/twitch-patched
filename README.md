@@ -48,7 +48,7 @@ Patches support the latest stable Twitch release and the latest beta:
 
 Support moves forward when a new stable release comes out. Builds are verified against ARM64 originals. See [compatibility data](config/compatibility.json) for Android 13 device checks and remaining validation.
 
-These patches require Morphe Patcher 2.0.1, available in Morphe Manager 2.2.0 and Morphe Desktop 1.19.1.
+These patches require Morphe Patcher 2.0.0 or newer, available in Morphe Manager 2.0.0 and Morphe Desktop 1.19.0. Releases are tested on Morphe Manager 2.3.0 and Morphe Desktop 1.20.0.
 
 Live ad replacement depends on finding a clean, compatible Twitch stream. Ads can still appear when no alternative is available. See [ad-blocking coverage](docs/AD_BLOCKING.md) for supported surfaces and limitations. Google Play billing is unavailable in the re-signed app.
 

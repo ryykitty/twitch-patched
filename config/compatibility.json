@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "packageName": "tv.twitch.android.app",
   "toolchain": {
-    "morpheDesktop": "1.19.1",
-    "morphePatcher": "2.0.1",
+    "morpheDesktop": "1.20.0",
+    "morphePatcher": "2.0.0",
     "morpheGradlePlugin": "2.0.0",
     "java": 21,
     "androidBuildTools": "36.0.0"

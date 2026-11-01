@@ -70,6 +70,11 @@ Morphe Patcher 2 decodes resources lazily. Use `ResourcePatchContext.decode` for
 wildcard resource scans before enumerating matched files. Direct file access
 decodes individual resources on demand.
 
+The `morphe-patcher` version in `gradle/libs.versions.toml` becomes the bundle's
+`Patcher-Version`. Morphe Manager and Morphe Desktop refuse a bundle that declares
+a newer patcher than they ship, so raising it drops every older Manager. Keep it at
+the oldest patcher the code compiles against, and test on the newest tools.
+
 See [the upgrade workflow](UPGRADES.md) for repository synchronization, baseline
 checkpoints, device recovery and overnight acceptance checks.
 
