@@ -28,6 +28,17 @@ class UiViewResourcesTest {
         assertEquals("android.widget.FrameLayout", types.values.single())
     }
 
+    @Test fun collapsingContainerKeepsItsBackgroundAndHasNoHideOption() {
+        val source = "<LinearLayout xmlns:android='http://schemas.android.com/apk/res/android'>" +
+            "<FrameLayout android:id='@id/compact_pill_carousel_container' android:background='@color/background_base'/></LinearLayout>"
+        val types = mutableMapOf<String, String>()
+        val document = parseResourceXml(rewriteUiCollapsingContainer(source, "compact_pill_carousel_container", types, "pinned_cheer"))
+        val node = document.getElementsByTagName("dev.twitchpatches.extension.ui.views.CollapsingFrameLayout").item(0) as Element
+        assertEquals("@color/background_base", node.getAttribute("android:background"))
+        assertFalse(node.hasAttribute("android:tag"))
+        assertEquals("android.widget.FrameLayout", types.values.single())
+    }
+
     @Test fun missingAndDuplicateControlsFailBeforeBindingTheWrongElement() {
         val source = "<LinearLayout xmlns:android='http://schemas.android.com/apk/res/android'><ImageView android:id='@id/cast'/><ImageView android:id='@id/cast'/></LinearLayout>"
         for (id in listOf("cast", "missing")) assertThrows(Exception::class.java) {

@@ -18,7 +18,8 @@ Twitch provides the corresponding control.
 
 Empty action rows and dividers collapse automatically. Remaining actions keep
 their order, spacing and callbacks. Extension settings also cover overflow
-buttons and containers beside the leaderboard.
+buttons and containers beside the leaderboard. The paid pinned message row above
+native chat takes no space while it has no messages, with or without any option.
 
 Hype Train settings cover banners and player overlays. Leaderboard settings
 separate channel rankings from the player button. Hidden Hype Trains retain their current state and can be shown again

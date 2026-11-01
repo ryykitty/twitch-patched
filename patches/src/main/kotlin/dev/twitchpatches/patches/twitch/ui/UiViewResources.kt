@@ -48,18 +48,29 @@ internal fun ResourcePatchContext.prepareUiViewResources() {
     icon.writeText(rewriteUiRoot(icon.readText(), "hide_channel_extensions", "FrameLayout", uiViewTypes, "extension_entry_point_single_icon"))
     val train = get("res/layout/hype_train_container_layout.xml")
     train.writeText(rewriteUiRoot(train.readText(), "hide_hype_trains", "FrameLayout", uiViewTypes, "hype_train_container_layout"))
+    val pinnedCheer = get("res/layout/pinned_cheer.xml")
+    pinnedCheer.writeText(rewriteUiCollapsingContainer(pinnedCheer.readText(), "compact_pill_carousel_container", uiViewTypes, "pinned_cheer"))
 }
 
 internal fun rewriteUiLayout(source: String, controls: Map<String, String>, types: MutableMap<String, String>, name: String): String {
     val document = parseResourceXml(source)
-    controls.forEach { (id, key) ->
-        val nodes = document.getElementsByTagName("*")
-        val element = (0 until nodes.length).map { nodes.item(it) as Element }.filter {
-            it.getAttribute("android:id") == "@id/$id"
-        }.uniqueHook("UI $name/$id")
-        replaceUiView(document, element, key, types)
-    }
+    controls.forEach { (id, key) -> replaceUiView(document, findUiElement(document, id, name), key, types) }
     return serializeUiLayout(document)
+}
+
+internal fun rewriteUiCollapsingContainer(source: String, id: String, types: MutableMap<String, String>, name: String): String {
+    val document = parseResourceXml(source)
+    val element = findUiElement(document, id, name)
+    require(element.tagName == "FrameLayout") { "UI settings: $name/$id is no longer a FrameLayout." }
+    replaceUiView(document, element, null, types, "CollapsingFrameLayout")
+    return serializeUiLayout(document)
+}
+
+private fun findUiElement(document: Document, id: String, name: String): Element {
+    val nodes = document.getElementsByTagName("*")
+    return (0 until nodes.length).map { nodes.item(it) as Element }.filter {
+        it.getAttribute("android:id") == "@id/$id"
+    }.uniqueHook("UI $name/$id")
 }
 
 internal fun rewriteUiRoot(source: String, key: String, wrapper: String, types: MutableMap<String, String>, name: String): String {
@@ -70,7 +81,7 @@ internal fun rewriteUiRoot(source: String, key: String, wrapper: String, types: 
     return serializeUiLayout(document)
 }
 
-private fun replaceUiView(document: Document, element: Element, key: String, types: MutableMap<String, String>, wrapper: String? = null) {
+private fun replaceUiView(document: Document, element: Element, key: String?, types: MutableMap<String, String>, wrapper: String? = null) {
     val base = when (element.tagName) {
         "FrameLayout", "LinearLayout", "ImageView", "ImageButton" -> "android.widget.${element.tagName}"
         else -> element.tagName
@@ -84,7 +95,7 @@ private fun replaceUiView(document: Document, element: Element, key: String, typ
         view.setAttribute(attribute.nodeName, attribute.nodeValue)
     }
     while (element.hasChildNodes()) view.appendChild(element.firstChild)
-    view.setAttribute("android:tag", "twitchpatches_ui:$key")
+    if (key != null) view.setAttribute("android:tag", "twitchpatches_ui:$key")
     element.parentNode.replaceChild(view, element)
 }
 
