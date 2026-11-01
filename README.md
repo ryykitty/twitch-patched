@@ -30,7 +30,7 @@ Patch settings include search, emote provider controls and UI customization. Gro
 
 Included automatically with any modifying patch:
 
-- **DJ playback:** Enables Audio Only and Play in Background controls for DJ streams.
+- **DJ playback:** Enables Audio Only and Play in Background controls for DJ streams. In Classic Split, picture-in-picture keeps playing when the screen turns off, on every stream, unless Background Audio is set to Never.
 - **Light mode:** Fixes theme changes in the Live and Clips feeds, navigation and Patch settings.
 - **Push notifications:** Restores notification registration in the patched app.
 

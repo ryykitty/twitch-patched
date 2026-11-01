@@ -8,6 +8,7 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import com.android.tools.smali.dexlib2.immutable.instruction.*
 import com.android.tools.smali.dexlib2.immutable.reference.*
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
 
@@ -22,6 +23,26 @@ class BackgroundPlaybackTest {
         assertThrows(IllegalArgumentException::class.java) {
             requireBackgroundEligibilityContract(lifecycle("La;"), eligibility("Lb;"))
         }
+    }
+
+    @Test fun findsThePictureInPictureFlagAfterTheForegroundFlag() {
+        assertEquals(3, classicPictureInPictureFlag(classicInactive(Opcode.IF_NEZ)))
+    }
+
+    @Test fun changedPictureInPictureCheckFailsInsteadOfChangingAnotherFlag() {
+        assertThrows(IllegalArgumentException::class.java) { classicPictureInPictureFlag(classicInactive(Opcode.IF_EQZ)) }
+    }
+
+    private fun classicInactive(branch: Opcode): List<Instruction> {
+        val flag = ImmutableFieldReference("La;", "flag", "Z")
+        return listOf(
+            ImmutableInstruction35c(Opcode.INVOKE_VIRTUAL, 1, 0, 0, 0, 0, 0,
+                ImmutableMethodReference("Landroid/app/Activity;", "isFinishing", emptyList(), "Z")),
+            ImmutableInstruction22c(Opcode.IGET_BOOLEAN, 0, 1, flag),
+            ImmutableInstruction21t(Opcode.IF_EQZ, 0, 8),
+            ImmutableInstruction22c(Opcode.IGET_BOOLEAN, 0, 1, flag),
+            ImmutableInstruction21t(branch, 0, 4),
+            ImmutableInstruction10x(Opcode.RETURN_VOID))
     }
 
     private fun lifecycle(target: String) = method(vertical, "onStop", emptyList(), "V", false, listOf(

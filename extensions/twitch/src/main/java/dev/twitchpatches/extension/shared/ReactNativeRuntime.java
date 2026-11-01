@@ -23,6 +23,7 @@ import dev.twitchpatches.extension.promotions.SubscriptionBannerSettings;
 import dev.twitchpatches.extension.ads.AdSettings;
 import dev.twitchpatches.extension.emotes.EmoteRuntime;
 import dev.twitchpatches.extension.emotes.FavoriteEmotes;
+import dev.twitchpatches.extension.playback.BackgroundPlayback;
 import dev.twitchpatches.extension.reload.ReloadRuntime;
 import dev.twitchpatches.extension.ui.UiSettings;
 import dev.twitchpatches.extension.chat.DeletedMessageSettings;
@@ -38,6 +39,7 @@ public final class ReactNativeRuntime implements Application.ActivityLifecycleCa
         if (initialized) return;
         initialized = true;
         TwitchTheme.initialize(application);
+        BackgroundPlayback.initialize(application);
         application.registerActivityLifecycleCallbacks(new ReactNativeRuntime());
         ExecutorService worker = Executors.newSingleThreadExecutor(task -> new Thread(task, "TwitchPatchAssets"));
         bootstrap = new CompletableFuture<>();

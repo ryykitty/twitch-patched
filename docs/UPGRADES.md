@@ -132,7 +132,7 @@ in-place update. Retain logs locally while the candidate is used overnight.
 | Settings | Feature toggles recover both ways; omitted patches have no settings. |
 | UI settings | Group and individual controls work independently, empty action rows collapse, and fullscreen player/settings windows respond to both system-bar toggle directions. |
 | Theme | Dark, Light and System settings update Following, Live, Clips and navigation. Check initial entry, clip loading, refresh and tab changes; headers scroll and category labels remain visible. Patch settings opens immediately after a theme change. |
-| DJ playback | Background audio, audio-only and picture-in-picture controls work in native and React Native playback when the corresponding renditions are available. |
+| DJ playback | Background audio, audio-only and picture-in-picture controls work in native Classic Split and React Native playback when the corresponding renditions are available. With Background Audio on, audio continues in picture-in-picture with the screen off. Never pauses it until the screen is unlocked. Native Vertical View has no background audio while Twitch keeps its experiment off. |
 | Notifications | A real live alert arrives in the background and opens its channel; record delivery timing separately. |
 
 Record a check as unobserved when the necessary event did not occur. For a bug,
