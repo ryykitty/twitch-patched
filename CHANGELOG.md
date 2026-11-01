@@ -1,3 +1,19 @@
+## [1.5.0-dev.2](https://github.com/ryykitty/twitch-patched/compare/v1.5.0-dev.1...v1.5.0-dev.2) (2026-11-01)
+
+### Bug Fixes
+
+* keep all emote picker tabs visible after tapping a provider in React Native chat ([9352faa](https://github.com/ryykitty/twitch-patched/commit/9352faaa1c3ed13748050159221aa958bbe200bc))
+* list emote suggestions that start with what you typed first ([d8f2897](https://github.com/ryykitty/twitch-patched/commit/d8f2897001dda9a08e64b8e73860448002f3a2cf))
+* stop React Native chat crashing as soon as you type ([2aa1045](https://github.com/ryykitty/twitch-patched/commit/2aa1045e6ad7eaa0e9970679b611d7ac94c1c9b3)), closes [#34](https://github.com/ryykitty/twitch-patched/issues/34)
+
+### Features
+
+* show emotes as images in the message box in every chat layout ([83bae3e](https://github.com/ryykitty/twitch-patched/commit/83bae3eba995fee0b244cfc224298681aaa9d7c0))
+
+### Improvements
+
+* speed up patching by reusing the React Native bundle analysis ([bc72ec9](https://github.com/ryykitty/twitch-patched/commit/bc72ec94f522925583f4322c1f522d73e7ec342e))
+
 ## [1.5.0-dev.1](https://github.com/ryykitty/twitch-patched/compare/v1.4.0...v1.5.0-dev.1) (2026-11-01)
 
 ### Bug Fixes
