@@ -23,11 +23,11 @@ internal fun HermesBundle.dependencyModule(functionName: String, property: Strin
 }
 
 private fun inlineImportIndex(code: List<HermesInstruction>, readIndex: Int): Int? {
-    val call = code.getOrNull(readIndex - 1)
-    val dependency = code.getOrNull(readIndex - 2)
-    val imported = call?.name == "Call2" && call.args[0] == code[readIndex].args[1] &&
-        dependency?.name == "GetByIndex" && call.args[3] == dependency.args[0]
-    return if (imported) dependency!!.args[2] else null
+    val call = code.getOrNull(readIndex - 1) ?: return null
+    val dependency = code.getOrNull(readIndex - 2) ?: return null
+    val imported = call.name == "Call2" && call.args[0] == code[readIndex].args[1] &&
+        dependency.name == "GetByIndex" && call.args[3] == dependency.args[0]
+    return if (imported) dependency.args[2] else null
 }
 
 private fun HermesBundle.environmentImportIndex(code: List<HermesInstruction>, readIndex: Int, factory: HermesBundle.Function, property: String): Int {
@@ -38,14 +38,13 @@ private fun HermesBundle.environmentImportIndex(code: List<HermesInstruction>, r
     val store = body.withIndex().singleOrNull { it.value.name == "StoreToEnvironment" &&
         it.value.args[0] == environment && it.value.args[1] == slot }
         ?: error("Modern Twitch: $property dependency slot changed.")
-    val call = body.getOrNull(store.index - 1)
-    val dependency = body.getOrNull(store.index - 2)
+    val importFlowChanged = "Modern Twitch: $property import flow changed."
+    val call = requireNotNull(body.getOrNull(store.index - 1)) { importFlowChanged }
+    val dependency = requireNotNull(body.getOrNull(store.index - 2)) { importFlowChanged }
     val requireRegister = body.single { it.name == "LoadParam" && it.args[1] == 2 }.args[0]
     val dependenciesRegister = body.single { it.name == "LoadParam" && it.args[1] == 7 }.args[0]
-    require(call?.name == "Call2" && dependency?.name == "GetByIndex" &&
+    require(call.name == "Call2" && dependency.name == "GetByIndex" &&
         call.args[0] == store.value.args[2] && call.args[1] == requireRegister &&
-        call.args[3] == dependency.args[0] && dependency.args[1] == dependenciesRegister) {
-        "Modern Twitch: $property import flow changed."
-    }
-    return dependency!!.args[2]
+        call.args[3] == dependency.args[0] && dependency.args[1] == dependenciesRegister) { importFlowChanged }
+    return dependency.args[2]
 }

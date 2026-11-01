@@ -56,6 +56,6 @@ class DeletedMessageHooksTest {
         val failure = assertThrows(IllegalStateException::class.java) {
             keepDeletedMessageText(formatter("const/4 v0, 0x0\nreturn-object v0"))
         }
-        assertTrue(failure.message!!.contains("sender name span"))
+        assertTrue(failure.message.orEmpty().contains("sender name span"))
     }
 }
