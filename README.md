@@ -19,6 +19,7 @@ Patch settings include search, emote provider controls and UI customization. Gro
 | Hide subscription discount banners | Hides subscription offers, discount banners and promotional labels. |
 | Auto-claim bonus channel points | Automatically claims bonus channel points while watching live streams. |
 | BTTV, FFZ and 7TV emotes | Adds global and channel emotes to live and replay chat, autocomplete and the emote picker, with animations and tap previews. Shows Twitch and provider emotes as images in the message box in every chat layout, which Patch settings can turn off. |
+| 7TV, FFZ, Chatterino and DankChat badges | Shows one third-party badge next to the Twitch badges in live and replay chat, in native and React Native chat. Someone with several badges shows the first enabled one in the order 7TV, DankChat, Chatterino, FrankerFaceZ. Patch settings can turn off each provider without a restart. Animated badges show their first frame. |
 | Favorite emotes | Adds a Favorites section to the emote picker in native and React Native chat. Long-press an emote in the picker or tap the star on its card. Emotes you cannot use yet show as locked, and channel BTTV, FFZ and 7TV emotes only show where they are available. |
 | Reload stream | Reloads live streams with a double-tap control. |
 | Show deleted messages | Keeps deleted and moderated messages readable in native and React Native chat. |
@@ -83,8 +84,6 @@ The bundle is written to `patches/build/libs/patches-<version>.mpp`. The Gradle 
 Changes and feature proposals are welcome. Keep pull requests focused on one feature or fix and target `dev`. See [contributing](CONTRIBUTING.md) for setup and verification, and [maintenance](docs/MAINTENANCE.md) for releases.
 
 The [screen inventory](docs/SCREENS.md) lists the playback and settings surfaces covered by the patches. Interface customization modules use the [UI settings registry](docs/UI_SETTINGS.md).
-
-Thanks to [oviron](https://github.com/oviron) for Twitch 31.7.0 support and the original deleted-message patch.
 
 This patchset was developed with AI assistance for code generation, debugging and documentation.
 

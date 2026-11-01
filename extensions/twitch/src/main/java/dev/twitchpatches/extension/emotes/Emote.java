@@ -1,12 +1,12 @@
 package dev.twitchpatches.extension.emotes;
 
-final class Emote {
+public final class Emote {
     final String code;
     final String url;
     final boolean animated;
     final boolean overlay;
 
-    Emote(String code, String url, boolean animated, boolean overlay) {
+    public Emote(String code, String url, boolean animated, boolean overlay) {
         this.code = code;
         this.url = url;
         this.animated = animated;

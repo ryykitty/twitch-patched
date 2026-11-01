@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.function.Consumer;
 
-final class EmoteImages {
+public final class EmoteImages {
     private final EmoteImageRequests requests;
     private final Map<String, Long> failed = new java.util.LinkedHashMap<>();
     private final LruCache<String, Image> memory;
@@ -21,7 +21,7 @@ final class EmoteImages {
 
     EmoteImages(Consumer<String> changed) { this(changed, 2, 12); }
 
-    EmoteImages(Consumer<String> changed, int threads, int megabytes) {
+    public EmoteImages(Consumer<String> changed, int threads, int megabytes) {
         this.changed = changed;
         requests = new EmoteImageRequests(threads);
         memory = new LruCache<String, Image>(megabytes * 1024 * 1024) {
@@ -29,12 +29,12 @@ final class EmoteImages {
         };
     }
 
-    synchronized Drawable drawable(android.content.res.Resources resources, String url) {
+    public synchronized Drawable drawable(android.content.res.Resources resources, String url) {
         Image image = memory.get(url);
         return image == null ? null : image.animation != null ? image.animation.newDrawable() : image.state.newDrawable(resources).mutate();
     }
 
-    synchronized void request(Emote emote) {
+    public synchronized void request(Emote emote) {
         String url = emote.url;
         if (memory.get(url) != null || failed.getOrDefault(url, 0L) > System.currentTimeMillis()) return;
         requests.submit(url, ticket -> load(emote, ticket));

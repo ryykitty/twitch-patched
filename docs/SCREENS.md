@@ -39,6 +39,7 @@ Stable baseline: Twitch 31.8.0, ARM64. Experimental target: 31.9.0_BETA. Names i
 | Draft emotes | Native `ChatInput`, the Vertical View Compose field and its collapsed text; `ChatComposerBar`, `NativeEmoteInput`, token image maps and caret reconciliation |
 | Emote picker | Twitch catalogues, history, BTTV, FFZ and 7TV provider tabs |
 | Emote preview | Native preview; V2 sheet |
+| Third-party badges | Native chat row builder for live and replay chat; `ChatMessageRow`, `BadgePart` and the badge registry |
 | Favorite emotes | Native picker long click, section and footer button; native emote card and preview; V2 `EmotePickerTray`, `useEmotePreview`, `EmoteCard` and sheet |
 | Deleted messages | Native formatter; React Native `ChatMessageRow` |
 | Hype Trains | Native highlight events and expanded banner; vertical Compose host; React Native highlight selectors and Skyline hosts |
