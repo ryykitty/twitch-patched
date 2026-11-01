@@ -42,15 +42,15 @@
         "sdkPerDexAndApkChecks": "passed",
         "originalHierarchyFindings": 118,
         "introducedHierarchyFindings": 0,
-        "evidence": "Fresh full DEX rebuild and original-aware audit with all ten feature patches.",
+        "evidence": "Fresh full DEX rebuild and original-aware audit with all eleven feature patches.",
         "deviceAcceptance": "Not installed. The test device runs the beta, whose higher version code blocks this version."
       },
       "evaluatedArtifact": {
-        "date": "2026-10-31",
+        "date": "2026-11-01",
         "build": "Morphe Desktop",
-        "bundleSha256": "b3091515df87c485f3cc89f5d1c5a4ffd3f3cd6740f7d979e1a7f1bd1428b6e7",
-        "apkSha256": "ff6ece9cb9cf4ef4c7d3b787bc6fe16cffa50554176b95ae5f9a260621a36401",
-        "patchesApplied": 10
+        "bundleSha256": "483b446fc463500605139284b9a7fbc193ba639f10b2c18b4cb7e2d0ece14efa",
+        "apkSha256": "ce99a6feadb2d00ee270632a27afd7ef62b723af3a9bf0d44cb43e62296c76cc",
+        "patchesApplied": 11
       }
     },
     {
@@ -73,22 +73,22 @@
         "sdkPerDexAndApkChecks": "passed",
         "originalHierarchyFindings": 118,
         "introducedHierarchyFindings": 0,
-        "evidence": "Fresh full DEX rebuild and original-aware audit with all ten feature patches.",
-        "deviceAcceptance": "Development build installed in place on Android 13. Startup, Patch settings and live playback checked. Normal-use acceptance is pending."
+        "evidence": "Fresh full DEX rebuild and original-aware audit with all eleven feature patches.",
+        "deviceAcceptance": "Morphe Manager 2.3.0 build installed in place on Android 13. Startup, Patch settings, native Vertical View playback and the native player menu checked. Normal-use acceptance is pending."
       },
       "evaluatedArtifact": {
-        "date": "2026-10-31",
+        "date": "2026-11-01",
         "build": "Morphe Desktop",
-        "bundleSha256": "b3091515df87c485f3cc89f5d1c5a4ffd3f3cd6740f7d979e1a7f1bd1428b6e7",
-        "apkSha256": "8a2447e7a1df5c2176ca7b0c094842c265a9b49da9a168354a45b7ad87b40e8d",
-        "patchesApplied": 10
+        "bundleSha256": "483b446fc463500605139284b9a7fbc193ba639f10b2c18b4cb7e2d0ece14efa",
+        "apkSha256": "2dd1f8fa3ce32b13d6451d61cbf76d1267b6142bca19f328ae313a21abf5416b",
+        "patchesApplied": 11
       }
     }
   ],
   "regressionChecks": {
-    "date": "2026-10-31",
-    "javaKotlinTests": 279,
-    "javaScriptTests": 61,
+    "date": "2026-11-01",
+    "javaKotlinTests": 286,
+    "javaScriptTests": 86,
     "standaloneVerifierTests": "passed",
     "sourceHygiene": "passed",
     "androidApi": 33,
@@ -102,6 +102,8 @@
     "reactNativeBundleSource": "Host bundle-source contract resolves uniquely on both targets. Full APK rebuilding and original-aware SDK checks pass; no new hierarchy findings.",
     "streamAdWarmup": "Four tests pass for immediate startup, late clean results, rendition isolation and cancellation. The existing 2.2-second foreground budget is unchanged.",
     "creatorSponsorships": "Native banner/header contracts and React Native query/placement contracts resolve on both targets. Generated capture instructions and inherited Android method references are tested; three adapter tests cover live toggles and cached creatives. Device acceptance pending.",
+    "bonusClaims": "In native Vertical View, a bonus that appeared before playback started was claimed once playback started. With the setting off it stayed unclaimed. React Native chat was not observed with a live bonus.",
+    "olderManagers": "The bundle declares Morphe Patcher 2.0.0. All eleven patches applied on Morphe Patcher 2.0.0, 2.0.1 and 2.1.0 on both targets, with the same patched classes on each.",
     "favoriteEmotes": "The patch resolves on both targets alone and with the full selection. On a device, favorites stayed in sync between native and React Native pickers, cards in live and VOD chat showed the star, Twitch emotes that cannot be used showed locked with the correct upsell or card, and channel provider emotes stayed out of other channels. React Native Vertical renders the same tray and card but could not be opened on the test account.",
     "hookCoverage": "The patcher ran under line coverage on both targets. Hook variants that neither target uses were removed. Variants that remain differ between 31.8.0 and 31.9.0_BETA or depend on the patch selection."
   },
