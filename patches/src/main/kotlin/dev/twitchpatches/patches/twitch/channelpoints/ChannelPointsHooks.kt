@@ -20,6 +20,7 @@ internal const val CHANNEL = "Ltv/twitch/android/models/channel/ChannelInfo;"
 internal const val TUID = "Ltv/twitch/android/models/Tuid;"
 internal const val CONTENT_MODE = "Ltv/twitch/android/models/ContentMode;"
 internal const val RUNTIME = "Ldev/twitchpatches/extension/channelpoints/ChannelPointsRuntime;"
+internal const val CLAIMER = "Ldev/twitchpatches/extension/channelpoints/BonusClaimer;"
 private const val METADATA = "Ltv/twitch/android/shared/one/chat/pub/ChatModeMetadata;"
 private const val IVS_PLAYER = "Lcom/amazonaws/ivs/player/MediaPlayer;"
 
