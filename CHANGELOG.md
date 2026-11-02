@@ -1,3 +1,17 @@
+## [1.6.0-dev.1](https://github.com/ryykitty/twitch-patched/compare/v1.5.0...v1.6.0-dev.1) (2026-11-02)
+
+### Bug Fixes
+
+* hide the Bits button in the Classic Split chat input ([49eea36](https://github.com/ryykitty/twitch-patched/commit/49eea361334780b8bbe39e80b95c33db722cf1d8))
+* hide the Clip button in Vertical View without removing the layout switch ([a291d33](https://github.com/ryykitty/twitch-patched/commit/a291d3379e183bbba8e963244b34bc3314c86358))
+* keep background audio playing in picture-in-picture with the screen off, including DJ streams ([b559456](https://github.com/ryykitty/twitch-patched/commit/b559456808de5724c1371a5657731de78b6c06f0)), closes [#5](https://github.com/ryykitty/twitch-patched/issues/5)
+* make UI settings open from the native player menu ([dc8db75](https://github.com/ryykitty/twitch-patched/commit/dc8db75dbbe5eae3e56cd734df05f1fbc7d46a1e))
+* remove the empty grey strip above native chat ([941663f](https://github.com/ryykitty/twitch-patched/commit/941663f5605150e77b661e6809bb0ff4f6454468))
+
+### Features
+
+* show 7TV, FFZ, Chatterino and DankChat badges in chat ([5a9564b](https://github.com/ryykitty/twitch-patched/commit/5a9564b280448aaa12d412debe1955000ddaa34f))
+
 ## [1.5.0](https://github.com/ryykitty/twitch-patched/compare/v1.4.0...v1.5.0) (2026-11-01)
 
 ### Bug Fixes
