@@ -43,15 +43,15 @@
         "sdkPerDexAndApkChecks": "passed",
         "originalHierarchyFindings": 118,
         "introducedHierarchyFindings": 0,
-        "evidence": "Fresh full DEX rebuild and original-aware audit with all eleven feature patches.",
+        "evidence": "Fresh full DEX rebuild and original-aware audit with all twelve feature patches.",
         "deviceAcceptance": "Not installed. The test device runs the beta, whose higher version code blocks this version."
       },
       "evaluatedArtifact": {
-        "date": "2026-11-01",
+        "date": "2026-11-02",
         "build": "Morphe Desktop",
-        "bundleSha256": "4332f78f5292e4e26164d78c126c02bed960480df906bfe730fdb9c7367b0384",
-        "apkSha256": "528c91d62c99ca8d088deb00a5f44199b3eeae3fa04c1a776eee346cc7c7813e",
-        "patchesApplied": 11
+        "bundleSha256": "e77f35f3e393e042944235a64cfc6ddf6dfa6dd489bbc39227eba3564d92ae0e",
+        "apkSha256": "50d0707b12b96eb42055229348682d5f818cc0af20c96124a764843aebd3c309",
+        "patchesApplied": 12
       }
     },
     {
@@ -74,22 +74,22 @@
         "sdkPerDexAndApkChecks": "passed",
         "originalHierarchyFindings": 118,
         "introducedHierarchyFindings": 0,
-        "evidence": "Fresh full DEX rebuild and original-aware audit with all eleven feature patches.",
-        "deviceAcceptance": "Morphe Manager 2.3.0 build installed in place on Android 13, with the same method logic as the Morphe Desktop build. Startup, Patch settings, reload, emote input and picker, and both chat layouts checked. Normal-use acceptance is pending."
+        "evidence": "Fresh full DEX rebuild and original-aware audit with all twelve feature patches.",
+        "deviceAcceptance": "Morphe Manager 2.3.0 build installed in place on Android 13, with the same method logic as the Morphe Desktop build. Startup, Patch settings and search, reload after a layout change, emote suggestions and picker, both native layouts, landscape system bars and DJ background audio checked. Normal-use acceptance is pending."
       },
       "evaluatedArtifact": {
-        "date": "2026-11-01",
+        "date": "2026-11-02",
         "build": "Morphe Desktop",
-        "bundleSha256": "4332f78f5292e4e26164d78c126c02bed960480df906bfe730fdb9c7367b0384",
-        "apkSha256": "a4ffab82a04cefe5de734b550ba912882dac8c8731959b7ded90884cd744cdaf",
-        "patchesApplied": 11
+        "bundleSha256": "e77f35f3e393e042944235a64cfc6ddf6dfa6dd489bbc39227eba3564d92ae0e",
+        "apkSha256": "b482c90aa6bde6049d7e902a0b3ab15710dbf8495f2d2525e7e4497db5088763",
+        "patchesApplied": 12
       }
     }
   ],
   "regressionChecks": {
-    "date": "2026-11-01",
-    "javaKotlinTests": 287,
-    "javaScriptTests": 89,
+    "date": "2026-11-02",
+    "javaKotlinTests": 296,
+    "javaScriptTests": 95,
     "standaloneVerifierTests": "passed",
     "sourceHygiene": "passed",
     "androidApi": 33,
@@ -99,15 +99,17 @@
     "reducedSelection": "Show deleted messages alone passed full DEX rebuilding and the original-aware audit on 31.8.0; zero introduced findings. BTTV, FFZ and 7TV emotes, Favorite emotes and UI settings each applied alone on both targets.",
     "fullscreenRequests": "Android runtime probes passed 20 repeated modern and legacy host requests, live preference changes, restoration and keyboard preservation.",
     "channelActions": "Native metadata models preserve Follow and notification callbacks while filtering Subscribe and gifting. Native chat-overlay Subscribe uses the existing visibility policy.",
-    "backgroundPlayback": "Native lifecycle and React Native policy tests pass. DJ screen-off playback works on a device.",
+    "backgroundPlayback": "Native lifecycle and React Native policy tests pass. On a DJ stream in native Classic Split with Background Audio set to Always, audio kept playing in picture-in-picture with the screen off under a foreground service. With Never it paused and resumed on unlock. In native Vertical View it paused with Always while Twitch keeps its experiment off. Closing the window during playback was not observed.",
     "reactNativeBundleSource": "Host bundle-source contract resolves uniquely on both targets. Full APK rebuilding and original-aware SDK checks pass; no new hierarchy findings.",
     "streamAdWarmup": "Four tests pass for immediate startup, late clean results, rendition isolation and cancellation. The existing 2.2-second foreground budget is unchanged.",
     "creatorSponsorships": "Native banner/header contracts and React Native query/placement contracts resolve on both targets. Generated capture instructions and inherited Android method references are tested; three adapter tests cover live toggles and cached creatives. Device acceptance pending.",
     "bonusClaims": "In native Vertical View, a bonus that appeared before playback started was claimed once playback started. With the setting off it stayed unclaimed. React Native chat was not observed with a live bonus.",
-    "olderManagers": "The bundle declares Morphe Patcher 2.0.0. All eleven patches applied on Morphe Patcher 2.0.0, 2.0.1 and 2.1.0 on both targets.",
+    "olderManagers": "The bundle declares Morphe Patcher 2.0.0. All twelve patches applied on Morphe Patcher 2.0.0, 2.0.1 and 2.1.0 on both targets.",
     "favoriteEmotes": "The patch resolves on both targets alone and with the full selection. On a device, favorites stayed in sync between native and React Native pickers, cards in live and VOD chat showed the star, Twitch emotes that cannot be used showed locked with the correct upsell or card, and channel provider emotes stayed out of other channels. React Native Vertical renders the same tray and card but could not be opened on the test account.",
     "hookCoverage": "The patcher ran under line coverage on both targets. Hook variants that neither target uses were removed. Variants that remain differ between 31.8.0 and 31.9.0_BETA or depend on the patch selection.",
-    "emoteInput": "On a device, typing no longer ended React Native chat. The message box showed Twitch and provider emotes as images in React Native chat, native Classic Split and native Vertical View, including animated emotes and the collapsed Vertical View field. Render emotes inline applied both ways without a restart. Suggestions listed names starting with the query first, and React Native provider tabs jumped to their section with every tab still shown."
+    "emoteInput": "On a device, typing no longer ended React Native chat. The message box showed Twitch and provider emotes as images in React Native chat, native Classic Split and native Vertical View, including animated emotes and the collapsed Vertical View field. Render emotes inline applied both ways without a restart. Suggestions listed names starting with the query first, and React Native provider tabs jumped to their section with every tab still shown.",
+    "thirdPartyBadges": "The patch resolves on both targets with the full selection and alone on 31.8.0. On a device, badges showed in native Classic Split, native Vertical View, VOD chat replay and React Native, and the provider toggle applied both ways without a restart. No 7TV badge holder was seen in chat on a device; the lookup and image address were checked against a public account.",
+    "uiOptionLeftovers": "The empty paid pinned row takes no space above native chat. Clip in native Vertical View and the Bits button in the Classic Split chat input follow their options, and the native player menu opens UI settings. A row with a real paid pinned message was not observed."
   },
   "knownLimitations": {
     "streamAds": "If no clean compatible alternative is available within the bounded search, original media is retained and an ad can appear. Live preroll/midroll acceptance remains pending for this build.",
@@ -121,10 +123,9 @@
     "extendedAcceptance": [
       "Preroll and midroll events",
       "Notification delivery",
-      "Theme transitions",
-      "DJ audio and background playback"
+      "Theme transitions"
     ],
-    "hypeTrains": "Native event-state and React Native selector tests passed. Live Hype Train transitions still require an event on an available channel.",
+    "hypeTrains": "Native event-state and React Native selector tests passed. On a live train in native Classic Split the option hid the banner without a restart. The train ended before the banner could be seen returning, and React Native was not observed.",
     "emoteDrafts": "Twitch and provider draft images are confirmed in React Native chat, native Classic Split and native Vertical View. In native layouts, backspace removes one character and shows the remaining text.",
     "creatorSponsorships": "Native and React Native suppression is covered by hook and adapter checks. Live sponsorship transitions still require device acceptance."
   },
