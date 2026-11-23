@@ -40,10 +40,13 @@ All feature patches are selected and enabled by default. UI customization option
 
 ## Compatibility
 
-Patches support the latest stable Twitch release and the latest beta:
+The patch bundle declares the following Twitch targets.
 
 | Version | Version code | Status |
 | --- | --- | --- |
+| 32.1.0 | 3201006 | Stable |
+| 32.0.0 | 3200006 | Stable |
+| 31.9.0 | 3109006 | Stable |
 | 31.8.0 | 3108006 | Stable |
 | 31.9.0_BETA | 13109003 | Experimental |
 

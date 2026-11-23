@@ -47,8 +47,8 @@ internal fun BytecodePatchContext.injectUiHypeTrainEvents() {
     }.distinctBy { it.toString() }.uniqueHook("native Hype Train removal event")
     val variants = handler.code().filter { it.opcode == Opcode.INSTANCE_OF }.map {
         ((it as ReferenceInstruction).reference as TypeReference).type
-    }.toSet()
-    require(variants.size == 7 && variants.all { classDefBy(it).superclass == base }) {
+    }.filter { classDefBy(it).superclass == base }.toSet()
+    require(variants.size == 7 && variants.containsAll(listOf(approaching, active, expand, collapse, level))) {
         "UI settings: Hype Train presentation variants changed."
     }
     val kinds = variants.associateWith { when (it) { approaching -> 1; active -> 2; collapse, expand -> 4; else -> 3 } }
@@ -69,9 +69,14 @@ internal fun BytecodePatchContext.injectUiHypeTrainEvents() {
     """ }.joinToString("\n")
     owner.methods.add(nativeReloadMethod(owner.type, handlerName, listOf("Ljava/lang/Object;"), "V", 3, """
         $classify
+        sget-object v0, $removed
+        if-ne p1, v0, :stock
         const/4 v0, 0x0
         :dispatch
         invoke-static {p0, p1, v0}, $HYPE->accept(Ljava/lang/Object;Ljava/lang/Object;I)V
+        return-void
+        :stock
+        invoke-virtual {p0, p1}, ${original.reference}
         return-void
     """))
     val bridge = mutableClassDefBy(HYPE)

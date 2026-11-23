@@ -24,8 +24,8 @@
   ],
   "targets": [
     {
-      "versionName": "31.8.0",
-      "versionCode": 3108006,
+      "versionName": "32.1.0",
+      "versionCode": 3201006,
       "status": "supported",
       "primary": true,
       "evaluatedAbis": [
@@ -33,9 +33,9 @@
       ],
       "deviceAndroidApis": null,
       "original": {
-        "bundleSha256": "e0a37e42d5018b9d3cbb35420af22a980a46b0d4fe3c412fdd3fdb5a1d766393",
-        "baseSha256": "56d97dd7133f4d55e76caa103d4296e02b76ade1d851ab67258499caa730d604",
-        "mergedSha256": "137f066b1b80b4163b77a92839427775cf5486de5b6c2dc3a0251cf990122f75",
+        "bundleSha256": "4a689e379b698f24360e7a725eaaec9b0200bd385a670f0032b7bbeff9de3c68",
+        "baseSha256": "f6a1e69d7d3c94c98c71b5300ebf179fc6ae0db13e0340ca2160f1d9386011ed",
+        "mergedSha256": "b2a8d1ae5cee0ce7ed5238d245aa0af2fcf3163d7c650c2480c29ab891c72692",
         "signerCertificateSha256": "1338f9b049893cc70b78432a177582f90bd4bc6296ea4ed35bcc7df59687ac53"
       },
       "verification": {
@@ -43,14 +43,107 @@
         "sdkPerDexAndApkChecks": "passed",
         "originalHierarchyFindings": 118,
         "introducedHierarchyFindings": 0,
-        "evidence": "Fresh full DEX rebuild and original-aware audit with all twelve feature patches.",
-        "deviceAcceptance": "Not installed. The test device runs the beta, whose higher version code blocks this version."
+        "evidence": "All twelve default patches applied with fingerprint validation and a full DEX rebuild. The SDK audit checked a test-signed copy.",
+        "deviceAcceptance": "Device testing pending for this build."
       },
       "evaluatedArtifact": {
-        "date": "2026-11-02",
-        "build": "Morphe Desktop",
-        "bundleSha256": "e77f35f3e393e042944235a64cfc6ddf6dfa6dd489bbc39227eba3564d92ae0e",
-        "apkSha256": "50d0707b12b96eb42055229348682d5f818cc0af20c96124a764843aebd3c309",
+        "date": "2026-11-23",
+        "build": "Morphe Desktop CLI 2.3.0",
+        "bundleSha256": "ec5906f7ad12887ae5af60c64d15f889c11829e81e4854a762512131a12da9b1",
+        "apkSha256": "de9287884b0a632958c971c540fe051f69cd5997999f4430dec6854b45c5dccf",
+        "patchesApplied": 12
+      }
+    },
+    {
+      "versionName": "32.0.0",
+      "versionCode": 3200006,
+      "status": "supported",
+      "primary": false,
+      "evaluatedAbis": [
+        "arm64-v8a"
+      ],
+      "deviceAndroidApis": null,
+      "original": {
+        "bundleSha256": "372eb1f50a9a03f5a54223aa4ee8a1fa80c7be955d17251a3383536309506f45",
+        "baseSha256": "e3aa5f2ef7996f2c8b623d935ed6f19c09fac17455a69879a9682005a67665a1",
+        "mergedSha256": "6435094ef5d6d2264183e4f75e1c41ffcecc707945ebd9613f1864727082c6b2",
+        "signerCertificateSha256": "1338f9b049893cc70b78432a177582f90bd4bc6296ea4ed35bcc7df59687ac53"
+      },
+      "verification": {
+        "fullDexRebuild": "passed",
+        "sdkPerDexAndApkChecks": "passed",
+        "originalHierarchyFindings": 118,
+        "introducedHierarchyFindings": 0,
+        "evidence": "All twelve default patches applied with fingerprint validation and a full DEX rebuild. The SDK audit checked a test-signed copy.",
+        "deviceAcceptance": "Device testing pending for this build."
+      },
+      "evaluatedArtifact": {
+        "date": "2026-11-23",
+        "build": "Morphe Desktop CLI 2.3.0",
+        "bundleSha256": "ec5906f7ad12887ae5af60c64d15f889c11829e81e4854a762512131a12da9b1",
+        "apkSha256": "696cb0faee5bc8ff9e954f5b3baa8c3709b4a1e8c891c790380c5f2c4aa3d09e",
+        "patchesApplied": 12
+      }
+    },
+    {
+      "versionName": "31.9.0",
+      "versionCode": 3109006,
+      "status": "supported",
+      "primary": false,
+      "evaluatedAbis": [
+        "arm64-v8a"
+      ],
+      "deviceAndroidApis": null,
+      "original": {
+        "bundleSha256": "7008221811c8527afd46e5a2a190eba715efc1b605023a7e73f83020e87d5b0f",
+        "baseSha256": "dceebe96deca2292251d7d74bed0f30419f0aac41d2060d1fd03a622eb138b74",
+        "mergedSha256": "849482bf0508034e3f0d9771f7c5ffac5fbe8c7e7fd858914f181a48ad47a895",
+        "signerCertificateSha256": "1338f9b049893cc70b78432a177582f90bd4bc6296ea4ed35bcc7df59687ac53"
+      },
+      "verification": {
+        "fullDexRebuild": "passed",
+        "sdkPerDexAndApkChecks": "passed",
+        "originalHierarchyFindings": 118,
+        "introducedHierarchyFindings": 0,
+        "evidence": "All twelve default patches applied with fingerprint validation and a full DEX rebuild. The SDK audit checked a test-signed copy.",
+        "deviceAcceptance": "Device testing pending for this build."
+      },
+      "evaluatedArtifact": {
+        "date": "2026-11-23",
+        "build": "Morphe Desktop CLI 2.3.0",
+        "bundleSha256": "ec5906f7ad12887ae5af60c64d15f889c11829e81e4854a762512131a12da9b1",
+        "apkSha256": "51bbafdd2cd820ae0ab6cfd293be34219a3b541cbcb3f709debe6680026a5b5a",
+        "patchesApplied": 12
+      }
+    },
+    {
+      "versionName": "31.8.0",
+      "versionCode": 3108006,
+      "status": "supported",
+      "primary": false,
+      "evaluatedAbis": [
+        "arm64-v8a"
+      ],
+      "deviceAndroidApis": null,
+      "original": {
+        "bundleSha256": "5f0bc04ea4bfa9853f23640445621864896d7274d9c4c543427dc064eb964e72",
+        "baseSha256": "91b49b3c7e96bdda8dbb6d0ec04b23bb88c46c94df91768c1a1fe29ce652527a",
+        "mergedSha256": "dc660102f018574bc788a1effea7e72c477529090da54b1c311062b682d3e93c",
+        "signerCertificateSha256": "1338f9b049893cc70b78432a177582f90bd4bc6296ea4ed35bcc7df59687ac53"
+      },
+      "verification": {
+        "fullDexRebuild": "passed",
+        "sdkPerDexAndApkChecks": "passed",
+        "originalHierarchyFindings": 118,
+        "introducedHierarchyFindings": 0,
+        "evidence": "All twelve default patches applied with fingerprint validation and a full DEX rebuild. The SDK audit checked a test-signed copy. Original ARM64 splits obtained from APKPure and verified against the Twitch signing certificate.",
+        "deviceAcceptance": "Device testing pending for this build."
+      },
+      "evaluatedArtifact": {
+        "date": "2026-11-23",
+        "build": "Morphe Desktop CLI 2.3.0",
+        "bundleSha256": "ec5906f7ad12887ae5af60c64d15f889c11829e81e4854a762512131a12da9b1",
+        "apkSha256": "f9c1e45659d98ebe3a00057e6679b9aaa37b6fab7b74508b74b52841b32d9e69",
         "patchesApplied": 12
       }
     },

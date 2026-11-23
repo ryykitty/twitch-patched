@@ -9,7 +9,7 @@ internal fun renderUiChatOverlays(bundle: HermesBundle): String {
     val targets = mapOf(
         "BOARDS" to exports.resolve("ChannelLeaderboardStripHost", setOf("useChannelLeaderboard", "hiddenForTray", "ChatTopBannerCarousel")),
         "TRAIN_PLAYER" to exports.resolve("TheatrePlayerHypeTrain", setOf("ErrorBoundary")),
-        "TRAIN_SKYLINE" to exports.resolve("SkylineHypeTrainHost", setOf("useHighlightSelector", "HypeTrainHighlightRenderer", "HighlightChrome")),
+        "TRAIN_SKYLINE" to exports.resolve("SkylineHypeTrainHost", setOf("useHighlightSelector", "useSkylineHypeTrainExpanded", "HighlightChrome")),
         "TRAIN_RENDERER" to exports.resolveDeferred("HypeTrainHighlightRenderer", setOf("highlight", "expanded", "onToggleExpanded")),
         "HIGHLIGHTS" to exports.resolve("useHighlightSelector", setOf("useContext", "useStore")),
     )

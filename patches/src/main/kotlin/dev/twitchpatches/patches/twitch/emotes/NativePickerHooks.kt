@@ -6,10 +6,13 @@ import app.morphe.patcher.patch.BytecodePatchContext
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.Reference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import dev.twitchpatches.patches.twitch.shared.*
 
@@ -23,7 +26,7 @@ internal data class NativePickerHooks(
     val generic: Method, val input: Method, val unlocked: Method, val model: Method,
     val header: Method, val section: Method, val entries: FieldReference,
     val state: FieldReference, val update: MethodReference, val delegateList: FieldReference,
-    val layout: FieldReference, val smooth: MethodReference, val target: FieldReference,
+    val layout: FieldReference, val smooth: MethodReference, val target: Reference,
     val scroll: MethodReference, val url: Method, val imageBinder: Method,
 )
 
@@ -95,13 +98,27 @@ internal fun BytecodePatchContext.resolveNativePickerHooks(): NativePickerHooks 
     val layout = fields.filter { it.type == "Landroidx/recyclerview/widget/GridLayoutManager;" }.uniqueHook("picker grid layout")
     val delegateList = fields.filter { it.definingClass == delegate.definingClass && it.type == layout.definingClass }
         .uniqueHook("picker content list")
-    val smooth = render.references().filterIsInstance<MethodReference>().filter {
-        it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) ==
+    val renderCode = render.code()
+    val (constructorIndex, constructor) = renderCode.withIndex().filter { (_, instruction) ->
+        val call = (instruction as? ReferenceInstruction)?.reference as? MethodReference
+        instruction.opcode == Opcode.INVOKE_DIRECT && call?.name == "<init>" && call.parameterTypes ==
             listOf("Ljava/lang/Object;", "Landroid/content/Context;", "I")
     }.uniqueHook("picker smooth scroller")
-    val target = fields.filter { it.type == "I" }.uniqueHook("picker scroll target")
+    val smooth = (constructor as ReferenceInstruction).reference as MethodReference
+    val scroller = (constructor as FiveRegisterInstruction).registerC
+    val scrollerBase = classDefBy(smooth.definingClass).superclass
+    val position = renderCode[constructorIndex + 1]
+    val target = (position as? ReferenceInstruction)?.reference
+    require(when (target) {
+        is FieldReference -> position.opcode == Opcode.IPUT && target.definingClass == scrollerBase &&
+            target.type == "I" && (position as TwoRegisterInstruction).registerB == scroller
+        is MethodReference -> position.opcode == Opcode.INVOKE_VIRTUAL && target.definingClass == scrollerBase &&
+            target.parameterTypes == listOf("I") && target.returnType == "V" &&
+            (position as FiveRegisterInstruction).registerC == scroller
+        else -> false
+    }) { "Emotes: picker scroll target assignment changed." }
     val scroll = render.references().filterIsInstance<MethodReference>().filter {
-        it.parameterTypes.map(CharSequence::toString) == listOf(target.definingClass) && it.returnType == "V"
+        it.parameterTypes == listOf(scrollerBase) && it.returnType == "V"
     }.uniqueHook("picker scroll invocation")
     val state = presenter.fields.filter { it.type == "Ltv/twitch/android/core/mvp/presenter/StateMachine;" }
         .uniqueHook("picker state machine")
@@ -113,6 +130,13 @@ internal fun BytecodePatchContext.resolveNativePickerHooks(): NativePickerHooks 
     val assetType = genericConstructor.parameterTypes[2].toString()
     val descriptor = emote.methods.filter { it.name == "<init>" && it.parameterTypes.size == 4 }
         .uniqueHook("picker emote model constructor")
+    val unlockedTypes = listOf(generic.superclass.orEmpty(), input.type)
+    val unlockedConstructor = unlocked.methods.filter { method ->
+        val types = method.parameterTypes.map(CharSequence::toString)
+        method.name == "<init>" && types.take(2) == unlockedTypes &&
+            types.size == 4 && types[2].startsWith("L") && types[3] == PICKER_LIST &&
+            unlocked.methods.any { it.hasStrings(", trackingMetadata=", ", modifiedEmotes=") }
+    }.uniqueHook("picker unlocked emote constructor")
     val entries = section.fields.filter { it.type == PICKER_LIST }.uniqueHook("picker section entries")
     val url = PickerImageUrlFingerprint.originalMethod
     val imageBinder = PickerImageBinderFingerprint(url.reference).matchAll()
@@ -120,10 +144,10 @@ internal fun BytecodePatchContext.resolveNativePickerHooks(): NativePickerHooks 
         .originalMethod
     return NativePickerHooks(presenter, start, event.constructor(listOf(PICKER_LIST, "Z")), delegate,
         genericConstructor, input.constructor(listOf(PICKER_STRING, PICKER_STRING, "Z")),
-        unlocked.constructor(listOf(generic.superclass.orEmpty(), input.type)), descriptor,
+        unlockedConstructor, descriptor,
         header.constructor(listOf(PICKER_STRING, PICKER_STRING, PICKER_STRING, "Z")),
         section.constructor(listOf(header.superclass.orEmpty(), PICKER_LIST)), entries,
-        state, update, delegateList, layout, smooth, target, scroll, url, imageBinder).also {
+        state, update, delegateList, layout, smooth, requireNotNull(target), scroll, url, imageBinder).also {
         classDefBy(assetType).fields.filter { field -> field.name in setOf("STATIC", "ANIMATED") }.let { fields ->
             require(fields.size == 2) { "Emotes: picker asset types changed." }
         }

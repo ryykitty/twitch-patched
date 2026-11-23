@@ -17,14 +17,15 @@ internal class MetroExports(private val bundle: HermesBundle) {
         require(descendants(function).containsAll(properties)) { "Modern Twitch: $name completion contract changed." }
     }
 
-    fun requireFunctionContract(name: String, params: Int, properties: Set<String>) {
-        val function = bundle.functions.single { bundle.strings[it.name] == name && it.params == params }
+    fun requireFunctionContract(name: String, params: Int?, properties: Set<String>) {
+        val function = bundle.functions.singleOrNull { bundle.strings[it.name] == name && (params == null || it.params == params) }
+            ?: error("Modern Twitch: expected one $name function for the parser contract.")
         val symbols = descendants(function)
         if (symbols.containsAll(properties)) return
         val delegates = symbols.filter { it != name && it.endsWith(name) }
         require(name == "BottomSheet" && delegates.toSet() == setOf("NativeBottomSheet", "RNBottomSheet") &&
             delegates.all { delegate ->
-                val implementation = bundle.functions.singleOrNull { bundle.strings[it.name] == delegate && it.params == params }
+                val implementation = bundle.functions.singleOrNull { bundle.strings[it.name] == delegate && it.params == function.params }
                 implementation != null && descendants(implementation).containsAll(properties)
             }) {
             "Modern Twitch: $name parser contract changed."

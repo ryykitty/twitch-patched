@@ -15,14 +15,29 @@ object TwitchTarget {
         appIconColor = 0x9146FF,
         targets = listOf(
             AppTarget(
-                version = BASELINE_VERSION,
+                version = "32.1.0",
                 isExperimental = false,
                 description = "Latest stable Twitch release. ARM64 build verification.",
             ),
             AppTarget(
+                version = "32.0.0",
+                isExperimental = false,
+                description = "ARM64 build verification.",
+            ),
+            AppTarget(
+                version = "31.9.0",
+                isExperimental = false,
+                description = "ARM64 build verification.",
+            ),
+            AppTarget(
+                version = BASELINE_VERSION,
+                isExperimental = false,
+                description = "ARM64 build verification.",
+            ),
+            AppTarget(
                 version = "31.9.0_BETA",
                 isExperimental = true,
-                description = "Latest Twitch beta. ARM64 build verification.",
+                description = "Twitch beta. ARM64 build verification.",
             ),
         ),
     )

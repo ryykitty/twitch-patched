@@ -6,6 +6,7 @@ import app.morphe.patcher.literal
 import app.morphe.patcher.patch.BytecodePatchContext
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -38,27 +39,27 @@ internal fun BytecodePatchContext.restoreVerticalLayoutControls(contract: UiComp
         val ref = (instruction as? ReferenceInstruction)?.reference as? MethodReference
         ref?.parameterTypes == listOf("Z", callback, contract.composer, "I") && ref.returnType == "V"
     }.uniqueHook("vertical volume position").index
-    val slots = code.withIndex().filter { (index, instruction) ->
+    val supportIndex = code.take(volumeIndex).withIndex().filter { (_, instruction) ->
         val call = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-        call?.toString() == contract.start.toString() &&
-            (code.getOrNull(index + 1) as? ReferenceInstruction)?.reference?.toString() == contract.end.toString() &&
-            ((code.getOrNull(index + 2) as? ReferenceInstruction)?.reference as? MethodReference)?.let {
-                it.definingClass == contract.concrete && it.parameterTypes.isEmpty() && it.returnType == "V" && it.toString() != contract.end.toString()
-            } == true
-    }.filter { (index, _) -> index < volumeIndex && code.take(index).any {
-        val ref = (it as? ReferenceInstruction)?.reference as? MethodReference
-        ref?.definingClass == target.definingClass && ref.parameterTypes == listOf("I", contract.composer, callback, callback, "Z")
-    } }.uniqueHook("empty vertical layout control slot")
+        call?.definingClass == target.definingClass && call.parameterTypes == listOf("I", contract.composer, callback, callback, "Z")
+    }.uniqueHook("vertical support controls").index
+    val slot = code.withIndex().filter { (index, instruction) ->
+        val call = (instruction as? ReferenceInstruction)?.reference as? MethodReference
+        val close = code.getOrNull(index + 1) as? FiveRegisterInstruction
+        index in (supportIndex + 1) until volumeIndex && call?.toString() == contract.start.toString() &&
+            (close as? ReferenceInstruction)?.reference?.toString() == contract.end.toString() &&
+            close.registerC == (instruction as FiveRegisterInstruction).registerC
+    }.uniqueHook("empty vertical layout control slot")
     val parameters = requireNotNull(target.implementation).registerCount - target.parameterTypes.size
-    require(code.take(slots.index).none { it.opcode.setsRegister() && it is OneRegisterInstruction &&
+    require(code.take(slot.index).none { it.opcode.setsRegister() && it is OneRegisterInstruction &&
         it.registerA == parameters + 10 }) { "UI settings: vertical layout callback is overwritten." }
-    val group = slots.value as FiveRegisterInstruction
-    val key = code[slots.index - 1] as? OneRegisterInstruction
+    val group = slot.value as FiveRegisterInstruction
+    val key = code[slot.index - 1] as? OneRegisterInstruction
         ?: error("UI settings: vertical control group key changed.")
-    require(code[slots.index - 1].opcode == Opcode.CONST && group.registerCount == 2 &&
-        key.registerA == group.registerD && key.registerA != group.registerC &&
-        (code[slots.index + 3] as? OneRegisterInstruction)?.registerA == key.registerA &&
-        code[slots.index + 3].opcode.setsRegister()) { "UI settings: vertical control scratch register is still live." }
+    require(key.opcode == Opcode.CONST && group.registerCount == 2 &&
+        key.registerA == group.registerD && key.registerA != group.registerC) {
+        "UI settings: vertical control group key changed."
+    }
     val owner = mutableClassDefBy("Ldev/twitchpatches/extension/ui/UiComposeBridge;")
     val render = nativeReloadMethod(owner.type, "verticalLayoutControls", listOf(callback.toString(), contract.composer), "V", 9, """
         const/4 v0, 0x0
@@ -73,8 +74,9 @@ internal fun BytecodePatchContext.restoreVerticalLayoutControls(contract: UiComp
     """, static = true)
     owner.methods.add(render)
     mutableClassDefBy(target.definingClass).methods.single { it.reference == target.reference }
-        .addInstructions(slots.index + 1, """
+        .addInstructions(slot.index + 1, """
             move-object/from16 v${key.registerA}, p10
             invoke-static {v${key.registerA}, v${group.registerC}}, ${render.reference}
+            const v${key.registerA}, ${(key as NarrowLiteralInstruction).narrowLiteral}
         """)
 }

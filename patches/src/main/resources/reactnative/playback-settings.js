@@ -12,5 +12,5 @@
     global.__twitchPatchRuntime.target(__TWITCH_AUDIO_RENDITION_MODULE__, 'useAudioOnlyRendition', allowDjPlayback);
     var vetoModule = __TWITCH_BACKGROUND_VETO_MODULE__;
     if (vetoModule !== null)
-        global.__twitchPatchRuntime.target(vetoModule, 'backgroundAudioVeto', allowDjPlayback);
+        global.__twitchPatchRuntime.target(vetoModule, '__TWITCH_BACKGROUND_VETO_EXPORT__', allowDjPlayback);
 })(globalThis);
