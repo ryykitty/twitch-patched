@@ -1,9 +1,12 @@
 package dev.twitchpatches.patches.twitch.ads
 
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patcher.util.proxy.mutableTypes.MutableField.Companion.toMutable
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.immutable.ImmutableField
 import dev.twitchpatches.patches.twitch.reload.nativeReloadMethod
 import dev.twitchpatches.patches.twitch.shared.*
@@ -42,6 +45,17 @@ internal fun BytecodePatchContext.blockChannelSkins() {
         return original.reference
     }
     val banner = wrap(contract.banner)
+    contract.showingCheck?.let { index ->
+        val original = mutableClassDefBy(contract.header.definingClass).methods.single { it.reference == contract.header.reference }
+        val code = original.code()
+        val register = "v${(code[index] as OneRegisterInstruction).registerA}"
+        original.addInstructionsWithLabels(index + 1, """
+            if-eqz $register, :original
+            invoke-static {}, $AD_SETTINGS->displayAdsBlocked()Z
+            move-result $register
+            xor-int/lit8 $register, $register, 0x1
+        """, ExternalLabel("original", code[index + 1]))
+    }
     val header = wrap(contract.header)
     val owner = mutableClassDefBy(contract.hide.definingClass)
     val hide = owner.methods.single { it.reference == contract.hide.reference }
@@ -86,12 +100,14 @@ internal fun BytecodePatchContext.blockChannelSkins() {
         iget-object v6, v0, ${contract.header.definingClass}->$SAVED
         if-eqz v6, :done
         ${arguments(contract.header)}
-        invoke-static {}, $AD_SETTINGS->displayAdsBlocked()Z
-        move-result v7
-        if-eqz v7, :showHeader
-        sget-object v4, ${contract.hidden}
-        :showHeader
-        invoke-virtual/range {v0 .. v4}, $header
+        ${contract.hidden?.let { """
+            invoke-static {}, $AD_SETTINGS->displayAdsBlocked()Z
+            move-result v7
+            if-eqz v7, :showHeader
+            sget-object v4, $it
+            :showHeader
+        """ }.orEmpty()}
+        invoke-virtual/range {v0 .. v${contract.header.parameterTypes.size}}, $header
         :done
         return-void
     """, static = true))

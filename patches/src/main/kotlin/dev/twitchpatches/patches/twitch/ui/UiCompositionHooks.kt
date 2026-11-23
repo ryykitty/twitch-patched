@@ -140,7 +140,10 @@ internal fun uiWrapper(original: Method, name: String, contract: UiCompositionCo
         $condition
         invoke-static/range {p0 .. p${original.parameterTypes.size - 1}}, ${original.reference}
         :done
-        invoke-virtual {v0}, ${contract.end}
+        ${if (contract.end.parameterTypes.isEmpty()) "invoke-virtual {v0}, ${contract.end}" else """
+            const/4 v1, 0x0
+            invoke-virtual {v0, v1}, ${contract.end}
+        """}
         return-void
     """, static = true)
 }

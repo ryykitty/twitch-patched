@@ -41,9 +41,11 @@ private object AutocompleteEmoteModelFingerprint : Fingerprint(
 private class AutocompleteQueryFingerprint(
     constructorRef: String,
 ) : Fingerprint(
-    parameters = listOf(PICKER_STRING),
-    returnType = PICKER_LIST,
-    filters = listOf(methodCall(constructorRef)),
+    filters = listOf(methodCall(definingClass = "Ltv/twitch/android/util/EmoteUrlUtil;"), methodCall(constructorRef)),
+    custom = { method, _ ->
+        method.parameterTypes == listOf(PICKER_STRING) && method.returnType == PICKER_LIST ||
+            method.parameterTypes == listOf("Z") && method.returnType == "V"
+    },
 )
 
 internal fun inputMethod(owner: String, name: String, parameters: List<String>, returns: String, registers: Int,

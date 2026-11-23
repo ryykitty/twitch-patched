@@ -3,6 +3,7 @@ package dev.twitchpatches.patches.twitch.ads
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.fieldAccess
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.string
@@ -22,15 +23,6 @@ import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import dev.twitchpatches.patches.twitch.shared.*
 
-private object StreamAccessTokenServiceFingerprint : Fingerprint(
-    isStatic = false,
-    returnType = "Ljava/lang/Object;",
-    strings = listOf(
-        "parseStreamAccessTokenResponse",
-        "call to 'resume' before 'invoke' with coroutine",
-    ),
-)
-
 private object SingleSubscriptionFingerprint : Fingerprint(
     returnType = "V",
     strings = listOf(string("The RxJavaPlugins.onSubscribe hook returned a null SingleObserver.", StringComparisonType.STARTS_WITH)),
@@ -43,25 +35,47 @@ private class TokenSerializerFingerprint(playerField: FieldReference) : Fingerpr
 
 internal data class NativeTokenContract(
     val service: ClassDef, val constructor: Method, val params: MethodReference, val absent: FieldReference,
-    val paramsMask: Int, val query: MethodReference, val mapper: MethodReference, val parser: FieldReference,
-    val mapperArguments: List<Int>, val graphql: MethodReference, val graphqlField: FieldReference,
+    val paramsMask: Int, val query: MethodReference, val mapper: NativeTokenMapper, val parser: FieldReference,
+    val graphql: MethodReference, val graphqlField: FieldReference,
     val queryFlags: Int, val subscribe: Method, val observer: NativeTokenObserver, val dispose: Method,
     val result: FieldReference, val serializer: Method, val platformIndex: Int,
     val platformRegister: Int, val paramsRegister: Int,
 )
 
+private const val STRING = "Ljava/lang/String;"
+private const val OBJECT = "Ljava/lang/Object;"
+private const val FUNCTION1 = "Lkotlin/jvm/functions/Function1;"
+internal fun Method.callRefs() = code().withIndex().mapNotNull { (index, instruction) ->
+    ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.let { Triple(index, instruction, it) }
+}
+
+private fun isGraphqlSingle(instruction: Instruction, ref: MethodReference) = instruction.opcode == Opcode.INVOKE_STATIC &&
+    ref.parameterTypes.size == 4 && ref.parameterTypes[2].toString() == FUNCTION1 && ref.parameterTypes[3].toString() == "I"
+
+private object StreamTokenQueryFingerprint : Fingerprint(
+    name = "name",
+    returnType = STRING,
+    strings = listOf("StreamAccessTokenQuery"),
+)
+
+private class StreamTokenServiceFingerprint(query: Method) : Fingerprint(
+    isStatic = false,
+    returnType = OBJECT,
+    strings = listOf("call to 'resume' before 'invoke' with coroutine"),
+    filters = listOf(methodCall(query.reference)),
+    custom = { method, _ -> method.parameterTypes.size == 3 && method.parameterTypes.first() == STRING },
+)
+
 internal fun BytecodePatchContext.resolveNativeTokens(): NativeTokenContract {
-    val source = StreamAccessTokenServiceFingerprint.originalMethod
-    if (source.parameterTypes.size != 3 || source.parameterTypes.first().toString() != "Ljava/lang/String;") {
-        throw PatchException("Native token service parameter contract changed")
-    }
+    val query = StreamTokenQueryFingerprint.originalClassDef.methods.filter {
+        it.name == "<init>" && it.parameterTypes.size == 2 && it.parameterTypes.first() == STRING
+    }.uniqueHook("native stream token query")
+    val source = StreamTokenServiceFingerprint(query).originalMethod
     val service = classDefBy(source.definingClass)
     val code = source.code()
-    val calls = code.withIndex().mapNotNull { (index, instruction) ->
-        ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.let { Triple(index, instruction, it) }
-    }
+    val calls = source.callRefs()
     val paramsCall = calls.filter { (_, instruction, ref) -> ref.name == "<init>" &&
-        ref.parameterTypes.size == 3 && ref.parameterTypes[1].toString() == "Ljava/lang/String;" &&
+        ref.parameterTypes.size == 3 && ref.parameterTypes[1].toString() == STRING &&
         ref.parameterTypes[2].toString() == "I" && instruction.opcode == Opcode.INVOKE_DIRECT &&
         classDefBy(ref.definingClass).methods.any { method -> method.references().filterIsInstance<StringReference>()
             .any { it.string.startsWith("PlaybackAccessTokenParams(device=") } }
@@ -73,23 +87,11 @@ internal fun BytecodePatchContext.resolveNativeTokens(): NativeTokenContract {
         .mapNotNull { (it as? ReferenceInstruction)?.reference as? FieldReference }
         .filter { classDefBy(it.type).superclass == params.parameterTypes.first().toString() }
         .uniqueHook("native absent token option")
-    val query = calls.filter { (_, _, ref) -> ref.name == "<init>" &&
-        ref.parameterTypes.map { it.toString() } == listOf("Ljava/lang/String;", params.definingClass) &&
-        classDefBy(ref.definingClass).methods.any { it.hasStrings("StreamAccessTokenQuery") }
-    }.uniqueHook("native stream token query").third
-    val mapperCall = calls.filter { (_, _, ref) -> ref.name == "<init>" &&
-        ref.parameterTypes.map { it.toString() } == listOf("I", "Ljava/lang/Object;", "Ljava/lang/Class;",
-            "Ljava/lang/String;", "Ljava/lang/String;", "I", "I")
-    }.uniqueHook("native token mapper")
-    val registers = invokeRegisters(mapperCall.second)
-    if (registers.size != 8) throw PatchException("Native token mapper must use eight argument words")
-    val parser = source.fieldBefore(mapperCall.first, registers[2])
-    val mapperArguments = listOf(1, 6, 7).map { source.literalBefore(mapperCall.first, registers[it]) }
-    val graphqlCall = calls.filter { (_, instruction, ref) ->
-        instruction.opcode == Opcode.INVOKE_STATIC && ref.parameterTypes.size == 4 &&
-            ref.parameterTypes[2].toString() == "Lkotlin/jvm/functions/Function1;" && ref.parameterTypes[3].toString() == "I"
-    }.uniqueHook("native authorized GraphQL Single")
+    require(query.parameterTypes[1] == params.definingClass) { "Native stream token query parameters changed." }
+    val graphqlCall = calls.filter { (_, instruction, ref) -> isGraphqlSingle(instruction, ref) }
+        .uniqueHook("native authorized GraphQL Single")
     val graphRegisters = invokeRegisters(graphqlCall.second)
+    val (mapper, parser) = resolveTokenMapper(source, graphqlCall.first, graphRegisters[2])
     val graphqlField = source.fieldBefore(graphqlCall.first, graphRegisters[0])
     if (graphqlField.type != graphqlCall.third.parameterTypes[0].toString() ||
         graphqlField.definingClass != service.type || parser.definingClass != service.type)
@@ -112,10 +114,10 @@ internal fun BytecodePatchContext.resolveNativeTokens(): NativeTokenContract {
     }.uniqueHook("native token disposal")
     val result = code.filter { it.opcode == Opcode.IGET_OBJECT }.mapNotNull {
         (it as? ReferenceInstruction)?.reference as? FieldReference
-    }.lastOrNull { it.type == "Ljava/lang/Object;" &&
+    }.lastOrNull { it.type == OBJECT &&
         "Ljava/io/Serializable;" in classDefBy(it.definingClass).interfaces }
         ?: throw PatchException("Native token result wrapper not found")
-    val playerField = classDefBy(params.definingClass).fields.filter { it.type == "Ljava/lang/String;" &&
+    val playerField = classDefBy(params.definingClass).fields.filter { it.type == STRING &&
         !AccessFlags.STATIC.isSet(it.accessFlags) }.uniqueHook("token player-type field")
     val serializer = TokenSerializerFingerprint(playerField).originalMethod
     val serialCode = serializer.code()
@@ -127,8 +129,8 @@ internal fun BytecodePatchContext.resolveNativeTokens(): NativeTokenContract {
         .uniqueHook("token-specific platform literal")
     if (serialCode.getOrNull(android.index + 1)?.opcode != Opcode.INVOKE_VIRTUAL)
         throw PatchException("Token platform serialization does not immediately consume its literal")
-    return NativeTokenContract(service, constructor, params, absent, mask, query, mapperCall.third, parser,
-        mapperArguments, graphqlCall.third, graphqlField, queryFlags, subscribe, callbacks, dispose, result,
+    return NativeTokenContract(service, constructor, params, absent, mask, query, mapper, parser,
+        graphqlCall.third, graphqlField, queryFlags, subscribe, callbacks, dispose, result,
         serializer, android.index, (android.value as OneRegisterInstruction).registerA,
         (cast.value as OneRegisterInstruction).registerA)
 }
@@ -138,7 +140,7 @@ internal data class NativeTokenObserver(val success: Method, val error: Method, 
 internal fun resolveTokenObserver(methods: Iterable<Method>): NativeTokenObserver {
     val callbacks = methods.filter { it.returnType == "V" && it.parameterTypes.size == 1 &&
         AccessFlags.PUBLIC.isSet(it.accessFlags) && AccessFlags.ABSTRACT.isSet(it.accessFlags) }
-    val success = callbacks.filter { it.parameterTypes.single().toString() == "Ljava/lang/Object;" }
+    val success = callbacks.filter { it.parameterTypes.single().toString() == OBJECT }
         .uniqueHook("native token observer success")
     val error = callbacks.filter { it.parameterTypes.single().toString() == "Ljava/lang/Throwable;" }
         .uniqueHook("native token observer error")
@@ -159,13 +161,13 @@ internal fun Method.literalBefore(index: Int, register: Int): Int {
         ?: throw PatchException("Token constructor literal was overwritten or unresolved for v$register")
 }
 
-private fun Method.fieldBefore(index: Int, register: Int): FieldReference {
+internal fun Method.fieldBefore(index: Int, register: Int): FieldReference {
     val write = code().take(index).asReversed().firstOrNull { writesRegister(it, register) }
     return ((write as? ReferenceInstruction)?.reference as? FieldReference)
         ?.takeIf { write.opcode == Opcode.IGET_OBJECT }
         ?: throw PatchException("Token service field was overwritten or unresolved for v$register")
 }
 
-private fun writesRegister(instruction: Instruction, register: Int): Boolean {
+internal fun writesRegister(instruction: Instruction, register: Int): Boolean {
     return (instruction as? OneRegisterInstruction)?.registerA == register && instruction.opcode.setsRegister()
 }

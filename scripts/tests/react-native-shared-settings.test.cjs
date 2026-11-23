@@ -18,7 +18,8 @@ function install(file, symbol, placeholder, original) {
         .replace('__TWITCH_REACT_MODULE__', '7'), context);
     vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8').replace(placeholder, '12')
         .replace('__TWITCH_PLAYBACK_SETTINGS_MODULE__', '13').replace('__TWITCH_BACKGROUND_AUDIO_MODULE__', '13')
-        .replace('__TWITCH_AUDIO_RENDITION_MODULE__', '13').replace('__TWITCH_BACKGROUND_VETO_MODULE__', '13'), context);
+        .replace('__TWITCH_AUDIO_RENDITION_MODULE__', '13').replace('__TWITCH_BACKGROUND_VETO_MODULE__', '13')
+        .replace('__TWITCH_BACKGROUND_VETO_EXPORT__', symbol), context);
     let factory;
     context.__d = function (value) { factory = value; };
     context.__d(function (global, require, a, b, module, exports) { exports[symbol] = original; }, 12, []);
@@ -99,6 +100,18 @@ test('DJ background veto preserves chat-only and the saved playback preference',
         assert.equal(veto.render(props) ?? saved, saved);
         assert.equal(veto.render({...props, chatOnly: true}), 'never');
         assert.equal(props.isParticipatingDJ, true);
+    }
+});
+
+test('the boolean background audio veto still reaches the native lifecycle for chat-only', () => {
+    const veto = install('playback-settings.js', 'isBackgroundAudioVetoed', '__TWITCH_BACKGROUND_VETO_MODULE__',
+        props => props.isParticipatingDJ || props.chatOnly);
+    for (const isParticipatingDJ of [false, true]) {
+        for (const chatOnly of [false, true]) {
+            const props = {isParticipatingDJ, chatOnly};
+            assert.equal(veto.render(props), chatOnly);
+            assert.equal(props.isParticipatingDJ, isParticipatingDJ);
+        }
     }
 });
 

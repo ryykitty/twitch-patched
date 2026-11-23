@@ -24,8 +24,11 @@ internal val reactNativeAssetsPatch = resourcePatch {
             setOf("beginBackgroundAudio", "endBackgroundAudio", "background", "active"))
         val rendition = exports.resolve("useAudioOnlyRendition", setOf("isParticipatingDJ", "playerApiRef",
             "qualities", "audioOnly", "playInBackground"))
-        val veto = if (bundle.functions.any { bundle.strings[it.name] == "backgroundAudioVeto" })
-            exports.resolve("backgroundAudioVeto", setOf("isParticipatingDJ", "chatOnly")) else null
+        val vetoNames = listOf("backgroundAudioVeto", "isBackgroundAudioVetoed").filter { name ->
+            bundle.functions.any { bundle.strings[it.name] == name }
+        }
+        check(vetoNames.size <= 1) { "Modern Twitch: expected at most one background audio veto export." }
+        val veto = vetoNames.singleOrNull()?.let { exports.resolve(it, setOf("isParticipatingDJ", "chatOnly")) }
         if (veto == null) exports.requireFunctionContract("usePlayInBackgroundPreference", 2,
             setOf("backgroundAudioSetting"))
         exports.requireFunctionContract("ViewingOptionsSection", 2,
@@ -40,7 +43,8 @@ internal val reactNativeAssetsPatch = resourcePatch {
             .replace("__TWITCH_PLAYBACK_SETTINGS_MODULE__", playback.module.toString())
             .replace("__TWITCH_BACKGROUND_AUDIO_MODULE__", background.module.toString())
             .replace("__TWITCH_AUDIO_RENDITION_MODULE__", rendition.module.toString())
-            .replace("__TWITCH_BACKGROUND_VETO_MODULE__", veto?.module?.toString() ?: "null"))
+            .replace("__TWITCH_BACKGROUND_VETO_MODULE__", veto?.module?.toString() ?: "null")
+            .replace("__TWITCH_BACKGROUND_VETO_EXPORT__", veto?.name.orEmpty()))
     }
 }
 

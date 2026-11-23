@@ -141,7 +141,9 @@ internal fun BytecodePatchContext.nativePickerBridges(hooks: NativePickerHooks, 
         const/4 v3, 0x0
         invoke-direct {v1, p1, p0, v3}, ${hooks.input.reference}
         new-instance v4, ${hooks.unlocked.definingClass}
-        invoke-direct {v4, v0, v1}, ${hooks.unlocked.reference}
+        invoke-static {}, Ljava/util/Collections;->emptyList()Ljava/util/List;
+        move-result-object v5
+        invoke-direct {v4, v0, v1, v3, v5}, ${hooks.unlocked.reference}
         sget-object v3, $badge->NONE:$badge
         new-instance v5, ${hooks.model.definingClass}
         invoke-direct {v5, p0, v4, v2, v3}, ${hooks.model.reference}
@@ -174,7 +176,11 @@ internal fun BytecodePatchContext.nativePickerBridges(hooks: NativePickerHooks, 
         new-instance v2, ${hooks.smooth.definingClass}
         const/4 v3, 0x0
         invoke-direct {v2, v3, v1, v3}, ${hooks.smooth}
-        iput p2, v2, ${hooks.target}
+        ${when (hooks.target) {
+            is FieldReference -> "iput p2, v2, ${hooks.target}"
+            is MethodReference -> "invoke-virtual {v2, p2}, ${hooks.target}"
+            else -> error("Emotes: unsupported picker scroll target.")
+        }}
         invoke-virtual {v0, v2}, ${hooks.scroll}
         :done
         return-void

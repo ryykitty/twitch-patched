@@ -59,12 +59,11 @@ Review the candidate's hooks before updating `TwitchTarget.kt`. Evaluate native
 and React Native playback, chat, settings and ad handling before declaring a
 version supported. Originals, signing keys and run artifacts stay under `.local/`.
 
-Patches support the latest stable Twitch release and the latest beta, and nothing
-older. A version update starts when the stable release advances. A beta moving on
-its own does not start one. Use the APK's exact version name for prereleases and
-keep beta targets marked as experimental. The current targets are 31.8.0 and
-31.9.0_BETA. The [screen inventory](SCREENS.md) lists the surfaces to include in
-regression checks.
+A version update starts when the stable release advances. A beta moving on its
+own does not start one. Use the APK's exact version name for prereleases and
+keep beta targets marked as experimental. The [compatibility table](../README.md#compatibility)
+lists the current targets. The [screen inventory](SCREENS.md) lists the surfaces
+to include in regression checks.
 
 Morphe Patcher 2 decodes resources lazily. Use `ResourcePatchContext.decode` for
 wildcard resource scans before enumerating matched files. Direct file access

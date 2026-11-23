@@ -11,6 +11,7 @@ import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableField
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import dev.twitchpatches.patches.twitch.shared.*
 
 private const val RESULT = "Ldev/twitchpatches/extension/ads/TokenResult;"
@@ -53,15 +54,7 @@ internal fun BytecodePatchContext.applyNativeTokens(hooks: NativeTokenContract) 
         iput-object v2, v1, ${paramsClass.type}->$PLATFORM_FIELD:Ljava/lang/String;
         new-instance v2, ${query.definingClass}
         invoke-direct {v2, p1, v1}, $query
-        new-instance v3, ${mapper.definingClass}
-        const/16 v4, ${mapperArguments[0]}
-        iget-object v5, v0, $parser
-        const-class v6, ${parser.type}
-        const-string v7, "parseStreamAccessTokenResponse"
-        const-string v8, "parseStreamAccessTokenResponse(Ltv/twitch/gql/StreamAccessTokenQuery${'$'}Data;)Ltv/twitch/android/models/AccessTokenResponse;"
-        const/16 v9, ${mapperArguments[1]}
-        const/16 v10, ${mapperArguments[2]}
-        invoke-direct/range {v3 .. v10}, $mapper
+        ${tokenMapper(mapper, parser)}
         iget-object v4, v0, $graphqlField
         const/16 v5, $queryFlags
         invoke-static {v4, v2, v3, v5}, $graphql
@@ -128,6 +121,27 @@ internal fun BytecodePatchContext.applyNativeTokens(hooks: NativeTokenContract) 
     ctor.code().withIndex().filter { it.value.opcode == Opcode.RETURN_VOID }.map { it.index }
         .asReversed().forEach { ctor.insertAtReturn(it, "invoke-static/range {p0 .. p0}, $AD_RUNTIME->tokenOwner(Ljava/lang/Object;)V") }
 }
+
+/** Rebuilds the app's own stream token mapper into v3, using v4..v10 as scratch, with the service in v0. */
+internal fun tokenMapper(mapper: NativeTokenMapper, parser: FieldReference): String = when (mapper) {
+    is ReflectiveTokenMapper -> """
+        new-instance v3, ${mapper.constructor.definingClass}
+        const v4, ${mapper.arguments[0]}
+        iget-object v5, v0, $parser
+        const-class v6, ${parser.type}
+        const-string v7, "$TOKEN_PARSER"
+        const-string v8, "$TOKEN_PARSER_SIGNATURE"
+        const v9, ${mapper.arguments[1]}
+        const v10, ${mapper.arguments[2]}
+        invoke-direct/range {v3 .. v10}, ${mapper.constructor}
+    """
+    is BoundTokenMapper -> """
+        new-instance v3, ${mapper.constructor.definingClass}
+        iget-object v4, v0, $parser
+        const v5, ${mapper.discriminator}
+        invoke-direct {v3, v4, v5}, ${mapper.constructor}
+    """
+}.trimIndent()
 
 private fun BytecodePatchContext.replaceResultStub(name: String, parameters: List<String>, locals: Int, body: String) {
     val type = mutableClassDefBy(RESULT)

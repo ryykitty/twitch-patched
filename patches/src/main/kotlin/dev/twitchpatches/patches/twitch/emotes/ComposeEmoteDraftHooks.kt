@@ -41,10 +41,15 @@ private object ChatToolbarStateFingerprint : Fingerprint(
 )
 
 private object ParagraphIntrinsicsFingerprint : Fingerprint(
+    name = "<init>",
     returnType = "V",
-    parameters = listOf("L", "L", "L", "Ljava/lang/String;", "Ljava/util/List;", "Ljava/util/List;", "Z"),
     filters = listOf(methodCall(definingClass = "Landroid/text/SpannableString;", name = "<init>")),
-    custom = { method, _ -> method.name == "<init>" },
+    custom = { method, owner ->
+        val types = method.parameterTypes.map(CharSequence::toString)
+        types.size == 7 && types.last() == "Z" && types.dropLast(1).all { it.startsWith("L") } &&
+            types.count { it == PICKER_STRING } == 1 && types.count { it == PICKER_LIST } == 2 &&
+            owner.fields.count { it.type == CHAR_SEQUENCE } == 1
+    },
 )
 
 private class TextFieldLayoutFingerprint(record: String, transformedState: String) : Fingerprint(

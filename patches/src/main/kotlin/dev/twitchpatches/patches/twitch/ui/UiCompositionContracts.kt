@@ -7,6 +7,9 @@ import app.morphe.patcher.string
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.WideLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -90,9 +93,19 @@ internal fun BytecodePatchContext.resolveUiComposition(): UiCompositionContract 
     val start = classic.references().filterIsInstance<MethodReference>().filter {
         it.definingClass == concrete && it.parameterTypes == listOf("I") && it.returnType == "V"
     }.distinctBy { it.toString() }.uniqueHook("UI replaceable composition group")
-    val startIndex = classic.code().indexOfFirst { (it as? ReferenceInstruction)?.reference?.toString() == start.toString() }
-    val end = classic.code().drop(startIndex + 1).mapNotNull { (it as? ReferenceInstruction)?.reference as? MethodReference }
-        .first { it.definingClass == concrete && it.parameterTypes.isEmpty() && it.returnType == "V" }
+    val classicCode = classic.code()
+    val end = classicCode.zipWithNext().mapIndexedNotNull { index, (open, close) ->
+        if ((open as? ReferenceInstruction)?.reference?.toString() != start.toString()) return@mapIndexedNotNull null
+        val call = (close as? ReferenceInstruction)?.reference as? MethodReference ?: return@mapIndexedNotNull null
+        if (close.opcode != Opcode.INVOKE_VIRTUAL || call.definingClass != concrete || call.returnType != "V" ||
+            (open as FiveRegisterInstruction).registerC != (close as FiveRegisterInstruction).registerC)
+            return@mapIndexedNotNull null
+        if (call.parameterTypes.isEmpty()) return@mapIndexedNotNull call
+        val flag = classicCode.take(index).lastOrNull {
+            it.opcode.setsRegister() && (it as? OneRegisterInstruction)?.registerA == close.registerD
+        } as? NarrowLiteralInstruction
+        call.takeIf { it.parameterTypes == listOf("Z") && flag?.narrowLiteral == 0 }
+    }.distinctBy { it.toString() }.uniqueHook("UI replaceable composition group closing call")
     val fragment = classDefBy("Ltv/twitch/android/feature/theatre/vertical/VerticalTheatreFragment;")
     val controlTypes = fragment.methods.filter { it.parameterTypes.isEmpty() && it.returnType.startsWith("L") }.map { it.returnType }.toSet()
     val controls = controlTypes.flatMap { classDefBy(it).methods }.filter {

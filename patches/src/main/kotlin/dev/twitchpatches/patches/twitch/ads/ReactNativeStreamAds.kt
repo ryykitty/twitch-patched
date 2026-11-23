@@ -11,9 +11,9 @@ internal val reactNativeStreamAdsPatch = resourcePatch {
         val exports = MetroExports(twitchBundle())
         val hook = exports.resolve("useControllerState", setOf("useRef", "useSyncExternalStore"), 4)
         exports.requireFunctionContract("useControllerState", 4, setOf("subscribe", "current", "has", "value"))
-        val controller = exports.resolve("createAdStateController", setOf("createNativeModuleBacking"))
-        exports.requireFunctionContract("createAdStateController", 2, setOf("getState", "subscribe", "subscribeCueEvents"))
-        exports.requireFunctionContract("TheatreContent", 1, setOf("adState", "useControllerState", "TheatreVideoComposition"))
+        val controller = exports.resolveDeferred("createAdStateController",
+            setOf("createNativeModuleBacking", "getState", "subscribe", "subscribeCueEvents"))
+        exports.requireFunctionContract("TheatreContent", null, setOf("adState", "useControllerState", "TheatreVideoComposition"))
         exports.resolve("TheatreAdOverlays", setOf("adIsPlaying", "adState", "TheatreAdControlsOverlay"))
         val welcome = exports.resolve("useWelcomeBannerState", setOf("channelName", "adState", "useSyncExternalStore"))
         exports.requireFunctionContract("useWelcomeBannerState", 2,
@@ -21,7 +21,7 @@ internal val reactNativeStreamAdsPatch = resourcePatch {
         exports.resolveMemo("WelcomeBanner", "WelcomeBannerImpl",
             setOf("channelName", "isPreroll", "isLandscape", "playerWidth", "formatMessage",
                 "Welcome! This ad supports {channelName}", "Thanks for watching this ad to support {channelName}"))
-        exports.requireFunctionContract("TheatreContent", 1,
+        exports.requireFunctionContract("TheatreContent", null,
             setOf("useWelcomeBannerState", "isShowing", "useTheatreLayout", "showStripWelcomeBanner",
                 "showInFlowWelcomeBanner", "WelcomeBanner"))
         get(RN_ASSET).appendText("\n" + assetSource("stream-ad-state.js")

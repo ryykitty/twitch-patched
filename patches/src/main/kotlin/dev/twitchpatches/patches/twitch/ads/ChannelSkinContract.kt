@@ -6,8 +6,11 @@ import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.string
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import dev.twitchpatches.patches.twitch.shared.*
 
 private object ChannelSkinModelFingerprint : Fingerprint(
@@ -47,12 +50,13 @@ private class ChannelSkinHiddenStateFingerprint(
 )
 
 internal data class ChannelSkinContract(val banner: Method, val hide: Method, val header: Method,
-    val hidden: FieldReference)
+    val hidden: FieldReference?, val showingCheck: Int?)
 
 internal fun BytecodePatchContext.channelSkinContract(): ChannelSkinContract {
     val skin = ChannelSkinModelFingerprint.originalClassDef.type
     val context = ChannelSkinRenderContextFingerprint.originalClassDef.type
-    val state = ShowingModelFingerprint.originalClassDef.superclass ?: ""
+    val showing = ShowingModelFingerprint.originalClassDef
+    val state = requireNotNull(showing.superclass)
 
     val bannerMatches = ChannelSkinBannerFingerprint.matchAllOrNull()
         ?: throw PatchException("Channel sponsorship: no banner candidate matched.")
@@ -71,10 +75,19 @@ internal fun BytecodePatchContext.channelSkinContract(): ChannelSkinContract {
 
     val headerMatches = ChannelSkinHeaderFingerprint.matchAllOrNull()
         ?: throw PatchException("Channel sponsorship: no header candidate matched.")
-    val header = headerMatches.map { it.originalMethod }.single {
-        it.parameterTypes.size == 4 &&
-            it.parameterTypes[1].toString() == "Ltv/twitch/android/models/channel/ChannelModel;" &&
-            it.parameterTypes.last().toString() == state
+    val header = headerMatches.map { it.originalMethod }.filter { method ->
+        val channel = "Ltv/twitch/android/models/channel/ChannelModel;"
+        (method.parameterTypes.size == 4 && method.parameterTypes[1] == channel && method.parameterTypes.last() == state) ||
+            (method.isInstance(listOf("Ltv/twitch/android/core/mvp/viewdelegate/ViewDelegateState;"), "V") &&
+                method.references().filterIsInstance<FieldReference>().any { it.type == state } &&
+                method.references().filterIsInstance<FieldReference>().any { it.type == channel })
+    }.uniqueHook("native channel sponsorship header")
+    if (header.parameterTypes.size == 1) {
+        val check = header.code().withIndex().filter { (_, instruction) ->
+            instruction.opcode == Opcode.INSTANCE_OF &&
+                ((instruction as ReferenceInstruction).reference as TypeReference).type == showing.type
+        }.uniqueHook("native sponsorship header visibility check")
+        return ChannelSkinContract(banner, hide, header, null, check.index)
     }
 
     val hiddenClass = ChannelSkinHiddenStateFingerprint(state).originalClassDef
@@ -84,5 +97,5 @@ internal fun BytecodePatchContext.channelSkinContract(): ChannelSkinContract {
             AccessFlags.STATIC.isSet(field.accessFlags)
     }.uniqueHook("native hidden channel sponsorship state")
 
-    return ChannelSkinContract(banner, hide, header, hidden)
+    return ChannelSkinContract(banner, hide, header, hidden, null)
 }

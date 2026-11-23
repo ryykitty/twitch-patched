@@ -17,7 +17,7 @@ internal val reactNativeReloadPatch = resourcePatch {
         val icon = exports.resolve("RawIconRefresh", setOf("Path", "default"))
         val toast = exports.resolveObjectExport("default", setOf("SHORT", "LONG", "show", "showWithGravity", "showWithGravityAndOffset"),
             mapOf("show" to 3, "showWithGravity" to 4, "showWithGravityAndOffset" to 6))
-        exports.requireFunctionContract("TheatreContent", 1, setOf("useTheatreData", "refreshVideoToken", "TheatreVideoComposition"))
+        exports.requireFunctionContract("TheatreContent", null, setOf("useTheatreData", "refreshVideoToken", "TheatreVideoComposition"))
         requireReloadCounter(bundle)
         listOf("reload-owner.js", "reload-control.js", "reload-adapters.js").forEach { file ->
             get(RN_ASSET).appendText("\n" + assetSource(file)
